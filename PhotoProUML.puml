@@ -1,7 +1,7 @@
 @startuml
-package "Service Authentification / Identité" {
+package "Service Auth / Identité" {
     class Utilisateur {
-        - id : UUID <<PK>>
+        - id : UUID
         - email : String
         - mot_de_passe_hash : String
         - role : String
@@ -10,39 +10,37 @@ package "Service Authentification / Identité" {
 
 package "Service Galerie (Domaine)" {
     class Photographe {
-        - id : UUID <<PK>>
-        - utilisateur_id : UUID <<FK>>
+        - id : UUID
+        - utilisateur_id : UUID
         - nom : String
     }
 
     class Galerie {
-        - id : UUID <<PK>>
+        - id : UUID
         - titre : String
         - description : String
         - est_privee : Boolean
-        - clef_acces : String <<Key>>
+        - clef_acces : String
         - date_creation : DateTime
     }
 
     class Photo {
-        - id : UUID <<PK>>
-        - clef_stockage : String <<S3 Key>>
+        - id : UUID
+        - clef_stockage : String
         - titre : String
         - date_upload : DateTime
     }
 
     class Commentaire {
-        - id : UUID <<PK>>
+        - id : UUID
         - nom_visiteur : String
         - texte : String
         - date_publication : DateTime
     }
 }
 
-' Relations inter-services (conceptuelles)
 Utilisateur "1" -right- "1" Photographe : est lié à >
 
-' Relations internes au domaine
 Photographe "1" -- "0..*" Galerie : possède >
 Galerie "1" *-- "0..*" Photo : contient >
 Photo "1" -- "0..*" Commentaire : possède >
