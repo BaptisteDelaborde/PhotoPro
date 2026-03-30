@@ -1,0 +1,17 @@
+.idea/
+.idea_modules/
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+composer.phar
+vendor/
+
+*~
+
+config/config.ini
+config/db.ini
+
+node_modules
