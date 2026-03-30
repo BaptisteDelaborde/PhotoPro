@@ -1,0 +1,173 @@
+networks:
+  photopro.net:
+    driver: bridge
+
+services:
+  # Service d'infra et messagerie RabbitMQ
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+    networks:
+      - photopro.net
+    volumes:
+      - ./rabbitmq.photo:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: photo
+      RABBITMQ_DEFAULT_PASS: photo
+    entrypoint: /bin/sh
+    command: -c "if [ -f /var/lib/rabbitmq/.erlang.cookie ]; then chmod 600 /var/lib/rabbitmq/.erlang.cookie; fi && exec docker-entrypoint.sh rabbitmq-server"
+
+  mailcatcher:
+    build:
+      context: build
+      dockerfile: mailcatcher.Dockerfile
+    ports:
+      - "1081:1080"
+      - "1025:1025"
+    networks:
+      - photopro.net
+
+  # Gateways
+  gateway_backoffice:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '8081:80'
+    volumes:
+      - ./gateway_backoffice:/var/php
+    working_dir: /var/php
+    networks:
+      - photopro.net
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
+  gateway_frontoffice:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '8082:80'
+    volumes:
+      - ./gateway_frontoffice:/var/php
+    working_dir: /var/php
+    networks:
+      - photopro.net
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
+  # Microservices métiers
+  # Service Galerie
+  api_galerie:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - "6080:80"
+    volumes:
+      - ./api_galerie:/var/php
+    working_dir: /var/php
+    networks:
+      - photopro.net
+    depends_on:
+      galerie.db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    command: sh -c "composer install --ignore-platform-reqs || composer update --no-interaction --ignore-platform-reqs && php -S 0.0.0.0:80 -t /var/php/public"
+
+  # Service Auth / Identité
+  api_auth:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - "6081:80"
+    volumes:
+      - ./api_auth:/var/php
+    working_dir: /var/php
+    networks:
+      - photopro.net
+    depends_on:
+      auth.db:
+        condition: service_started
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
+  # Service Notif
+  app-mail:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    volumes:
+      - ./app-mail:/var/php
+    working_dir: /var/php
+    networks:
+      - photopro.net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: sh -c "composer install && php consumer.php || tail -f /dev/null"
+
+  # BDs
+  galerie.db:
+    image: 'postgres:latest'
+    env_file: ./galeriedb.env
+    ports:
+      - '5435:5432'
+    networks:
+      - photopro.net
+    volumes:
+      - ./sql/galerie.schema.sql:/docker-entrypoint-initdb.d/03.schema.sql
+      - ./sql/galerie.data.sql:/docker-entrypoint-initdb.d/04.data.sql
+
+  auth.db:
+    image: 'postgres:latest'
+    env_file: ./authdb.env
+    ports:
+      - '5436:5432'
+    networks:
+      - photopro.net
+    volumes:
+      - ./sql/auth.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
+
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+    networks:
+      - photopro.net
+
+  # Stockage SeaweedFS (Compatible S3)
+  seaweedfs-master:
+    image: chrislusf/seaweedfs
+    ports:
+      - "9333:9333"
+    networks:
+      - photopro.net
+    command: "master -ip=seaweedfs-master"
+
+  seaweedfs-volume:
+    image: chrislusf/seaweedfs
+    ports:
+      - "8083:8080"
+    networks:
+      - photopro.net
+    depends_on:
+      - seaweedfs-master
+    command: "volume -mserver=seaweedfs-master:9333 -port=8080"
+
+  seaweedfs-s3:
+    image: chrislusf/seaweedfs
+    ports:
+      - "8333:8333"
+    networks:
+      - photopro.net
+    depends_on:
+      - seaweedfs-master
+      - seaweedfs-volume
+    command: "s3 -filer=seaweedfs-master:9333"
