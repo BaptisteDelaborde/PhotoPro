@@ -1,23 +1,19 @@
 {
   "identities": [
     {
-      "name": "admin",
-      "actions": ["Read", "Write", "List", "Admin"],
-      "credentials": [
-        {
-          "accessKey": "ABCDEF",
-          "secretKey": "123456"
-        }
-      ]
-    },
-    {
-      "name": "marcel",
-      "actions": ["Read", "Write", "List"],
+      "name": "photopro_admin",
       "credentials": [
         {
           "accessKey": "GHIJKL",
           "secretKey": "789012"
         }
+      ],
+      "actions": [
+        "Read",
+        "Write",
+        "List",
+        "Tagging",
+        "Admin"
       ]
     }
   ]

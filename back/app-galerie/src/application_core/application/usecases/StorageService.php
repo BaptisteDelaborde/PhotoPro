@@ -27,12 +27,12 @@ class StorageService
 
         try {
             $this->s3_internal_client->putObject([
-                'Bucket' => $this->bucket, [cite: 607]
-                'Key' => $key, [cite: 608]
-                'Body' => $content, [cite: 609]
-                'ContentType' => $mime_type, [cite: 610]
+                'Bucket' => $this->bucket,
+                'Key' => $key,
+                'Body' => $content,
+                'ContentType' => $mime_type,
                 'Metadata' => [
-                    'date' => date('d/m/Y H:i:s'), [cite: 612]
+                    'date' => date('d/m/Y H:i:s'),
                 ]
             ]);
         } catch (S3Exception $e) {
@@ -44,11 +44,11 @@ class StorageService
 
     public function getPresignedUrl(string $key, int $expiresInSeconds = 3600): string {
         $command = $this->s3_external_client->getCommand('GetObject', [
-            'Bucket' => $this->bucket, [cite: 636]
-            'Key' => $key [cite: 638]
+            'Bucket' => $this->bucket,
+            'Key' => $key
         ]);
 
-        $request = $this->s3_external_client->createPresignedRequest($command, "+{$expiresInSeconds} seconds"); [cite: 642]
+        $request = $this->s3_external_client->createPresignedRequest($command, "+{$expiresInSeconds} seconds");
         
         return (string) $request->getUri();
     }

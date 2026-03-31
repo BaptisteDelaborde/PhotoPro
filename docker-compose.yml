@@ -158,16 +158,17 @@ services:
       - CHOKIDAR_INTERVAL=100
     command: sh -c "npm install || true && npm run dev -- --host"
 
-  # Stockage SeaweedFS (Compatible S3)
+# Stockage SeaweedFS (Compatible S3)
   S3:
     image: chrislusf/seaweedfs:latest
     ports:
       - "8333:8333"
       - "9333:9333"
       - "23646:23646"
-    command: "server -dir=/data -s3 s3.port=8333 -s3.config=/etc/seaweedfs/s3.json"
+    command: "server -dir=/data -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json"    
     networks:
       - photopro.net
     volumes:
       - ./S3/data:/data
-      - ./S3/s3.json:/etc/seaweedfs/s3.json
+      # On monte tout le dossier S3 au lieu du fichier unique !
+      - ./S3:/etc/seaweedfs
