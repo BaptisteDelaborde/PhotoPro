@@ -1,8 +1,8 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use photopro\auth\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use photopro\auth\infrastructure\repositories\PDOAuthRepository;
+use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+use photopro\infra\repositories\PDOAuthReposiroty;
 
 return [
     'db' => [
@@ -25,17 +25,13 @@ return [
         PDO::ATTR_EMULATE_PREPARES   => false,
     ],
 
-    // Connexion à la base de données Auth
-    'db.auth' => function (ContainerInterface $c): PDO {
-        $config = $c->get('db')['auth'];
+    \PDO::class => function (ContainerInterface $c) {
+        $db = $c->get('db')['auth'];
         $options = $c->get('pdo_options');
-        $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}";
-        return new PDO($dsn, $config['user'], $config['password'], $options);
+        $dsn = "{$db['driver']}:host={$db['host']};port={$db['port']};dbname={$db['dbname']}";
+        return new \PDO($dsn, $db['user'], $db['password'], $options);
     },
-
-    // Repository Auth (Injection de la dépendance PDO)
     AuthRepositoryInterface::class => function (ContainerInterface $c) {
-        // (J'en ai profité pour corriger la petite faute de frappe "Reposiroty" -> "Repository" au passage 😉)
-        return new PDOAuthRepository($c->get('db.auth'));
-    },
+        return new PDOAuthReposiroty($c->get(\PDO::class));
+    }
 ];

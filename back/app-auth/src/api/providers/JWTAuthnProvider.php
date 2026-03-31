@@ -17,6 +17,10 @@ class JWTAuthnProvider implements AuthnProviderInterface{
         $this->serviceUser = $serviceUser;
     }
 
+    public function register(CredentialsDTO $credentials, int $role): ProfileDTO {
+        return $this->serviceUser->register($credentials, $role);
+    }
+
     public function signin(CredentialsDTO $credentials): array
     {
         $user = $this->serviceUser->byCredentials($credentials);

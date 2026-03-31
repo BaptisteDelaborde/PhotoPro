@@ -1,6 +1,7 @@
 <?php
 
 use photopro\api\actions\SigninAction;
+use photopro\api\actions\SignupAction;
 use photopro\api\actions\ValidateTokenAction;
 use photopro\api\providers\AuthnProviderInterface;
 use photopro\api\providers\JWTManager;
@@ -8,6 +9,11 @@ use photopro\api\providers\JWTManager;
 return [
     SigninAction::class => function($c){
         return new SigninAction(
+            $c->get(AuthnProviderInterface::class)
+        );
+    },
+    SignupAction::class => function($c){
+        return new SignupAction(
             $c->get(AuthnProviderInterface::class)
         );
     },

@@ -4,6 +4,7 @@ namespace photopro\infra\repositories;
 use photopro\core\application\ports\api\CredentialsDTO;
 use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 use photopro\core\domain\entities\User;
+use Ramsey\Uuid\Uuid;
 
 class PDOAuthReposiroty implements AuthRepositoryInterface
 {
@@ -31,9 +32,11 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
     }
 
     public function save(CredentialsDTO $dto, int $role):void {
+        $id = Uuid::uuid4()->toString();
         $passwordhash = password_hash($dto->password, PASSWORD_BCRYPT);
-        $sql = "INSERT INTO users (email, password, role) VALUES (:email, :password, :role)";
+        $sql = "INSERT INTO users (id, email, password, role) VALUES (:id, :email, :password, :role)";
         $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
         $stmt->bindParam(':email', $dto->email);
         $stmt->bindParam(':password', $passwordhash);
         $stmt->bindParam(':role', $role);
@@ -59,6 +62,5 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
             password: $row['password'],
             role: $row['role']
         );
-
     }
 }
