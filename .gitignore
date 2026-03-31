@@ -29,3 +29,4 @@ package-lock.json
 /rabbitmq.photo/
 *.log
 S3/data/
+composer.lock
