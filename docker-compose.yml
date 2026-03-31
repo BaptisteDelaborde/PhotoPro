@@ -42,7 +42,7 @@ services:
     ports:
       - '8081:80'
     volumes:
-      - ./gateway_backoffice:/var/php
+      - ./back/gateway-backoffice:/var/php
     working_dir: /var/php
     networks:
       - photopro.net
@@ -55,7 +55,7 @@ services:
     ports:
       - '8082:80'
     volumes:
-      - ./gateway_frontoffice:/var/php
+      - ./back/gateway-frontoffice:/var/php
     working_dir: /var/php
     networks:
       - photopro.net
@@ -70,7 +70,7 @@ services:
     ports:
       - "6080:80"
     volumes:
-      - ./api_galerie:/var/php
+      - ./back/app-galerie:/var/php
     working_dir: /var/php
     networks:
       - photopro.net
@@ -89,7 +89,7 @@ services:
     ports:
       - "6081:80"
     volumes:
-      - ./api_auth:/var/php
+      - ./back/app-auth:/var/php
     working_dir: /var/php
     networks:
       - photopro.net
@@ -104,7 +104,7 @@ services:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     volumes:
-      - ./app-mail:/var/php
+      - ./back/app-mail:/var/php
     working_dir: /var/php
     networks:
       - photopro.net
@@ -122,8 +122,8 @@ services:
     networks:
       - photopro.net
     volumes:
-      - ./sql/galerie.schema.sql:/docker-entrypoint-initdb.d/03.schema.sql
-      - ./sql/galerie.data.sql:/docker-entrypoint-initdb.d/04.data.sql
+      - ./sql/schema/galerie.schema.sql:/docker-entrypoint-initdb.d/03.schema.sql
+      - ./sql/data/galerie.data.sql:/docker-entrypoint-initdb.d/04.data.sql
 
   auth.db:
     image: 'postgres:latest'
@@ -133,7 +133,7 @@ services:
     networks:
       - photopro.net
     volumes:
-      - ./sql/auth.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
+      - ./sql/schema/auth.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
 
   adminer:
     image: adminer
@@ -143,7 +143,7 @@ services:
       - photopro.net
 
   # Stockage SeaweedFS (Compatible S3)
-S3:
+  S3:
     image: chrislusf/seaweedfs:latest
     ports:
       - "8333:8333"
