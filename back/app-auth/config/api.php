@@ -3,6 +3,7 @@
 use photopro\api\actions\SigninAction;
 use photopro\api\actions\SignupAction;
 use photopro\api\actions\ValidateTokenAction;
+use photopro\api\actions\RefreshAction;
 use photopro\api\middlewares\AuthnMiddleware;
 use photopro\api\providers\AuthnProviderInterface;
 use photopro\api\providers\JWTManager;
@@ -21,6 +22,11 @@ return [
     ValidateTokenAction::class => function($c){
         return new ValidateTokenAction(
             $c->get(JWTManager::class)
+        );
+    },
+    RefreshAction::class => function($c){
+        return new RefreshAction(
+            $c->get(AuthnProviderInterface::class)
         );
     },
     AuthnMiddleware::class => function($c) {

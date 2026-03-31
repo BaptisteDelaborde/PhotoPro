@@ -38,4 +38,27 @@ class JWTAuthnProvider implements AuthnProviderInterface {
 
         return [new AuthDTO($accessToken, $refreshToken), new ProfileDTO($user->id,$user->email,$user->role)];
     }
+
+    public function refresh(string $refreshToken): array {
+        $decoded = $this->JWTManager->decodeToken($refreshToken);
+        if ($decoded['type'] !== 'refresh') {
+            throw new \Exception("Invalid token type");
+        }
+
+        $payload = [
+            'iss' => 'http://photopro',
+            'iat' => time(),
+            'exp' => time()+3600,
+            'sub' => $decoded['sub'],
+            'data' => (array) $decoded['data']
+        ];
+        
+        $newAccessToken  = $this->JWTManager->createAccesToken($payload);
+        $newRefreshToken = $this->JWTManager->createRefreshToken($payload);
+
+        return [
+            new AuthDTO($newAccessToken, $newRefreshToken),
+            new ProfileDTO($decoded['sub'], $decoded['data']->user ?? $decoded['data']['user'], $decoded['data']->role ?? $decoded['data']['role'])
+        ];
+    }
 }
