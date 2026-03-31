@@ -143,31 +143,15 @@ services:
       - photopro.net
 
   # Stockage SeaweedFS (Compatible S3)
-  seaweedfs-master:
-    image: chrislusf/seaweedfs
-    ports:
-      - "9333:9333"
-    networks:
-      - photopro.net
-    command: "master -ip=seaweedfs-master"
-
-  seaweedfs-volume:
-    image: chrislusf/seaweedfs
-    ports:
-      - "8083:8080"
-    networks:
-      - photopro.net
-    depends_on:
-      - seaweedfs-master
-    command: "volume -mserver=seaweedfs-master:9333 -port=8080"
-
-  seaweedfs-s3:
-    image: chrislusf/seaweedfs
+S3:
+    image: chrislusf/seaweedfs:latest
     ports:
       - "8333:8333"
+      - "9333:9333"
+      - "23646:23646"
+    command: "server -dir=/data -s3 s3.port=8333 -s3.config=/etc/seaweedfs/s3.json"
     networks:
       - photopro.net
-    depends_on:
-      - seaweedfs-master
-      - seaweedfs-volume
-    command: "s3 -filer=seaweedfs-master:9333"
+    volumes:
+      - ./S3/data:/data
+      - ./S3/s3.json:/etc/seaweedfs/s3.json
