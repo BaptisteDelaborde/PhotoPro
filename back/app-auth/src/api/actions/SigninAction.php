@@ -45,11 +45,11 @@ class SigninAction
                 ->withHeader('Content-Type', 'application/json')
                 ->withStatus(200);
 
-
         }catch (\Exception $e){
-            $response->getBody()->write($e->getMessage());
-            return $response->withStatus(400);
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(401);
         }
-
     }
 }
