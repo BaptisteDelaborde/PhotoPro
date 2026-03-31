@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\api\middleware;
+namespace photopro\api\middleware;
 
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpUnauthorizedException;
-use toubilib\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\ProfileDTO;
 
 class AuthMiddleware
 {

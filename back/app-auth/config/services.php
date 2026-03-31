@@ -1,15 +1,15 @@
 <?php
 
 use DI\Container;
-use toubilib\api\providers\AuthnProviderInterface;
-use toubilib\api\providers\JWTAuthnProvider;
-use toubilib\api\providers\JWTManager;
-use toubilib\core\application\ports\api\ServiceUserInterface;
-use toubilib\core\application\usecases\ServiceUser;
+use photopro\api\providers\AuthnProviderInterface;
+use photopro\api\providers\JWTAuthnProvider;
+use photopro\api\providers\JWTManager;
+use photopro\core\application\ports\api\ServiceUserInterface;
+use photopro\core\application\usecases\ServiceUser;
 
 return [
     ServiceUserInterface::class => function (Container $container) {
-        $authRepo = $container->get(\toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface::class);
+        $authRepo = $container->get(\photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface::class);
         return new ServiceUser($authRepo);
     },
     JWTManager::class => function() {

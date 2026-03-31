@@ -1,11 +1,11 @@
 <?php
-namespace toubilib\api\providers;
+namespace photopro\api\providers;
 
 use Firebase\JWT\JWT;
-use toubilib\core\application\ports\api\AuthDTO;
-use toubilib\core\application\ports\api\CredentialsDTO;
-use toubilib\core\application\ports\api\ProfileDTO;
-use toubilib\core\application\ports\api\ServiceUserInterface;
+use photopro\core\application\ports\api\AuthDTO;
+use photopro\core\application\ports\api\CredentialsDTO;
+use photopro\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\ServiceUserInterface;
 
 class JWTAuthnProvider implements AuthnProviderInterface{
 
@@ -21,7 +21,7 @@ class JWTAuthnProvider implements AuthnProviderInterface{
     {
         $user = $this->serviceUser->byCredentials($credentials);
         $payload = [
-            'iss' => 'http://toubilib',
+            'iss' => 'http://photopro',
             'iat' => time(),
             'exp' => time()+3600,
             'sub' => $user->id,

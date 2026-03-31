@@ -1,7 +1,7 @@
 <?php
-namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+namespace photopro\core\application\ports\spi\repositoryInterfaces;
 
-use toubilib\core\domain\entities\patient\Patient;
+use photopro\core\domain\entities\patient\Patient;
 
 interface PatientRepositoryInterface {
     public function findById(string $id): Patient;

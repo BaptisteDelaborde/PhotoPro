@@ -1,13 +1,13 @@
 <?php
 
-namespace toubilib\api\middleware;
+namespace photopro\api\middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Routing\RouteContext;
-use toubilib\core\application\usecases\ServiceAuthz;
-use toubilib\core\application\ports\api\ProfileDTO;
+use photopro\core\application\usecases\ServiceAuthz;
+use photopro\core\application\ports\api\ProfileDTO;
 
 class AuthzMiddleware
 {

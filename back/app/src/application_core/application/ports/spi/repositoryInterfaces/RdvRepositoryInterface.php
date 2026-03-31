@@ -1,10 +1,10 @@
 <?php
 
-namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+namespace photopro\core\application\ports\spi\repositoryInterfaces;
 
 
-use toubilib\core\application\ports\api\InputRendezVousDTO;
-use toubilib\core\domain\entities\Rdv;
+use photopro\core\application\ports\api\InputRendezVousDTO;
+use photopro\core\domain\entities\Rdv;
 
 interface RdvRepositoryInterface {
     /**

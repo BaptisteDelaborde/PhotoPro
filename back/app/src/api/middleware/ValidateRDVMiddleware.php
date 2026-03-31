@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\api\middleware;
+namespace photopro\api\middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -8,7 +8,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Slim\Exception\HttpBadRequestException;
-use toubilib\core\application\ports\api\InputRendezVousDTO;
+use photopro\core\application\ports\api\InputRendezVousDTO;
 
 class ValidateRDVMiddleware
 {

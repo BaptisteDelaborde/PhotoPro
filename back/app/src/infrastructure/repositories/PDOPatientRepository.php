@@ -1,8 +1,8 @@
 <?php
-namespace toubilib\infra\repositories;
+namespace photopro\infra\repositories;
 
-use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
-use toubilib\core\domain\entities\patient\Patient;
+use photopro\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
+use photopro\core\domain\entities\patient\Patient;
 
 class PDOPatientRepository implements PatientRepositoryInterface
 {

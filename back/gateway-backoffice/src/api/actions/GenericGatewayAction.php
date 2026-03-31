@@ -12,13 +12,13 @@ use Slim\Exception\HttpInternalServerErrorException;
 class GenericGatewayAction {
     private Client $praticiensClient;
     private Client $rdvClient;
-    private Client $toubilibClient;
+    private Client $photoproClient;
     private Client $authClient;
 
-    public function __construct(Client $praticiensClient, Client $rdvClient, Client $toubilibClient, Client $authClient){
+    public function __construct(Client $praticiensClient, Client $rdvClient, Client $photoproClient, Client $authClient){
         $this->praticiensClient = $praticiensClient;
         $this->rdvClient = $rdvClient;
-        $this->toubilibClient = $toubilibClient;
+        $this->photoproClient = $photoproClient;
         $this->authClient = $authClient;
     }
 
@@ -89,7 +89,7 @@ class GenericGatewayAction {
         if (str_starts_with($path, '/tokens')) {
             return $this->authClient;
         }
-        // default api.toubilib
-        return $this->toubilibClient;
+        // default api.photopro
+        return $this->photoproClient;
     }
 }

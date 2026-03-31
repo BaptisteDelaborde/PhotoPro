@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace toubilib\core\application\ports\api;
+namespace photopro\core\application\ports\api;
 
 interface ServiceAuthzInterface
 {

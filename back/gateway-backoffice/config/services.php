@@ -7,7 +7,7 @@ return [
         $settings = $c->get('settings');
 
         return new GuzzleClient(
-            $settings['services']['toubilib_api']
+            $settings['services']['photopro_api']
         );
     },
 ];

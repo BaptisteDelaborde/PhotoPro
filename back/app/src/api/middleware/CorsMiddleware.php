@@ -1,5 +1,5 @@
 <?php
-namespace toubilib\api\middleware;
+namespace photopro\api\middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

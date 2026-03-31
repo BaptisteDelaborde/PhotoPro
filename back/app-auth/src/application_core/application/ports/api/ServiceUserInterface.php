@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\application\ports\api;
+namespace photopro\core\application\ports\api;
 
 interface ServiceUserInterface{
 

@@ -1,9 +1,9 @@
 <?php
-namespace toubilib\infra\repositories;
+namespace photopro\infra\repositories;
 
-use toubilib\core\application\ports\api\CredentialsDTO;
-use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use toubilib\core\domain\entities\User;
+use photopro\core\application\ports\api\CredentialsDTO;
+use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+use photopro\core\domain\entities\User;
 
 class PDOAuthReposiroty implements AuthRepositoryInterface
 {

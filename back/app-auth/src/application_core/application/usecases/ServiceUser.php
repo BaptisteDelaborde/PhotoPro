@@ -1,10 +1,10 @@
 <?php
 
-namespace toubilib\core\application\usecases;
-use toubilib\core\application\ports\api\CredentialsDTO;
-use toubilib\core\application\ports\api\ProfileDTO;
-use toubilib\core\application\ports\api\ServiceUserInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+namespace photopro\core\application\usecases;
+use photopro\core\application\ports\api\CredentialsDTO;
+use photopro\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\ServiceUserInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 
 class ServiceUser implements ServiceUserInterface {
 

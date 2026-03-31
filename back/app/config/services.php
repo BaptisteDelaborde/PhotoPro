@@ -1,25 +1,25 @@
 <?php
 
 use DI\Container;
-use toubilib\api\middleware\AuthMiddleware;
-use toubilib\api\middleware\AuthzMiddleware;
-use toubilib\api\providers\AuthnProviderInterface;
-use toubilib\api\providers\JWTAuthnProvider;
-use toubilib\api\providers\JWTManager;
-use toubilib\core\application\ports\api\ServiceAuthzInterface;
-use toubilib\core\application\ports\api\ServicePatientInterface;
-use toubilib\core\application\ports\api\ServicePraticienInterface;
-use toubilib\core\application\ports\api\ServiceRdvInterface;
-use toubilib\core\application\ports\api\ServiceUserInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\application\usecases\ServiceAuthz;
-use toubilib\core\application\usecases\ServicePatient;
-use toubilib\core\application\usecases\ServicePraticien;
-use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\core\application\usecases\ServiceRdv;
-use toubilib\core\application\usecases\ServiceUser;
+use photopro\api\middleware\AuthMiddleware;
+use photopro\api\middleware\AuthzMiddleware;
+use photopro\api\providers\AuthnProviderInterface;
+use photopro\api\providers\JWTAuthnProvider;
+use photopro\api\providers\JWTManager;
+use photopro\core\application\ports\api\ServiceAuthzInterface;
+use photopro\core\application\ports\api\ServicePatientInterface;
+use photopro\core\application\ports\api\ServicePraticienInterface;
+use photopro\core\application\ports\api\ServiceRdvInterface;
+use photopro\core\application\ports\api\ServiceUserInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\application\usecases\ServiceAuthz;
+use photopro\core\application\usecases\ServicePatient;
+use photopro\core\application\usecases\ServicePraticien;
+use photopro\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use photopro\core\application\usecases\ServiceRdv;
+use photopro\core\application\usecases\ServiceUser;
 
 return [
     ServicePraticienInterface::class => function (Container $container) {

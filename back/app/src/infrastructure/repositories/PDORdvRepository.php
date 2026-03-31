@@ -1,9 +1,9 @@
 <?php
 
-namespace toubilib\infra\repositories;
+namespace photopro\infra\repositories;
 
-use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\core\domain\entities\Rdv;
+use photopro\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use photopro\core\domain\entities\Rdv;
 
 class PDORdvRepository implements RdvRepositoryInterface
 {

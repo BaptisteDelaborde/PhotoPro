@@ -14,7 +14,7 @@ return function (App $app) {
     $container = $app->getContainer();
     $app->get('/', function ($request, $response) {
         $response->getBody()->write(json_encode([
-            'message' => 'API Gateway Toubilib',
+            'message' => 'API Gateway photopro',
             'endpoints' => [
                 '/praticiens' => 'Liste des praticiens',
                 '/praticiens/{id}' => 'Détail d\'un praticien',

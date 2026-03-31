@@ -2,9 +2,9 @@
 
 require_once 'vendor/autoload.php';
 
-use toubilib\infra\adapters\DatabaseConnection;
-use toubilib\infra\repositories\PDOPraticienRepository;
-use toubilib\core\application\usecases\ServicePraticien;
+use photopro\infra\adapters\DatabaseConnection;
+use photopro\infra\repositories\PDOPraticienRepository;
+use photopro\core\application\usecases\ServicePraticien;
 
 // Charger la configuration
 $config = require 'config/database.php';

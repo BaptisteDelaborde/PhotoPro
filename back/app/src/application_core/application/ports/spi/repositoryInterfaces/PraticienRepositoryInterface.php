@@ -1,9 +1,9 @@
 <?php
 
-namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+namespace photopro\core\application\ports\spi\repositoryInterfaces;
 
-use toubilib\core\application\ports\api\PraticienDetailDTO;
-use toubilib\core\domain\entities\praticien\Praticien;
+use photopro\core\application\ports\api\PraticienDetailDTO;
+use photopro\core\domain\entities\praticien\Praticien;
 
 interface PraticienRepositoryInterface
 {

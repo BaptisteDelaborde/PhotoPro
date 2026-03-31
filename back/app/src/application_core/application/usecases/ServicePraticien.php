@@ -1,11 +1,11 @@
 <?php
 
-namespace toubilib\core\application\usecases;
+namespace photopro\core\application\usecases;
 
-use toubilib\core\application\ports\api\PraticienDetailDTO;
-use toubilib\core\application\ports\api\PraticienDTO;
-use toubilib\core\application\ports\api\ServicePraticienInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\application\ports\api\PraticienDetailDTO;
+use photopro\core\application\ports\api\PraticienDTO;
+use photopro\core\application\ports\api\ServicePraticienInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 
 class ServicePraticien implements ServicePraticienInterface
 {

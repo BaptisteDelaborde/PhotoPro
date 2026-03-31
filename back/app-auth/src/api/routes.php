@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use toubilib\api\actions\SigninAction;
-use toubilib\api\actions\ValidateTokenAction;
+use photopro\api\actions\SigninAction;
+use photopro\api\actions\ValidateTokenAction;
 
 return function( \Slim\App $app):\Slim\App {
 

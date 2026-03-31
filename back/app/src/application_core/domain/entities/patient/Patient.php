@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\domain\entities\patient;
+namespace photopro\core\domain\entities\patient;
 
 class Patient
 {

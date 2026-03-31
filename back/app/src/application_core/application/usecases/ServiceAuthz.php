@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace toubilib\core\application\usecases;
+namespace photopro\core\application\usecases;
 
-use toubilib\core\application\ports\api\ProfileDTO;
-use toubilib\core\application\ports\api\ServiceAuthzInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\domain\entities\Rdv;
+use photopro\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\ServiceAuthzInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\domain\entities\Rdv;
 
 class ServiceAuthz implements ServiceAuthzInterface
 {

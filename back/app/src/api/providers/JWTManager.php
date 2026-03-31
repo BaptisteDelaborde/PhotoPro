@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\api\providers;
+namespace photopro\api\providers;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

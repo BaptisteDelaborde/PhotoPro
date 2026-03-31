@@ -1,11 +1,11 @@
 <?php
 
-namespace toubilib\infra\repositories;
+namespace photopro\infra\repositories;
 
 use PDO;
-use toubilib\core\application\ports\api\PraticienDetailDTO;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\domain\entities\praticien\Praticien;
+use photopro\core\application\ports\api\PraticienDetailDTO;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\domain\entities\praticien\Praticien;
 use Ramsey\Uuid\Uuid;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface

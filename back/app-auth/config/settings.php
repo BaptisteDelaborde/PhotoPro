@@ -1,38 +1,41 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use toubilib\infra\repositories\PDOAuthReposiroty;
+use photopro\auth\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+use photopro\auth\infrastructure\repositories\PDOAuthRepository;
 
 return [
     'db' => [
-        'toubiauth' => [
-            'driver' => 'pgsql',
-            'host' => $_ENV['TOUBIAUTH_DB_HOST'] ?? 'toubiauth.db',
-            'port' => $_ENV['TOUBIAUTH_DB_PORT'] ?? 5432,
-            'dbname' => $_ENV['TOUBIAUTH_DB_NAME'] ?? 'toubiauth',
-            'user' => $_ENV['TOUBIAUTH_DB_USER'] ?? 'toubiauth',
-            'password' => $_ENV['TOUBIAUTH_DB_PASS'] ?? 'toubiauth',
+        'auth' => [
+            'driver'   => 'pgsql',
+            // 'auth.db' correspond au nom du service dans ton docker-compose.yml
+            'host'     => $_ENV['AUTH_DB_HOST'] ?? 'auth.db',
+            'port'     => $_ENV['AUTH_DB_PORT'] ?? 5432,
+            // Ces valeurs devront correspondre à ce que tu vas mettre dans ton fichier authdb.env
+            'dbname'   => $_ENV['AUTH_DB_NAME'] ?? 'photopro_auth',
+            'user'     => $_ENV['AUTH_DB_USER'] ?? 'photopro',
+            'password' => $_ENV['AUTH_DB_PASS'] ?? 'photopro',
         ]
     ],
 
-    // Options PDO communs
+    // Options PDO communes
     'pdo_options' => [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_EMULATE_PREPARES   => false,
     ],
 
-    // Connexion toubiauth
-    'db.toubiauth' => function (ContainerInterface $c): PDO {
-        $config = $c->get('db')['toubiauth'];
+    // Connexion à la base de données Auth
+    'db.auth' => function (ContainerInterface $c): PDO {
+        $config = $c->get('db')['auth'];
         $options = $c->get('pdo_options');
         $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}";
         return new PDO($dsn, $config['user'], $config['password'], $options);
     },
 
-    // Repository Auth
+    // Repository Auth (Injection de la dépendance PDO)
     AuthRepositoryInterface::class => function (ContainerInterface $c) {
-        return new PDOAuthReposiroty($c->get('db.toubiauth'));
+        // (J'en ai profité pour corriger la petite faute de frappe "Reposiroty" -> "Repository" au passage 😉)
+        return new PDOAuthRepository($c->get('db.auth'));
     },
 ];

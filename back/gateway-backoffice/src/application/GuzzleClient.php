@@ -1,10 +1,10 @@
 <?php
 
-namespace toubilib\gateway\infrastructure\http;
+namespace photopro\gateway\infrastructure\http;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
-use toubilib\gateway\application\interface\ClientInterface;
+use photopro\gateway\application\interface\ClientInterface;
 
 class GuzzleClient implements ClientInterface
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace toubilib\api\actions;
+namespace photopro\api\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpInternalServerErrorException;
-use toubilib\core\application\ports\api\ServiceRdvInterface;
+use photopro\core\application\ports\api\ServiceRdvInterface;
 
 class CreerRendezVousAction
 {

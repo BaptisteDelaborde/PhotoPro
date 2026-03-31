@@ -1,18 +1,18 @@
 <?php
 
-namespace toubilib\core\application\usecases;
+namespace photopro\core\application\usecases;
 
 use Ramsey\Uuid\Uuid;
-use toubilib\core\application\ports\api\InputRendezVousDTO;
-use toubilib\core\application\ports\api\RdvDTO;
-use toubilib\core\application\ports\api\ServicePatientInterface;
-use toubilib\core\application\ports\api\ServicePraticienInterface;
-use toubilib\core\application\ports\api\ServiceRdvInterface;
-use toubilib\core\application\ports\api\RdvSlotDTO;
-use toubilib\core\domain\entities\Rdv as RdvEntity;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\core\domain\entities\Rdv;
+use photopro\core\application\ports\api\InputRendezVousDTO;
+use photopro\core\application\ports\api\RdvDTO;
+use photopro\core\application\ports\api\ServicePatientInterface;
+use photopro\core\application\ports\api\ServicePraticienInterface;
+use photopro\core\application\ports\api\ServiceRdvInterface;
+use photopro\core\application\ports\api\RdvSlotDTO;
+use photopro\core\domain\entities\Rdv as RdvEntity;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use photopro\core\domain\entities\Rdv;
 
 class ServiceRdv implements ServiceRdvInterface
 {

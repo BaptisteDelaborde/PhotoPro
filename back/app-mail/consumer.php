@@ -62,7 +62,7 @@ $callback = function (AMQPMessage $msg) use ($mailer) {
     } else {
         $destinataires[] = [
             'type' => 'debug',
-            'email' => 'test@toubilib.local',
+            'email' => 'test@photopro.local',
         ];
     }
 
@@ -74,7 +74,7 @@ $callback = function (AMQPMessage $msg) use ($mailer) {
         $to = $dest['email'];
         $type = $dest['type'] ?? 'destinataire';
 
-        $subject = "[Toubilib] RDV {$event}";
+        $subject = "[photopro] RDV {$event}";
 
         $lines = [];
         $lines[] = "Bonjour {$type},";

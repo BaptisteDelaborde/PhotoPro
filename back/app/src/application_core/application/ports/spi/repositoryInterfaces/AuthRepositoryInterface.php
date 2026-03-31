@@ -1,7 +1,7 @@
 <?php
-namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+namespace photopro\core\application\ports\spi\repositoryInterfaces;
 
-use toubilib\core\domain\entities\User;
+use photopro\core\domain\entities\User;
 interface AuthRepositoryInterface {
     public function findById (string $id): User;
 }

@@ -14,7 +14,7 @@ class MailerService implements MailerInterface
     public function __construct()
     {
         $dsn = getenv('MAILER_DSN') ?: 'smtp://mailcatcher:1025';
-        $this->from = getenv('MAILER_FROM') ?: 'no-reply@toubilib.local';
+        $this->from = getenv('MAILER_FROM') ?: 'no-reply@photopro.local';
 
         $transport = Transport::fromDsn($dsn);
         $this->mailer = new Mailer($transport);

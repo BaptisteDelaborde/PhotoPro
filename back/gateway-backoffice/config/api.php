@@ -22,10 +22,10 @@ return [
         ]);
     },
 
-    'client.toubilib' => function (Container $c) {
+    'client.photopro' => function (Container $c) {
         $settings = $c->get('settings');
         return new Client([
-            'base_uri' => $settings['services']['toubilib_api'],
+            'base_uri' => $settings['services']['photopro_api'],
         ]);
     },
 
@@ -40,7 +40,7 @@ return [
         return new GenericGatewayAction(
             $c->get('client.praticiens'),
             $c->get('client.rdv'),
-            $c->get('client.toubilib'),
+            $c->get('client.photopro'),
             $c->get('client.auth')
         );
     },

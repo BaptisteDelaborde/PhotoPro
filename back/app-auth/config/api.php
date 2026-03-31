@@ -1,9 +1,9 @@
 <?php
 
-use toubilib\api\actions\SigninAction;
-use toubilib\api\actions\ValidateTokenAction;
-use toubilib\api\providers\AuthnProviderInterface;
-use toubilib\api\providers\JWTManager;
+use photopro\api\actions\SigninAction;
+use photopro\api\actions\ValidateTokenAction;
+use photopro\api\providers\AuthnProviderInterface;
+use photopro\api\providers\JWTManager;
 
 return [
     SigninAction::class => function($c){

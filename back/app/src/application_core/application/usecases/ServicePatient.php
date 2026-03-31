@@ -1,9 +1,9 @@
 <?php
-namespace toubilib\core\application\usecases;
+namespace photopro\core\application\usecases;
 
-use toubilib\core\application\ports\api\PatientDTO;
-use toubilib\core\application\ports\api\ServicePatientInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
+use photopro\core\application\ports\api\PatientDTO;
+use photopro\core\application\ports\api\ServicePatientInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
 
 class ServicePatient implements ServicePatientInterface
 {

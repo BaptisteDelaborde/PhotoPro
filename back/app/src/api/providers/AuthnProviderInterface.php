@@ -1,10 +1,10 @@
 <?php
 
-namespace toubilib\api\providers;
+namespace photopro\api\providers;
 
-use toubilib\core\application\ports\api\AuthDTO;
-use toubilib\core\application\ports\api\CredentialsDTO;
-use toubilib\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\AuthDTO;
+use photopro\core\application\ports\api\CredentialsDTO;
+use photopro\core\application\ports\api\ProfileDTO;
 
 interface AuthnProviderInterface {
     //public function register(CredentialsDTO $credentials, int $role): ProfileDTO;

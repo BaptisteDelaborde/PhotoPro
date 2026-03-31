@@ -3,21 +3,21 @@ declare(strict_types=1);
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use toubilib\api\actions\CreerRendezVousAction;
-use toubilib\api\actions\DetailPraticienAction;
-use toubilib\api\actions\GetPatientById;
-use toubilib\api\actions\GetRdvById;
-use toubilib\api\actions\HonorerRDVAction;
-use toubilib\api\actions\ListePraticiensAction;
-use toubilib\api\actions\ListerCreneauxOccupesAction;
-use toubilib\api\actions\AgendaPraticienAction;
-use toubilib\api\actions\AnnulerRDVAction;
-use toubilib\api\actions\NonHonorerRDVAction;
-use toubilib\api\middleware\AuthMiddleware;
-use toubilib\api\middleware\AuthzMiddleware;
-use toubilib\api\middleware\ValidateRDVMiddleware;
-use toubilib\api\actions\SigninAction;
-use toubilib\api\actions\HistoriquePatientAction;
+use photopro\api\actions\CreerRendezVousAction;
+use photopro\api\actions\DetailPraticienAction;
+use photopro\api\actions\GetPatientById;
+use photopro\api\actions\GetRdvById;
+use photopro\api\actions\HonorerRDVAction;
+use photopro\api\actions\ListePraticiensAction;
+use photopro\api\actions\ListerCreneauxOccupesAction;
+use photopro\api\actions\AgendaPraticienAction;
+use photopro\api\actions\AnnulerRDVAction;
+use photopro\api\actions\NonHonorerRDVAction;
+use photopro\api\middleware\AuthMiddleware;
+use photopro\api\middleware\AuthzMiddleware;
+use photopro\api\middleware\ValidateRDVMiddleware;
+use photopro\api\actions\SigninAction;
+use photopro\api\actions\HistoriquePatientAction;
 
 return function( \Slim\App $app):\Slim\App {
 

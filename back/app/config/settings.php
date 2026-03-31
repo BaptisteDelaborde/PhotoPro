@@ -1,14 +1,14 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\infra\repositories\PDOAuthReposiroty;
-use toubilib\infra\repositories\PDOPatientRepository;
-use toubilib\infra\repositories\PDOPraticienRepository;
-use toubilib\infra\repositories\PDORdvRepository;
+use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use photopro\infra\repositories\PDOAuthReposiroty;
+use photopro\infra\repositories\PDOPatientRepository;
+use photopro\infra\repositories\PDOPraticienRepository;
+use photopro\infra\repositories\PDORdvRepository;
 
 return [
     'db' => [
