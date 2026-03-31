@@ -22,19 +22,19 @@ class UploadAction
     private const int MAX_SIZE = 10 * 1024 * 1024;
 
     public function __construct(StorageService $storageService) {
-        $this->storageService = $storageService; [cite: 740]
+        $this->storageService = $storageService;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response {
         $photographer_id = $args['id'] ?? 'anonyme'; 
         
-        $files = $request->getUploadedFiles(); [cite: 748]
+        $files = $request->getUploadedFiles();
 
         if (empty($files['photo'])) {
             throw new HttpBadRequestException($request, 'Pas de fichier présent dans la requête.');
         }
 
-        $upload = $files['photo']; [cite: 754]
+        $upload = $files['photo'];
 
         if ($upload->getError() !== UPLOAD_ERR_OK) {
             throw new HttpBadRequestException($request, 'Erreur technique lors de l\'upload : ' . $upload->getError());
@@ -55,7 +55,7 @@ class UploadAction
             $url = $this->storageService->getPresignedUrl($key);
             
         } catch (\Exception $e) {
-            throw new HttpInternalServerErrorException($request, 'Erreur du serveur de stockage : ' . $e->getMessage()); [cite: 775-777]
+            throw new HttpInternalServerErrorException($request, 'Erreur du serveur de stockage : ' . $e->getMessage());
         }
 
         $response->getBody()->write(json_encode([
@@ -66,6 +66,6 @@ class UploadAction
 
         return $response
             ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201); // 201 Created 
+            ->withStatus(201);
     }
 }
