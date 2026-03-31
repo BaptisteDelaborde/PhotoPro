@@ -149,10 +149,14 @@ services:
       - "5173:5173"
     volumes:
       - ./app-vue:/app
+      - /app/node_modules
     working_dir: /app
     networks:
       - photopro.net
-    command: sh -c "npm install && npm run dev"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=100
+    command: sh -c "npm install || true && npm run dev -- --host"
 
   # Stockage SeaweedFS (Compatible S3)
   S3:

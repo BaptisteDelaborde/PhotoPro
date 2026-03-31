@@ -1,95 +1,282 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+
+type Gallery = {
+  id: number
+  titre: string
+  type: string
+  est_publiee: boolean
+  cover?: string | null
+}
 
 const router = useRouter()
 
-const galleries = ref([
-    { id: 1, titre: 'Mariage Dupont', type: 'Privée', est_publiee: false },
-    { id: 2, titre: 'Paysages d\'Auvergne', type: 'Publique', est_publiee: true }
+const galleries = ref<Gallery[]>([
+  { id: 1, titre: 'Mariage Dupont', type: 'Privée', est_publiee: false, cover: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80&auto=format&fit=crop' },
+  { id: 2, titre: "Paysages d'Auvergne", type: 'Publique', est_publiee: true, cover: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80&auto=format&fit=crop' }
 ])
 
+const search = ref('')
+const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes')
+
+const filteredGalleries = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  return galleries.value.filter(g => {
+    const matchType = filterType.value === 'Toutes' || g.type === filterType.value
+    const matchQuery = !q || g.titre.toLowerCase().includes(q)
+    return matchType && matchQuery
+  })
+})
+
 const goToCreate = () => {
-    router.push('/galeries/nouvelle')
+  router.push('/galeries/nouvelle')
 }
 
 const goToGalleryDetails = (id: number) => {
-    console.log(`Ouverture de la galerie n°${id}`);
-    alert(`Bientôt : Édition de la galerie ${id}`);
+  router.push(`/galeries/${id}`)
 }
+
+const showPreview = (msg: string) => {
+  window.alert(msg)
+}
+
+const initials = (titre: string) =>
+    titre
+        .split(' ')
+        .map(s => s.charAt(0).toUpperCase())
+        .slice(0, 2)
+        .join('')
 </script>
 
 <template>
-    <div class="container">
-        <h2>Mes Galeries</h2>
-        <button @click="goToCreate" class="btn-create">Créer une nouvelle galerie</button>
+  <div class="gallery-page">
+    <header class="header">
+      <div class="header-left">
+        <h1>Mes galeries</h1>
+        <p class="lead">Organisez, publiez et partagez vos plus belles images</p>
+      </div>
 
-        <ul class="gallery-list">
-            <li v-for="galerie in galleries" :key="galerie.id" class="gallery-item"
-                @click="goToGalleryDetails(galerie.id)">
-                <span class="gallery-title"><strong>{{ galerie.titre }}</strong></span>
-                <span class="gallery-type">- {{ galerie.type }}</span>
-                <span class="gallery-status">
-                    <span v-if="galerie.est_publiee" class="status-published">(Publiée)</span>
-                    <span v-else class="status-draft">(Brouillon)</span>
-                </span>
-            </li>
-        </ul>
+      <div class="header-right">
+        <div class="search">
+          <input v-model="search" placeholder="Rechercher une galerie..." />
+        </div>
+
+        <select v-model="filterType" class="filter">
+          <option>Toutes</option>
+          <option>Publique</option>
+          <option>Privée</option>
+        </select>
+
+        <button class="btn-primary" @click="goToCreate">+ Nouvelle galerie</button>
+      </div>
+    </header>
+
+    <section v-if="filteredGalleries.length" class="cards">
+      <article
+          v-for="g in filteredGalleries"
+          :key="g.id"
+          class="card"
+          @click="goToGalleryDetails(g.id)"
+          role="button"
+          tabindex="0"
+      >
+        <div
+            class="cover"
+            :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}"
+        >
+          <div v-if="!g.cover" class="placeholder">{{ initials(g.titre) }}</div>
+          <div class="overlay">
+            <h3>{{ g.titre }}</h3>
+            <div class="meta">
+              <span class="type">{{ g.type }}</span>
+              <span class="status">{{ g.est_publiee ? 'Publiée' : 'Brouillon' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-outline" @click.stop="goToGalleryDetails(g.id)">Voir</button>
+          <button class="btn-ghost" @click.stop="showPreview('Prévisualisation : ' + g.titre)">Prévisualiser</button>
+        </div>
+      </article>
+    </section>
+
+    <div v-else class="empty">
+      <p>Aucune galerie trouvée. Créez votre première galerie.</p>
+      <button class="btn-primary" @click="goToCreate">Créer une galerie</button>
     </div>
+  </div>
 </template>
 
 <style scoped>
-.gallery-list {
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+.gallery-page {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 20px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #0b1220;
 }
 
-.gallery-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    align-items: center;
-    background-color: #181a1f;
-    color: #d1d5db;
-    padding: 15px 20px;
-    border-radius: 6px;
-    border: 1px solid #2d313a;
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
-.gallery-item:hover {
-    background-color: #252830;
-    border-color: #3b82f6;
+.header-left h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.01em;
 }
 
-.gallery-title {
-    text-align: left;
-    color: #ffffff;
+.lead {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
 }
 
-.gallery-type {
-    text-align: left;
+.header-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.gallery-status {
-    text-align: right;
-    color: #9ca3af;
+.search input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #e6edf3;
+  background: #fff;
+  min-width: 220px;
 }
 
-.btn-create {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+.filter {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e6edf3;
+  background: #fff;
 }
 
-.btn-create:hover {
-    background-color: #2563eb;
+.btn-primary {
+  background: linear-gradient(90deg,#1f2937,#374151);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cards {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(2,6,23,0.08);
+}
+
+.cover {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg,#f3f4f6,#e5e7eb);
+  color:#374151;
+  font-weight:700;
+  font-size:28px;
+}
+
+.overlay {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(2,6,23,0.45) 60%);
+  color: #fff;
+}
+
+.overlay h3 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.meta {
+  margin-top: 6px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:12px;
+  opacity: 0.95;
+}
+
+.type {
+  background: rgba(255,255,255,0.12);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.status {
+  background: rgba(255,255,255,0.08);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.actions {
+  display:flex;
+  gap:10px;
+  padding: 12px;
+  align-items:center;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #e6edf3;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 0;
+  color: #374151;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  background: linear-gradient(180deg,#fbfdff,#ffffff);
+  border-radius: 12px;
+  border: 1px dashed #e6edf3;
 }
 </style>
