@@ -10,12 +10,11 @@ class ServiceUser implements ServiceUserInterface {
 
     private AuthRepositoryInterface $userRepository;
 
-    public function __construct(AuthRepositoryInterface $userRepository)
-    {
+    public function __construct(AuthRepositoryInterface $userRepository) {
         $this->userRepository = $userRepository;
     }
 
-    public function register(CredentialsDTO $credentials, int $role): ProfileDTO{
+    public function register(CredentialsDTO $credentials, int $role): ProfileDTO {
 
         $this->userRepository->save($credentials, $role);
         $user = $this->userRepository->findByEmail($credentials->email);
@@ -27,7 +26,7 @@ class ServiceUser implements ServiceUserInterface {
         );
     }
 
-    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO{
+    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO {
         $user = $this->userRepository->findByEmail($credentials->email);
         if($user === null){
             throw new \Exception("Email éroné");

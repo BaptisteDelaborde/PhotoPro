@@ -7,15 +7,13 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use photopro\api\providers\AuthnProviderInterface;
 use photopro\core\application\ports\api\CredentialsDTO;
 
-class SigninAction
-{
+class SigninAction {
     public function __construct(
         private readonly AuthnProviderInterface $authnProvider
     )
     {}
 
-    public function __invoke(Request $request, Response $response): Response
-    {
+    public function __invoke(Request $request, Response $response): Response {
         try {
             $data = $request->getParsedBody();
             $email = $data['email'] ?? '';

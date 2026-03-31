@@ -8,11 +8,11 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException ;
 use Firebase\JWT\BeforeValidException;
 
-class JWTManager{
+class JWTManager {
     private string $key;
     private string $alg;
 
-    public function __construct(string $key, string $alg = 'HS256'){
+    public function __construct(string $key, string $alg = 'HS256') {
         $this->key = $key;
         $this->alg = $alg;
     }

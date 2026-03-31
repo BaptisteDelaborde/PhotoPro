@@ -8,17 +8,15 @@ return [
     'db' => [
         'auth' => [
             'driver'   => 'pgsql',
-            // 'auth.db' correspond au nom du service dans ton docker-compose.yml
+            // 'auth.db' = nom du service
             'host'     => $_ENV['AUTH_DB_HOST'] ?? 'auth.db',
             'port'     => $_ENV['AUTH_DB_PORT'] ?? 5432,
-            // Ces valeurs devront correspondre à ce que tu vas mettre dans ton fichier authdb.env
             'dbname'   => $_ENV['AUTH_DB_NAME'] ?? 'photopro_auth',
             'user'     => $_ENV['AUTH_DB_USER'] ?? 'photopro',
             'password' => $_ENV['AUTH_DB_PASS'] ?? 'photopro',
         ]
     ],
 
-    // Options PDO communes
     'pdo_options' => [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
