@@ -46,7 +46,9 @@ CREATE TABLE gallery_photos (
     photo_id UUID NOT NULL,
     position INT,
 
-    PRIMARY KEY (gallery_id, photo_id)
+    PRIMARY KEY (gallery_id, photo_id),
+    CONSTRAINT fk_gallery FOREIGN KEY (gallery_id) REFERENCES galleries(id) ON DELETE CASCADE,
+    CONSTRAINT fk_photo FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS comments;
