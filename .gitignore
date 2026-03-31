@@ -28,4 +28,5 @@ package-lock.json
 /back/app-galerie/vendor/
 /rabbitmq.photo/
 *.log
-S3/
+S3/data/
+composer.lock
