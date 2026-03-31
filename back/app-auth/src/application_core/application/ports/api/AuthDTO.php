@@ -1,7 +1,7 @@
 <?php
 namespace photopro\core\application\ports\api;
 
-class AuthDTO{
+class AuthDTO {
     public function __construct(
         public string $accesToken,
         public string $refreshToken

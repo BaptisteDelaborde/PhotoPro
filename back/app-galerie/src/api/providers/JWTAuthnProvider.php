@@ -7,21 +7,18 @@ use photopro\core\application\ports\api\CredentialsDTO;
 use photopro\core\application\ports\api\ProfileDTO;
 use photopro\core\application\ports\api\ServiceUserInterface;
 
-class JWTAuthnProvider implements AuthnProviderInterface {
+class JWTAuthnProvider implements AuthnProviderInterface{
 
     private ServiceUserInterface $serviceUser;
     private JWTManager $JWTManager;
 
-    public function __construct(JWTManager $jwtManager, ServiceUserInterface $serviceUser) {
+    public function __construct(JWTManager $jwtManager, ServiceUserInterface $serviceUser){
         $this->JWTManager = $jwtManager;
         $this->serviceUser = $serviceUser;
     }
 
-    public function register(CredentialsDTO $credentials, int $role): ProfileDTO {
-        return $this->serviceUser->register($credentials, $role);
-    }
-
-    public function signin(CredentialsDTO $credentials): array {
+    public function signin(CredentialsDTO $credentials): array
+    {
         $user = $this->serviceUser->byCredentials($credentials);
         $payload = [
             'iss' => 'http://photopro',

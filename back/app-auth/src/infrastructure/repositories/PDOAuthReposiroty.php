@@ -6,16 +6,14 @@ use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInter
 use photopro\core\domain\entities\User;
 use Ramsey\Uuid\Uuid;
 
-class PDOAuthReposiroty implements AuthRepositoryInterface
-{
+class PDOAuthReposiroty implements AuthRepositoryInterface {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) {
         $this->pdo = $pdo;
     }
 
-    public function findById(string $id): User
-    {
+    public function findById(string $id): User {
         $sql = "SELECT * FROM users WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(':id', $id);
@@ -43,8 +41,7 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
         $stmt->execute();
     }
 
-    public function findByEmail(string $email): ?User
-    {
+    public function findByEmail(string $email): ?User {
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(':email', $email);

@@ -24,6 +24,8 @@ node_modules/
 .vscode/
 package-lock.json
 
+/vendor/
+/back/app-galerie/vendor/
+/rabbitmq.photo/
+*.log
 S3/
-
-rabbitmq.photo/

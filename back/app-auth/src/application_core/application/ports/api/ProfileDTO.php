@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace photopro\core\application\ports\api;
 
-class ProfileDTO
-{
+class ProfileDTO {
     public function __construct(
         public readonly string $id,
         public readonly string $email,

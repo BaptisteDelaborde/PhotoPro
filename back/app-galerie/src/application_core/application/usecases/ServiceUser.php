@@ -2,7 +2,9 @@
 
 namespace photopro\core\application\usecases;
 use photopro\core\application\ports\api\CredentialsDTO;
+use photopro\core\application\ports\api\InputRendezVousDTO;
 use photopro\core\application\ports\api\ProfileDTO;
+use photopro\core\application\ports\api\RdvDTO;
 use photopro\core\application\ports\api\ServiceUserInterface;
 use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 
@@ -10,11 +12,12 @@ class ServiceUser implements ServiceUserInterface {
 
     private AuthRepositoryInterface $userRepository;
 
-    public function __construct(AuthRepositoryInterface $userRepository) {
+    public function __construct(AuthRepositoryInterface $userRepository)
+    {
         $this->userRepository = $userRepository;
     }
 
-    public function register(CredentialsDTO $credentials, int $role): ProfileDTO {
+    public function register(CredentialsDTO $credentials, int $role): ProfileDTO{
 
         $this->userRepository->save($credentials, $role);
         $user = $this->userRepository->findByEmail($credentials->email);
@@ -26,7 +29,7 @@ class ServiceUser implements ServiceUserInterface {
         );
     }
 
-    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO {
+    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO{
         $user = $this->userRepository->findByEmail($credentials->email);
         if($user === null){
             throw new \Exception("Email éroné");

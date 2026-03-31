@@ -142,6 +142,18 @@ services:
     networks:
       - photopro.net
 
+  # Frontend Vue.js
+  app-vue:
+    image: node:22-alpine
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./app-vue:/app
+    working_dir: /app
+    networks:
+      - photopro.net
+    command: sh -c "npm install && npm run dev"
+
   # Stockage SeaweedFS (Compatible S3)
   S3:
     image: chrislusf/seaweedfs:latest

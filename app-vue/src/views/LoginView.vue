@@ -7,7 +7,6 @@ const email = ref('')
 const password = ref('')
 
 const handleLogin = () => {
-    // Plus tard, vous ferez un appel à votre API Identité ici
     console.log('Tentative de connexion avec:', email.value)
 
     // Simulation d'une connexion réussie

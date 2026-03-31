@@ -8,11 +8,11 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException ;
 use Firebase\JWT\BeforeValidException;
 
-class JWTManager {
+class JWTManager{
     private string $key;
     private string $alg;
 
-    public function __construct(string $key, string $alg = 'HS256') {
+    public function __construct(string $key, string $alg = 'HS256'){
         $this->key = $key;
         $this->alg = $alg;
     }
@@ -41,8 +41,6 @@ class JWTManager {
             throw new \Exception("Erreur de la signature du token : " . $e1->getMessage());
         }catch (BeforeValidException $e2){
             throw new \Exception("Token pas encore valide : " . $e2->getMessage());
-        } catch (\UnexpectedValueException $e3){
-            throw new \Exception("Valeur non attendue : " . $e3->getMessage());
         }
     }
 }
