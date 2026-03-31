@@ -2,58 +2,28 @@
 
 use DI\Container;
 use GuzzleHttp\Client;
-use gateway\api\actions\ListePraticiensRemoteAction;
-use gateway\api\actions\DetailPraticienRemoteAction;
 use gateway\api\actions\GenericGatewayAction;
 use gateway\api\middleware\ValidateTokenMiddleware;
 
 return [
-    'client.praticiens' => function (Container $c) {
+    'client.galerie' => function (Container $c) {
         $settings = $c->get('settings');
         return new Client([
-            'base_uri' => $settings['services']['praticiens_api'],
-        ]);
-    },
-
-    'client.rdv' => function (Container $c) {
-        $settings = $c->get('settings');
-        return new Client([
-            'base_uri' => $settings['services']['rdv_api'],
-        ]);
-    },
-
-    'client.photopro' => function (Container $c) {
-        $settings = $c->get('settings');
-        return new Client([
-            'base_uri' => $settings['services']['photopro_api'],
+            'base_uri' => $settings['services']['api_galerie'],
         ]);
     },
 
     'client.auth' => function (Container $c) {
         $settings = $c->get('settings');
         return new Client([
-            'base_uri' => $settings['services']['auth_api'],
+            'base_uri' => $settings['services']['api_auth'],
         ]);
     },
 
     GenericGatewayAction::class => function (Container $c) {
         return new GenericGatewayAction(
-            $c->get('client.praticiens'),
-            $c->get('client.rdv'),
-            $c->get('client.photopro'),
+            $c->get('client.galerie'),
             $c->get('client.auth')
-        );
-    },
-
-    ListePraticiensRemoteAction::class => function (Container $c) {
-        return new ListePraticiensRemoteAction(
-            $c->get('client.praticiens')
-        );
-    },
-
-    DetailPraticienRemoteAction::class => function (Container $c) {
-        return new DetailPraticienRemoteAction(
-            $c->get('client.praticiens')
         );
     },
 

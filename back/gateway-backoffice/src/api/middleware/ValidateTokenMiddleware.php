@@ -10,20 +10,18 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
 
-class ValidateTokenMiddleware implements MiddlewareInterface
-{
+class ValidateTokenMiddleware implements MiddlewareInterface {
     private Client $authClient;
 
-    public function __construct(Client $authClient)
-    {
+    public function __construct(Client $authClient) {
         $this->authClient = $authClient;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
         $path = $request->getUri()->getPath();
 
-        if (!str_starts_with($path, '/rdvs')) {
+        // Ne pas valider le token sur les routes d'authentification
+        if (str_starts_with($path, '/signin') || str_starts_with($path, '/signup') || str_starts_with($path, '/refresh') || str_starts_with($path, '/tokens')) {
             return $handler->handle($request);
         }
 
@@ -58,7 +56,11 @@ class ValidateTokenMiddleware implements MiddlewareInterface
 
         // Valider le token via le service app-auth
         try {
+            // Utiliser le header Authorization qui porte déjà "Bearer <token>"
             $validationResponse = $this->authClient->request('POST', '/tokens/validate', [
+                'headers' => [
+                    'Authorization' => $authHeader
+                ],
                 'json' => ['token' => $token],
                 'http_errors' => false
             ]);

@@ -10,15 +10,11 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpInternalServerErrorException;
 
 class GenericGatewayAction {
-    private Client $praticiensClient;
-    private Client $rdvClient;
-    private Client $photoproClient;
+    private Client $galerieClient;
     private Client $authClient;
 
-    public function __construct(Client $praticiensClient, Client $rdvClient, Client $photoproClient, Client $authClient){
-        $this->praticiensClient = $praticiensClient;
-        $this->rdvClient = $rdvClient;
-        $this->photoproClient = $photoproClient;
+    public function __construct(Client $galerieClient, Client $authClient){
+        $this->galerieClient = $galerieClient;
         $this->authClient = $authClient;
     }
 
@@ -41,12 +37,10 @@ class GenericGatewayAction {
         if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
             $parsedBody = $request->getParsedBody();
             if (!empty($parsedBody)) {
-                // Utiliser 'json' pour encoder automatiquement en JSON et définir le Content-Type
                 $options['json'] = $parsedBody;
             } else {
-                // Si pas de parsedBody, utiliser le body brut
                 $body = $request->getBody();
-                $body->rewind(); // Réinitialiser le pointeur
+                $body->rewind();
                 if ($body->getSize() > 0) {
                     $options['body'] = $body->getContents();
                 }
@@ -74,22 +68,12 @@ class GenericGatewayAction {
      */
     private function selectClient(string $path): Client
     {
-        // app-rdv
-        if (str_starts_with($path, '/rdvs') || str_contains($path, '/rdvs')) {
-            return $this->rdvClient;
-        }
-        // app-praticiens
-        if (str_starts_with($path, '/praticiens')) {
-            return $this->praticiensClient;
-        }
         // app-auth
-        if (str_starts_with($path, '/signin')) {
+        if (str_starts_with($path, '/signin') || str_starts_with($path, '/signup') || str_starts_with($path, '/refresh') || str_starts_with($path, '/tokens')) {
             return $this->authClient;
         }
-        if (str_starts_with($path, '/tokens')) {
-            return $this->authClient;
-        }
-        // default api.photopro
-        return $this->photoproClient;
+
+        //api_galerie
+        return $this->galerieClient;
     }
 }
