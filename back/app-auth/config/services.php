@@ -13,7 +13,7 @@ return [
         return new ServiceUser($authRepo);
     },
     JWTManager::class => function() {
-        $secretKey = $_ENV['JWT_SECRET'] ?? 'your-secret-key';
+        $secretKey = $_ENV['JWT_SECRET'] ?? 'default-secret'; 
         return new JWTManager($secretKey, 'HS512');
     },
     AuthnProviderInterface::class => function (Container $container) {

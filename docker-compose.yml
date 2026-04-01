@@ -71,6 +71,8 @@ services:
       - "6080:80"
     volumes:
       - ./back/app-galerie:/var/php
+    env_file:
+      - ./back/app-galerie/config/.env
     working_dir: /var/php
     networks:
       - photopro.net
@@ -90,6 +92,8 @@ services:
       - "6081:80"
     volumes:
       - ./back/app-auth:/var/php
+    env_file:
+      - ./back/app-auth/config/.env
     working_dir: /var/php
     networks:
       - photopro.net
@@ -105,6 +109,8 @@ services:
       dockerfile: 8.4-cli.Dockerfile
     volumes:
       - ./back/app-mail:/var/php
+    env_file:
+      - ./back/app-mail/config/.env
     working_dir: /var/php
     networks:
       - photopro.net
@@ -116,7 +122,7 @@ services:
   # BDs
   galerie.db:
     image: 'postgres:latest'
-    env_file: ./galeriedb.env
+    env_file: ./back/app-galerie/config/.env
     ports:
       - '5435:5432'
     networks:
@@ -127,7 +133,7 @@ services:
 
   auth.db:
     image: 'postgres:latest'
-    env_file: ./authdb.env
+    env_file: ./back/app-auth/config/.env
     ports:
       - '5436:5432'
     networks:

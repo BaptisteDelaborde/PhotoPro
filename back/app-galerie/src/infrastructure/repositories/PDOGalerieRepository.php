@@ -10,7 +10,8 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 {
     private \PDO $pdo;
 
-    public function __construct(\PDO $pdo) {
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
@@ -56,14 +57,14 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         return $galerie;
     }
 
-    public function savePhoto(Photo $photo): void 
+    public function savePhoto(Photo $photo): void
     {
         $sql = "INSERT INTO photos (
                     id, photographer_id, title, file_name, mime_type, file_size, storage_url, uploaded_at
                 ) VALUES (
                     :id, :photographer_id, :title, :file_name, :mime_type, :file_size, :storage_url, :uploaded_at
                 )";
-        
+
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->bindValue(':id', $photo->getId());
@@ -78,12 +79,12 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute();
     }
 
-    public function save(Galerie $galerie): void 
+    public function save(Galerie $galerie): void
     {
         //On vérifie si la galerie existe déjà
         $sqlCheck = "SELECT id FROM galleries WHERE id = :id";
         $stmtCheck = $this->pdo->prepare($sqlCheck);
-        
+
         //On stocke l'id dans une variable pour bindParam
         $id = $galerie->getId();
         $stmtCheck->bindParam(':id', $id);
@@ -114,15 +115,19 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt = $this->pdo->prepare($sql);
 
         //Binding des valeurs
-        $stmt->bindValue(':id', $galerie->getId());
-        $stmt->bindValue(':photographer_id', $galerie->getPhotographerId());
+        $stmt->bindValue(':id', $galerie->getId(), \PDO::PARAM_STR);
+        $stmt->bindValue(':photographer_id', $galerie->getPhotographerId(), \PDO::PARAM_STR);
         $stmt->bindValue(':title', $galerie->getTitle());
         $stmt->bindValue(':description', $galerie->getDescription());
-        $stmt->bindValue(':cover_photo_id', $galerie->getCoverPhotoId());
-        
+        $stmt->bindValue(
+            ':cover_photo_id',
+            $galerie->getCoverPhotoId(),
+            $galerie->getCoverPhotoId() ? \PDO::PARAM_STR : \PDO::PARAM_NULL
+        );
+
         $stmt->bindValue(':is_public', $galerie->isPublic() ? 1 : 0, \PDO::PARAM_INT);
         $stmt->bindValue(':is_published', $galerie->isPublished() ? 1 : 0, \PDO::PARAM_INT);
-        
+
         $stmt->bindValue(':layout', $galerie->getLayout());
         $stmt->bindValue(':access_code', $galerie->getAccessCode());
         $stmt->bindValue(':access_url', $galerie->getAccessUrl());

@@ -26,7 +26,7 @@ class AuthnMiddleware
     {
         try {
             $authHeader = $request->getHeaderLine('Authorization');
-            $token = sscanf($authHeader, "Bearer %s")[0] ;
+            $token = sscanf($authHeader, "Bearer %s")[0];
             $payload = JWT::decode($token, new Key($this->secretKey, 'HS512'));
         } catch (ExpiredException $e) {
             throw new \Exception("Token expiré");
@@ -47,7 +47,7 @@ class AuthnMiddleware
         );
 
         // Ajouter le profil dans la requête pour l'action suivante
-        $request = $request->withAttribute('profile', $profile);
+        $request = $request->withAttribute('user_profile', $profile);
 
         return $handler->handle($request);
     }

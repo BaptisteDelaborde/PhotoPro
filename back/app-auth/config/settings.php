@@ -8,12 +8,11 @@ return [
     'db' => [
         'auth' => [
             'driver'   => 'pgsql',
-            // 'auth.db' = nom du service
             'host'     => $_ENV['AUTH_DB_HOST'] ?? 'auth.db',
             'port'     => $_ENV['AUTH_DB_PORT'] ?? 5432,
-            'dbname'   => $_ENV['AUTH_DB_NAME'] ?? 'photopro_auth',
-            'user'     => $_ENV['AUTH_DB_USER'] ?? 'photopro',
-            'password' => $_ENV['AUTH_DB_PASS'] ?? 'photopro',
+            'dbname'   => $_ENV['POSTGRES_DB'] ?? 'auth',
+            'user'     => $_ENV['POSTGRES_USER'] ?? 'auth_user',
+            'password' => $_ENV['POSTGRES_PASSWORD'] ?? 'auth_password',
         ]
     ],
 

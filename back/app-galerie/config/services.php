@@ -5,7 +5,7 @@ use photopro\core\application\usecases\StorageService;
 use photopro\core\application\usecases\ServiceGalerie;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
 use photopro\infra\repositories\PDOGalerieRepository;
-use photopro\core\application\ports\spi\GalerieRepositoryInterface;
+use photopro\core\application\ports\spi\repositoryInterfaces\GalerieRepositoryInterface;
 use photopro\api\providers\JWTManager;
 
 use Aws\S3\S3Client;
@@ -24,24 +24,20 @@ return [
         ]);
     },
 
-    // 2. Repositories (Base de données)
     GalerieRepositoryInterface::class => function (ContainerInterface $c) {
         return new PDOGalerieRepository($c->get(PDO::class));
     },
 
-    // 3. Services (Logique métier)
     ServiceGalerieInterface::class => function (ContainerInterface $c) {
         return new ServiceGalerie($c->get(GalerieRepositoryInterface::class));
     },
 
-    // 4. JWT Manager (Pour lire les tokens de app-auth)
     JWTManager::class => function (ContainerInterface $c) {
         $secretKey = $_ENV['JWT_SECRET_KEY'] ?? 'secret_par_defaut';
         return new JWTManager($secretKey, 'HS512');
     },
 
     StorageService::class => function (ContainerInterface $c) {
-        // 1. Création du client interne (pour l'upload depuis PHP vers S3 dans le réseau Docker)
         $internalClient = new S3Client([
             'version'                 => 'latest',
             'region'                  => $_ENV['S3_REGION'],
@@ -53,7 +49,6 @@ return [
             ],
         ]);
 
-        // 2. Création du client externe (pour générer les URLs visibles par le navigateur)
         $externalClient = new S3Client([
             'version'                 => 'latest',
             'region'                  => $_ENV['S3_REGION'],
@@ -65,7 +60,6 @@ return [
             ],
         ]);
 
-        // 3. On retourne le service prêt à l'emploi avec le nom du bucket
         return new StorageService($internalClient, $externalClient, $_ENV['S3_BUCKET']);
     },
 ];
