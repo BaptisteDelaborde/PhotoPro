@@ -13,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpUnauthorizedException;
 use photopro\core\application\ports\api\ProfileDTO;
 
-class AuthMiddleware
+class AuthnMiddleware
 {
     private string $secretKey;
 
