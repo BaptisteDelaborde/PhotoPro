@@ -21,8 +21,15 @@ return function (App $app) {
 
     $validateTokenMiddleware = $container->get(ValidateTokenMiddleware::class);
 
-    // Toutes les autres routes passent par le GenericGatewayAction
-    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class)->add($validateTokenMiddleware::class);
+    //Routes publiques (sans vérif de token)
+    $app->post('/auth/signin', GenericGatewayAction::class);
+    $app->post('/auth/signup', GenericGatewayAction::class);
+    $app->post('/auth/refresh', GenericGatewayAction::class);
+
+    //Autres routes qui passent par le GenericGatewayAction avec le middleware de validation de token
+    $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
+    })->add($validateTokenMiddleware::class);
 
     return $app;
 };
