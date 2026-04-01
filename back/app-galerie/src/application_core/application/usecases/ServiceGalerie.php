@@ -7,6 +7,7 @@ use photopro\core\application\ports\api\ServiceGalerieInterface;
 use photopro\core\application\ports\spi\repositoryInterfaces\GalerieRepositoryInterface;
 use photopro\core\domain\entities\Galerie;
 use Ramsey\Uuid\Uuid;
+use photopro\core\domain\entities\Photo;
 
 class ServiceGalerie implements ServiceGalerieInterface
 {
@@ -84,5 +85,24 @@ class ServiceGalerie implements ServiceGalerieInterface
             client_email: $galerie->getClientEmail(),
             published_at: $galerie->getPublishedAt()
         );
+    }
+
+    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo {
+        $photoId = Uuid::uuid4()->toString();
+        $uploadedAt = date('Y-m-d H:i:s'); 
+        
+        $photo = new Photo(
+            $photoId,
+            $photographer_id,
+            $file_name,
+            $mime_type,
+            $file_size,
+            $s3_key, 
+            $uploadedAt
+        );
+        
+        $this->galerieRepository->savePhoto($photo);
+        
+        return $photo;
     }
 }

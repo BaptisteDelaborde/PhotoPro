@@ -1,6 +1,6 @@
 <?php
 
-namespace photopro\galerie\domain\entities;
+namespace photopro\core\domain\entities;
 
 class Photo
 {

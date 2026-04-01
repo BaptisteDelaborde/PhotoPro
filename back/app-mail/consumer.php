@@ -4,16 +4,16 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-use AppMail\MailerInterface;
-use AppMail\MailerService;
+use AppMail\NotifInterface;
+use AppMail\NotifService;
 
 $host = 'rabbitmq';
 $port = 5672;
-$user = 'toubi';
-$password = 'toubi';
+$user = 'photo';
+$password = 'photo';
 $vhost = '/';
 
-$exchangeName = 'rdv.events';
+$exchangeName = 'galerie.events';
 $queueName = 'mail.notifications';
 
 echo "[MAIL] Connexion à RabbitMQ\n";
@@ -29,14 +29,13 @@ $channel->queue_bind($queueName, $exchangeName);
 echo "[MAIL] En attente de messages\n";
 
 /* Création du mailer */
-function createMailer(): MailerInterface
-{
+function createMailer(): NotifInterface {
     $impl = getenv('MAILER_IMPL') ?: 'symfony';
 
     switch ($impl) {
         case 'symfony':
         default:
-            return new MailerService();
+            return new NotifService();
     }
 }
 
@@ -54,7 +53,7 @@ $callback = function (AMQPMessage $msg) use ($mailer) {
 
     $event = $payload['event'] ?? 'UNKNOWN';
 
-    $rdv = $payload['rdv'] ?? $payload;
+    $galerie = $payload['galerie'] ?? $payload;
 
     $destinataires = [];
     if (isset($payload['destinataires']) && is_array($payload['destinataires'])) {
@@ -72,25 +71,21 @@ $callback = function (AMQPMessage $msg) use ($mailer) {
         }
 
         $to = $dest['email'];
-        $type = $dest['type'] ?? 'destinataire';
+        $type = $dest['type'] ?? 'client';
 
-        $subject = "[photopro] RDV {$event}";
+        $subject = "[PhotoPro] Votre galerie privée - {$event}";
 
         $lines = [];
         $lines[] = "Bonjour {$type},";
         $lines[] = "";
-        $lines[] = "Un événement concernant un rendez-vous vient de se produire : {$event}";
+        $lines[] = "Un événement concernant votre galerie privée vient de se produire : {$event}.";
         $lines[] = "";
-        $lines[] = "Détails du rendez-vous :";
-        $lines[] = "- ID        : " . ($rdv['id'] ?? $rdv['rdv_id'] ?? 'inconnu');
-        $lines[] = "- Praticien : " . ($rdv['praticien_id'] ?? 'inconnu');
-        $lines[] = "- Patient   : " . ($rdv['patient_id'] ?? 'inconnu');
-        $lines[] = "- Début     : " . ($rdv['date_heure_debut'] ?? 'inconnu');
-        if (isset($rdv['motif_visite'])) {
-            $lines[] = "- Motif     : " . $rdv['motif_visite'];
-        }
+        $lines[] = "Détails de la galerie :";
+        $lines[] = "- ID          : " . ($galerie['id'] ?? 'inconnu');
+        $lines[] = "- Titre       : " . ($galerie['titre'] ?? $galerie['nom'] ?? 'inconnu');
+        $lines[] = "- Description : " . ($galerie['description'] ?? 'aucune');
         $lines[] = "";
-        $lines[] = "Ceci est un message de test envoyé via MailCatcher";
+        $lines[] = "L'équipe PhotoPro";
 
         $body = implode("\n", $lines);
 

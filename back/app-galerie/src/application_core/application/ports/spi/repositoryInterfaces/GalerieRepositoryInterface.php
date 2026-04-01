@@ -1,0 +1,17 @@
+<?php
+
+namespace photopro\core\application\ports\spi\repositoryInterfaces;
+
+use photopro\core\domain\entities\Galerie;
+use photopro\core\domain\entities\Photo;
+
+interface GalerieRepositoryInterface
+{
+    public function findById(string $id): ?Galerie;
+
+    public function save(Galerie $galerie): void;
+
+    public function findByPhotographerId(string $photographerId): array;
+
+    public function savePhoto(Photo $photo): void;
+}
