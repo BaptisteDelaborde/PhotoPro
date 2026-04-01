@@ -6,13 +6,11 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 
-class MailerService implements MailerInterface
-{
+class NotifService implements NotifInterface {
     private Mailer $mailer;
     private string $from;
 
-    public function __construct()
-    {
+    public function __construct() {
         $dsn = getenv('MAILER_DSN') ?: 'smtp://mailcatcher:1025';
         $this->from = getenv('MAILER_FROM') ?: 'no-reply@photopro.local';
 
@@ -20,8 +18,7 @@ class MailerService implements MailerInterface
         $this->mailer = new Mailer($transport);
     }
 
-    public function send(string $to, string $subject, string $text): void
-    {
+    public function send(string $to, string $subject, string $text): void {
         $email = (new Email())
             ->from($this->from)
             ->to($to)
@@ -31,4 +28,3 @@ class MailerService implements MailerInterface
         $this->mailer->send($email);
     }
 }
-
