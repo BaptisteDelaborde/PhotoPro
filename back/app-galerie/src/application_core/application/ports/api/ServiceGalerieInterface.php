@@ -12,6 +12,8 @@ interface ServiceGalerieInterface
      */
     public function getGalerie(string $id): GalerieDTO;
 
+    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): \photopro\core\domain\entities\Photo;
+
     /**
      * Crée une nouvelle galerie (publique ou privée)
      * * @param string

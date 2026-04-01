@@ -9,9 +9,11 @@ use photopro\core\application\ports\api\ServiceGalerieInterface;
 use photopro\api\providers\JWTManager;
 
 return [
-    // Actions existantes
     UploadAction::class => function (ContainerInterface $c) {
-        return new UploadAction($c->get(StorageService::class));
+        return new UploadAction(
+            $c->get(StorageService::class),
+            $c->get(ServiceGalerieInterface::class)
+        );
     },
     
     CreateGalerieAction::class => function (ContainerInterface $c) {

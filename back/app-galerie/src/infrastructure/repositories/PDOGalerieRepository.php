@@ -4,6 +4,7 @@ namespace photopro\infra\repositories;
 
 use photopro\core\application\ports\spi\repositoryInterfaces\GalerieRepositoryInterface;
 use photopro\core\domain\entities\Galerie;
+use photopro\core\domain\entities\Photo;
 
 class PDOGalerieRepository implements GalerieRepositoryInterface
 {
@@ -53,6 +54,28 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         }
 
         return $galerie;
+    }
+
+    public function savePhoto(Photo $photo): void 
+    {
+        $sql = "INSERT INTO photos (
+                    id, photographer_id, title, file_name, mime_type, file_size, storage_url, uploaded_at
+                ) VALUES (
+                    :id, :photographer_id, :title, :file_name, :mime_type, :file_size, :storage_url, :uploaded_at
+                )";
+        
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindValue(':id', $photo->getId());
+        $stmt->bindValue(':photographer_id', $photo->getPhotographerId());
+        $stmt->bindValue(':title', $photo->getTitle());
+        $stmt->bindValue(':file_name', $photo->getFileName());
+        $stmt->bindValue(':mime_type', $photo->getMimeType());
+        $stmt->bindValue(':file_size', $photo->getFileSize());
+        $stmt->bindValue(':storage_url', $photo->getStorageUrl());
+        $stmt->bindValue(':uploaded_at', $photo->getUploadedAt());
+
+        $stmt->execute();
     }
 
     public function save(Galerie $galerie): void 
