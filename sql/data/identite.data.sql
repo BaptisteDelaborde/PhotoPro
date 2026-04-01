@@ -1,4 +1,4 @@
-INSERT INTO photographers (
+INSERT INTO photographes (
     id,
     auth_user_id,
     pseudo,

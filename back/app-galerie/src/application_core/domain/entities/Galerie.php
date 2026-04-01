@@ -147,4 +147,9 @@ class Galerie
     {
         $this->cover_photo_id = $photo_id;
     }
+
+    public function setIsPublic(bool $is_public): void
+    {
+        $this->is_public = $is_public;
+    }
 }

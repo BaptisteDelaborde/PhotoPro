@@ -105,4 +105,47 @@ class ServiceGalerie implements ServiceGalerieInterface
         
         return $photo;
     }
+    public function getGaleriesByPhotographer(string $photographerId): array
+    {
+        $galeries = $this->galerieRepository->findByPhotographerId($photographerId);
+        
+        $dtos = [];
+        foreach ($galeries as $galerie) {
+            $dtos[] = $this->toDTO($galerie);
+        }
+        
+        return $dtos;
+    }
+
+    public function deleteGalerie(string $id): void
+    {
+        $this->galerieRepository->delete($id);
+    }
+
+    public function updateStatus(string $id, array $data): GalerieDTO
+    {
+        $galerie = $this->galerieRepository->findById($id);
+        
+        if (!$galerie) {
+            throw new \Exception("La galerie demandée n'existe pas.", 404);
+        }
+
+        if (isset($data['is_public'])) {
+            $galerie->setIsPublic((bool)$data['is_public']);
+        }
+
+        if (isset($data['is_published'])) {
+            $isPublished = (bool)$data['is_published'];
+            
+            if ($isPublished && !$galerie->isPublished()) {
+                $galerie->publier();
+            } elseif (!$isPublished && $galerie->isPublished()) {
+                $galerie->depublier();
+            }
+        }
+
+        $this->galerieRepository->save($galerie);
+        
+        return $this->toDTO($galerie);
+    }
 }
