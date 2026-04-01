@@ -81,18 +81,15 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
     public function save(Galerie $galerie): void
     {
-        //On vérifie si la galerie existe déjà
         $sqlCheck = "SELECT id FROM galleries WHERE id = :id";
         $stmtCheck = $this->pdo->prepare($sqlCheck);
 
-        //On stocke l'id dans une variable pour bindParam
         $id = $galerie->getId();
         $stmtCheck->bindParam(':id', $id);
         $stmtCheck->execute();
 
         $exists = $stmtCheck->fetchColumn();
 
-        //Préparation de la requête (INSERT ou UPDATE)
         if ($exists) {
             $sql = "UPDATE galleries SET 
                         title = :title, description = :description, cover_photo_id = :cover_photo_id, 
@@ -114,7 +111,6 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         $stmt = $this->pdo->prepare($sql);
 
-        //Binding des valeurs
         $stmt->bindValue(':id', $galerie->getId(), \PDO::PARAM_STR);
         $stmt->bindValue(':photographer_id', $galerie->getPhotographerId(), \PDO::PARAM_STR);
         $stmt->bindValue(':title', $galerie->getTitle());
@@ -137,6 +133,38 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->bindValue(':published_at', $galerie->getPublishedAt());
 
         $stmt->execute();
+    }
+
+    public function delete(string $id): void 
+    {
+        $sql = "DELETE FROM galleries WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+
+    public function getPhotosByPhotographerId(string $photographerId): array 
+    {
+        $sql = "SELECT * FROM photos WHERE photographer_id = :photographer_id ORDER BY uploaded_at DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':photographer_id', $photographerId);
+        $stmt->execute();
+
+        $photos = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $photos[] = new Photo(
+                $row['id'],
+                $row['photographer_id'],
+                $row['file_name'],
+                $row['mime_type'],
+                (float) $row['file_size'],
+                $row['storage_url'],
+                $row['uploaded_at'],
+                $row['title']
+            );
+        }
+
+        return $photos;
     }
 
     public function findByPhotographerId(string $photographerId): array

@@ -105,6 +105,29 @@ class ServiceGalerie implements ServiceGalerieInterface
         
         return $photo;
     }
+
+    public function getPhotos(string $photographer_id): array 
+    {
+        $photos = $this->galerieRepository->getPhotosByPhotographerId($photographer_id);
+        
+        $result = [];
+        foreach ($photos as $photo) {
+            $result[] = [
+                'id' => $photo->getId(),
+                'title' => $photo->getTitle(),
+                'file_name' => $photo->getFileName(),
+                'mime_type' => $photo->getMimeType(),
+                'file_size' => $photo->getFileSize(),
+                's3_key' => $photo->getStorageUrl(),
+                // On pré-mâche le travail pour le frontend en générant l'URL complète
+                'url' => $_ENV['S3_EXTERNAL_ENDPOINT'] . '/' . $_ENV['S3_BUCKET'] . '/' . $photo->getStorageUrl(),
+                'uploaded_at' => $photo->getUploadedAt()
+            ];
+        }
+        
+        return $result;
+    }
+    
     public function getGaleriesByPhotographer(string $photographerId): array
     {
         $galeries = $this->galerieRepository->findByPhotographerId($photographerId);

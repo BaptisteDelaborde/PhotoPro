@@ -42,6 +42,7 @@ interface ServiceGalerieInterface
      * @return GalerieDTO[] Tableau de DTOs de galeries
      */
     public function getGaleriesByPhotographer(string $photographerId): array;
+    public function getPhotos(string $photographer_id): array;
 
     /**
      * Supprime une galerie par son identifiant

@@ -16,4 +16,5 @@ interface GalerieRepositoryInterface
     public function savePhoto(Photo $photo): void;
     
     public function delete(string $id): void;
+    public function getPhotosByPhotographerId(string $photographerId): array;
 }

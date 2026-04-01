@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use photopro\api\actions\UploadAction;
 use photopro\api\actions\CreateGalerieAction;
 use photopro\api\middleware\AuthnMiddleware;
+use photopro\api\actions\GetPhotosAction;
 
 return function( \Slim\App $app):\Slim\App {
     
@@ -14,6 +15,8 @@ return function( \Slim\App $app):\Slim\App {
 
     $app->post('/galeries', CreateGalerieAction::class)
         ->add(AuthnMiddleware::class);
+
+    $app->get('/photographes/{id}/photos', GetPhotosAction::class);
 
     return $app;
 };
