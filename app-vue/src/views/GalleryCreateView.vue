@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { apiGestion } from '../services/api'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const titre = ref('')
 const description = ref('')
@@ -12,20 +15,30 @@ const miseEnPage = ref('grille')
 const nomClient = ref('')
 const emailClient = ref('')
 
-const submitGallery = () => {
-    const payload = {
-        titre: titre.value,
-        description: description.value,
-        type: typeGalerie.value,
-        miseEnPage: miseEnPage.value,
-        client: typeGalerie.value === 'privee' ? {
-            nom: nomClient.value,
-            email: emailClient.value
-        } : null
-    }
+const errorMsg = ref('')
 
-    console.log('Données envoyées à l\'API :', payload)
-    router.push('/galeries')
+const submitGallery = async () => {
+    try {
+        const pid = authStore.photographerId || "uuid_photo_123"
+        const payload = {
+            photographer_id: pid,
+            title: titre.value,
+            description: description.value,
+            is_public: typeGalerie.value === 'publique',
+            layout: miseEnPage.value,
+            client: typeGalerie.value === 'privee' ? {
+                nom: nomClient.value,
+                email: emailClient.value
+            } : null
+        }
+
+        console.log('Données envoyées à l\'API :', payload)
+        await apiGestion.post('/galeries', payload)
+        router.push('/galeries')
+    } catch (error) {
+        errorMsg.value = 'Une erreur est survenue lors de la création de la galerie.'
+        console.error('Erreur lors de la création de la galerie :', error)
+    }
 }
 </script>
 
@@ -85,6 +98,8 @@ const submitGallery = () => {
                 <button type="button" class="btn-cancel" @click="router.push('/galeries')">Annuler</button>
                 <button type="submit" class="btn-submit">Créer la galerie</button>
             </div>
+
+            <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
         </form>
     </div>
 </template>
@@ -231,5 +246,12 @@ textarea {
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.error-msg {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 </style>

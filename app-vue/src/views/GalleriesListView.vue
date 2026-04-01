@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 type Gallery = {
   id: number
@@ -20,6 +21,8 @@ const galleries = ref<Gallery[]>([
 const search = ref('')
 const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes')
 
+const authStore = useAuthStore()
+
 const filteredGalleries = computed(() => {
   const q = search.value.trim().toLowerCase()
   return galleries.value.filter(g => {
@@ -30,7 +33,20 @@ const filteredGalleries = computed(() => {
 })
 
 const goToCreate = () => {
+  if (!authStore.isAuthenticated) {
+    router.push('/connexion')
+    return
+  }
   router.push('/galeries/nouvelle')
+}
+
+const goToLogin = () => {
+  router.push('/connexion')
+}
+
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/connexion')
 }
 
 const goToGalleryDetails = (id: number) => {
@@ -68,7 +84,9 @@ const initials = (titre: string) =>
           <option>Privée</option>
         </select>
 
-        <button class="btn-primary" @click="goToCreate">+ Nouvelle galerie</button>
+        <button v-if="authStore.isAuthenticated" class="btn-primary" @click="goToCreate">+ Nouvelle galerie</button>
+        <button v-if="authStore.isAuthenticated" class="btn-outline" @click="handleLogout">Déconnexion</button>
+        <button v-else class="btn-primary" @click="goToLogin">Se connecter</button>
       </div>
     </header>
 
@@ -104,7 +122,8 @@ const initials = (titre: string) =>
 
     <div v-else class="empty">
       <p>Aucune galerie trouvée. Créez votre première galerie.</p>
-      <button class="btn-primary" @click="goToCreate">Créer une galerie</button>
+      <button v-if="authStore.isAuthenticated" class="btn-primary" @click="goToCreate">Créer une galerie</button>
+      <button v-else class="btn-primary" @click="goToLogin">Se connecter pour créer</button>
     </div>
   </div>
 </template>
