@@ -1,0 +1,20 @@
+meta {
+  name: Upload photo mobile
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8082/photographes/22222222-2222-2222-2222-222222222222/photos
+  body: multipart-form
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  file: @file(/chemin/vers/photo.jpg)
+  title: Photo depuis mobile
+}

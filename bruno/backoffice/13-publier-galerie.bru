@@ -1,0 +1,15 @@
+meta {
+  name: Publier galerie
+  type: http
+  seq: 13
+}
+
+post {
+  url: http://localhost:8081/galeries/55555555-5555-5555-5555-555555555555/publish
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

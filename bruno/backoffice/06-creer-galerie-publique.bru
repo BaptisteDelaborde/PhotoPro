@@ -1,0 +1,28 @@
+meta {
+  name: Créer Galerie Publique
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8081/galeries
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Ma nouvelle galerie",
+    "description": "Description de ma galerie publique",
+    "is_public": true,
+    "layout": "grid"
+  }
+}

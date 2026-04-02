@@ -1,0 +1,22 @@
+meta {
+  name: Signin Mobile Photographe
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8082/auth/signin
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "photographer1@mail.com",
+    "password": "password"
+  }
+}

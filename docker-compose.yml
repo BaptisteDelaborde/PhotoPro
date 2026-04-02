@@ -140,6 +140,7 @@ services:
       - photopro.net
     volumes:
       - ./sql/schema/auth.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
+      - ./sql/data/auth.data.sql:/docker-entrypoint-initdb.d/02.data.sql
 
   adminer:
     image: adminer
