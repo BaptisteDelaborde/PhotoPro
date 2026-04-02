@@ -36,30 +36,4 @@ return [
         $secretKey = $_ENV['JWT_SECRET_KEY'] ?? 'secret_par_defaut';
         return new JWTManager($secretKey, 'HS512');
     },
-
-    StorageService::class => function (ContainerInterface $c) {
-        $internalClient = new S3Client([
-            'version'                 => 'latest',
-            'region'                  => $_ENV['S3_REGION'],
-            'endpoint'                => $_ENV['S3_INTERNAL_ENDPOINT'],
-            'use_path_style_endpoint' => true,
-            'credentials' => [
-                'key'    => $_ENV['S3_ACCESS_KEY'],
-                'secret' => $_ENV['S3_SECRET_KEY'],
-            ],
-        ]);
-
-        $externalClient = new S3Client([
-            'version'                 => 'latest',
-            'region'                  => $_ENV['S3_REGION'],
-            'endpoint'                => $_ENV['S3_EXTERNAL_ENDPOINT'],
-            'use_path_style_endpoint' => true,
-            'credentials' => [
-                'key'    => $_ENV['S3_ACCESS_KEY'],
-                'secret' => $_ENV['S3_SECRET_KEY'],
-            ],
-        ]);
-
-        return new StorageService($internalClient, $externalClient, $_ENV['S3_BUCKET']);
-    },
 ];
