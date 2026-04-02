@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import StorageView from '../views/StorageView.vue'
 import GalleriesListView from '../views/GalleriesListView.vue'
 import GalleryCreateView from '../views/GalleryCreateView.vue'
+import RegisterView from "@/views/RegisterView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,11 @@ const router = createRouter({
       path: '/connexion',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/register',
+      name:'inscription',
+      component: RegisterView
     },
     {
       path: '/stockage',

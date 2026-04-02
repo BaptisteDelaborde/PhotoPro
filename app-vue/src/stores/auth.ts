@@ -8,12 +8,15 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
 
   async function login(email: string, mdp: string) {
-    const res = await fetch('http://localhost:8081/signin', {
+    const res = await fetch('http://localhost:8081/auth/signin', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Basic ${btoa(email + ':' + mdp)}`
-        }
+        },
+        body: JSON.stringify({
+            email: email,
+            password: mdp
+        })
     });
 
     if (!res.ok) {
@@ -22,12 +25,34 @@ export const useAuthStore = defineStore('auth', () => {
 
     const data = await res.json();
 
-    token.value = data.access_token;
-    localStorage.setItem('token', data.access_token);
+    token.value = data.payload.access_token;
+    localStorage.setItem('token', data.payload.access_token);
 
-    const pid = data.photographer_id || "uuid_photo_123";
+    const pid = data.profile.id || "uuid_photo_123";
     photographerId.value = pid;
     localStorage.setItem('photographer_id', pid);
+  }
+
+  async function register(email: string, password: string, role: number = 0) {
+    const res = await fetch('http://localhost:8081/auth/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password,
+            role: role
+        })
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Erreur lors de l\'inscription');
+    }
+
+    const data = await res.json();
+    return data.profile;
   }
 
   function logout() {
@@ -37,6 +62,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('photographer_id');
   }
 
-  return { token, photographerId, isAuthenticated, login, logout }
+  return { token, photographerId, isAuthenticated, login, register, logout }
 })
 

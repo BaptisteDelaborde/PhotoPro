@@ -19,17 +19,13 @@ const errorMsg = ref('')
 
 const submitGallery = async () => {
     try {
-        const pid = authStore.photographerId || "uuid_photo_123"
         const payload = {
-            photographer_id: pid,
             title: titre.value,
             description: description.value,
             is_public: typeGalerie.value === 'publique',
             layout: miseEnPage.value,
-            client: typeGalerie.value === 'privee' ? {
-                nom: nomClient.value,
-                email: emailClient.value
-            } : null
+            client_name: typeGalerie.value === 'privee' ? nomClient.value : null,
+            client_email: typeGalerie.value === 'privee' ? emailClient.value : null
         }
 
         console.log('Données envoyées à l\'API :', payload)

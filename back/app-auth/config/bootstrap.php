@@ -27,3 +27,5 @@ $errorHandler->forceContentType('application/json');
 $app = (require __DIR__ . '/../src/api/routes.php')($app);
 
 return $app;
+
+

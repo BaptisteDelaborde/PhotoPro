@@ -8,28 +8,53 @@ const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
 const errorMsg = ref('')
+const successMsg = ref('')
 
-const handleLogin = async () => {
+const handleRegister = async () => {
+    errorMsg.value = ''
+    successMsg.value = ''
+
+    // Validation
+    if (!email.value || !password.value || !confirmPassword.value) {
+        errorMsg.value = 'Veuillez remplir tous les champs'
+        return
+    }
+
+    if (password.value !== confirmPassword.value) {
+        errorMsg.value = 'Les mots de passe ne correspondent pas'
+        return
+    }
+
+    if (password.value.length < 6) {
+        errorMsg.value = 'Le mot de passe doit contenir au moins 6 caractères'
+        return
+    }
+
     try {
-        console.log('Tentative de connexion avec:', email.value)
-        await authStore.login(email.value, password.value)
-        router.push('/galeries')
+        console.log('Tentative d\'inscription avec:', email.value)
+        await authStore.register(email.value, password.value, 0)
+        successMsg.value = 'Inscription réussie! Redirection vers la connexion...'
+
+        setTimeout(() => {
+            router.push('/connexion')
+        }, 1500)
     } catch (e) {
-        errorMsg.value = 'Échec de la connexion. Veuillez vérifier vos identifiants.'
-        console.error('Erreur de connexion:', e)
+        errorMsg.value = e instanceof Error ? e.message : 'Erreur lors de l\'inscription'
+        console.error('Erreur d\'inscription:', e)
     }
 }
 
-const goToRegister = () => {
-    router.push('/register')
+const goToLogin = () => {
+    router.push('/connexion')
 }
 </script>
 
 <template>
     <div class="container">
-        <h2>Connexion Backoffice Photographe</h2>
-        <form @submit.prevent="handleLogin">
+        <h2>Inscription Backoffice Photographe</h2>
+        <form @submit.prevent="handleRegister">
             <div class="form-group">
                 <label for="email">Email :</label>
                 <input id="email" v-model="email" type="email" required />
@@ -38,11 +63,16 @@ const goToRegister = () => {
                 <label for="password">Mot de passe :</label>
                 <input id="password" v-model="password" type="password" required />
             </div>
-            <button type="submit">Se connecter</button>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe :</label>
+                <input id="confirmPassword" v-model="confirmPassword" type="password" required />
+            </div>
+            <button type="submit">S'inscrire</button>
             <div v-if="errorMsg" class="error-message">{{ errorMsg }}</div>
+            <div v-if="successMsg" class="success-message">{{ successMsg }}</div>
         </form>
-        <div class="register-link">
-            Pas encore de compte ? <button type="button" class="link-button" @click="goToRegister">S'inscrire</button>
+        <div class="login-link">
+            Vous avez déjà un compte ? <button type="button" class="link-button" @click="goToLogin">Se connecter</button>
         </div>
     </div>
 </template>
@@ -117,7 +147,16 @@ button[type="submit"]:hover {
     border-left: 4px solid #d32f2f;
 }
 
-.register-link {
+.success-message {
+    color: #388e3c;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    border-left: 4px solid #388e3c;
+}
+
+.login-link {
     text-align: center;
     margin-top: 20px;
     color: #666;

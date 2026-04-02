@@ -24,3 +24,5 @@ $app->addRoutingMiddleware();
 $app = (require __DIR__ . '/../src/api/routeGateway.php')($app);
 
 return $app;
+
+
