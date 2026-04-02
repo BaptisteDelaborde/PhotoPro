@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\middleware\AuthnMiddleware;
 use photopro\api\actions\AddPhotoAction;
 use photopro\api\actions\GetPhotosAction;
@@ -19,6 +20,10 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/photographes/{id}/galeries/{galerie_id}/photos', GetPhotosAction::class)
         ->add(AuthnMiddleware::class);
 
+    // --- Routes Publiques ---
+    $app->get('/galeries/publiques', GetPublicGaleriesAction::class);
+    // $app->get('/galeries/code/{code}', GetGalerieByCodeAction::class);
+
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)
         ->add(AuthnMiddleware::class);
@@ -30,11 +35,6 @@ return function (\Slim\App $app): \Slim\App {
         ->add(AuthnMiddleware::class);
     $app->delete('/galeries/{id}', DeleteGalerieAction::class)
         ->add(AuthnMiddleware::class);
-
-
-    // --- Routes Publique ---
-    // $app->get('/galeries/publiques', GetPublicGaleriesAction::class);
-    // $app->get('/galeries/code/{code}', GetGalerieByCodeAction::class);
 
     return $app;
 };
