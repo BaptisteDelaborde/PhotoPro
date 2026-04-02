@@ -103,7 +103,12 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->bindValue(':id', $galerie->getId(), \PDO::PARAM_STR);
-        $stmt->bindValue(':photographer_id', $galerie->getPhotographerId(), \PDO::PARAM_STR);
+
+        if (!$exists) {
+            $stmt->bindValue(':photographer_id', $galerie->getPhotographerId(), \PDO::PARAM_STR);
+            $stmt->bindValue(':created_at', $galerie->getCreatedAt());
+        }
+
         $stmt->bindValue(':title', $galerie->getTitle());
         $stmt->bindValue(':description', $galerie->getDescription());
         $stmt->bindValue(
@@ -120,7 +125,6 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->bindValue(':access_url', $galerie->getAccessUrl());
         $stmt->bindValue(':client_name', $galerie->getClientName());
         $stmt->bindValue(':client_email', $galerie->getClientEmail());
-        $stmt->bindValue(':created_at', $galerie->getCreatedAt());
         $stmt->bindValue(':published_at', $galerie->getPublishedAt());
 
         $stmt->execute();

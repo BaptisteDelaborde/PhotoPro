@@ -6,6 +6,9 @@ services:
   # Service d'infra et messagerie RabbitMQ
   rabbitmq:
     image: rabbitmq:4-management
+    ports:
+      - "${PORT_RABBITMQ_UI}:15672"
+      - "${PORT_RABBITMQ_AMQP}:5672"
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 8s
@@ -25,6 +28,8 @@ services:
     build:
       context: build
       dockerfile: mailcatcher.Dockerfile
+    ports:
+      - "${PORT_MAILCATCHER}:1080"
     networks:
       - photopro.net
 
@@ -132,7 +137,7 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-    command: sh -c "composer install && php consumer.php || tail -f /dev/null"
+    command: sh -c "composer install && until php consumer.php; do echo '[MAIL] Redémarrage dans 5s...'; sleep 5; done"
 
   # BDs
   galerie.db:

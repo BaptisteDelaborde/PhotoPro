@@ -4,7 +4,9 @@ use Psr\Container\ContainerInterface;
 use photopro\core\application\usecases\StorageService;
 use photopro\core\application\usecases\ServiceGalerie;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
+use photopro\core\application\ports\spi\NotificationPublisherInterface;
 use photopro\infra\repositories\PDOGalerieRepository;
+use photopro\infra\messaging\RabbitMQPublisher;
 use photopro\core\application\ports\spi\repositoryInterfaces\GalerieRepositoryInterface;
 use photopro\api\providers\JWTManager;
 
@@ -28,8 +30,20 @@ return [
         return new PDOGalerieRepository($c->get(PDO::class));
     },
 
+    NotificationPublisherInterface::class => function (ContainerInterface $c) {
+        return new RabbitMQPublisher(
+            host: $_ENV['RABBITMQ_HOST'] ?? 'rabbitmq',
+            port: (int) ($_ENV['RABBITMQ_PORT'] ?? 5672),
+            user: $_ENV['RABBITMQ_USER'] ?? 'photo',
+            password: $_ENV['RABBITMQ_PASS'] ?? 'photo'
+        );
+    },
+
     ServiceGalerieInterface::class => function (ContainerInterface $c) {
-        return new ServiceGalerie($c->get(GalerieRepositoryInterface::class));
+        return new ServiceGalerie(
+            $c->get(GalerieRepositoryInterface::class),
+            $c->get(NotificationPublisherInterface::class)
+        );
     },
 
     JWTManager::class => function (ContainerInterface $c) {

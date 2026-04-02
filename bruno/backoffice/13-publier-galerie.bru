@@ -4,12 +4,18 @@ meta {
   seq: 13
 }
 
-post {
-  url: http://localhost:8081/galeries/55555555-5555-5555-5555-555555555555/publish
-  body: none
+patch {
+  url: http://localhost:8081/galeries/caca74f2-dc5e-4ce4-bb64-64940ccf4e07/status
+  body: json
   auth: bearer
 }
 
 auth:bearer {
   token: {{token}}
+}
+
+body:json {
+  {
+    "is_published": true
+  }
 }

@@ -5,6 +5,7 @@ namespace photopro\core\application\usecases;
 use photopro\core\application\ports\api\GalerieDTO;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
 use photopro\core\application\ports\spi\repositoryInterfaces\GalerieRepositoryInterface;
+use photopro\core\application\ports\spi\NotificationPublisherInterface;
 use photopro\core\domain\entities\Galerie;
 use Ramsey\Uuid\Uuid;
 use photopro\core\domain\entities\Photo;
@@ -12,10 +13,14 @@ use photopro\core\domain\entities\Photo;
 class ServiceGalerie implements ServiceGalerieInterface
 {
     private GalerieRepositoryInterface $galerieRepository;
+    private NotificationPublisherInterface $publisher;
 
-    public function __construct(GalerieRepositoryInterface $galerieRepository)
-    {
+    public function __construct(
+        GalerieRepositoryInterface $galerieRepository,
+        NotificationPublisherInterface $publisher
+    ) {
         $this->galerieRepository = $galerieRepository;
+        $this->publisher = $publisher;
     }
 
     public function getGalerie(string $id): GalerieDTO
@@ -169,7 +174,29 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         $this->galerieRepository->save($galerie);
 
-        return $this->toDTO($galerie);
+        $dto = $this->toDTO($galerie);
+
+        // Notification uniquement pour les galeries privées avec un client
+        if (!$galerie->isPublic() && $galerie->getClientEmail()) {
+            $payload = [
+                'galerie' => [
+                    'id'          => $dto->id,
+                    'titre'       => $dto->title,
+                    'description' => $dto->description,
+                    'access_url'  => $dto->access_url,
+                ],
+                'destinataires' => [
+                    ['type' => 'client', 'email' => $galerie->getClientEmail()]
+                ]
+            ];
+
+            if (isset($data['is_published'])) {
+                $event = (bool) $data['is_published'] ? 'PUBLISHED' : 'UNPUBLISHED';
+                $this->publisher->publish($event, $payload);
+            }
+        }
+
+        return $dto;
     }
 
     public function getPublicGaleries(): array
