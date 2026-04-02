@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 // Importation des vues (pages)
 import LoginView from '../views/LoginView.vue'
@@ -23,23 +24,36 @@ const router = createRouter({
     {
       path: '/stockage',
       name: 'stockage',
-      component: StorageView
+      component: StorageView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/galeries',
       name: 'galeries',
-      component: GalleriesListView
+      component: GalleriesListView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/galeries/nouvelle',
       name: 'creer-galerie',
-      component: GalleryCreateView
+      component: GalleryCreateView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/',
       redirect: '/galeries'
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/connexion')
+  } else {
+    next()
+  }
 })
 
 export default router
