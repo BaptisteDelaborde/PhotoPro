@@ -28,7 +28,7 @@ const goToRegister = () => {
 
 <template>
     <div class="container">
-        <h2>Connexion Backoffice Photographe</h2>
+        <h2>Connexion Photographe</h2>
         <form @submit.prevent="handleLogin">
             <div class="form-group">
                 <label for="email">Email :</label>

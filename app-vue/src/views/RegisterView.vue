@@ -53,7 +53,7 @@ const goToLogin = () => {
 
 <template>
     <div class="container">
-        <h2>Inscription Backoffice Photographe</h2>
+        <h2>Inscription Photographe</h2>
         <form @submit.prevent="handleRegister">
             <div class="form-group">
                 <label for="email">Email :</label>
