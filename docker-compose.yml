@@ -6,9 +6,6 @@ services:
   # Service d'infra et messagerie RabbitMQ
   rabbitmq:
     image: rabbitmq:4-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 8s
@@ -28,9 +25,6 @@ services:
     build:
       context: build
       dockerfile: mailcatcher.Dockerfile
-    ports:
-      - "1081:1080"
-      - "1025:1025"
     networks:
       - photopro.net
 
@@ -40,7 +34,7 @@ services:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     ports:
-      - '8081:80'
+      - '${PORT_GATEWAY_BACKOFFICE}:80'
     volumes:
       - ./back/gateway-backoffice:/var/php
     working_dir: /var/php
@@ -48,35 +42,12 @@ services:
       - photopro.net
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
-  api_storage:
-    build:
-      context: build
-      dockerfile: 8.4-cli.Dockerfile
-    container_name: api_storage
-    ports:
-      - "6082:80"
-    volumes:
-      - ./back/app-storage:/var/php
-    working_dir: /var/php
-    command: sh -c "composer config process-timeout 3600 && composer install && php -S 0.0.0.0:80 -t public"    
-    environment:
-      - S3_INTERNAL_ENDPOINT=http://S3:8333
-      - S3_EXTERNAL_ENDPOINT=http://localhost:8333
-      - S3_REGION=seaweedFS
-      - S3_ACCESS_KEY=GHIJKL
-      - S3_SECRET_KEY=789012
-      - S3_BUCKET=photopro-galeries
-    networks:
-      - photopro.net
-    depends_on:
-      - S3
-
   gateway_frontoffice:
     build:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     ports:
-      - '8082:80'
+      - '${PORT_GATEWAY_FRONTOFFICE}:80'
     volumes:
       - ./back/gateway-frontoffice:/var/php
     working_dir: /var/php
@@ -90,8 +61,6 @@ services:
     build:
       context: build
       dockerfile: 8.4-cli.Dockerfile
-    ports:
-      - "6080:80"
     volumes:
       - ./back/app-galerie:/var/php
     env_file:
@@ -111,8 +80,6 @@ services:
     build:
       context: build
       dockerfile: 8.4-cli.Dockerfile
-    ports:
-      - "6081:80"
     volumes:
       - ./back/app-auth:/var/php
     env_file:
@@ -124,6 +91,28 @@ services:
       auth.db:
         condition: service_started
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
+  # Service Storage
+  api_storage:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    container_name: api_storage
+    volumes:
+      - ./back/app-storage:/var/php
+    working_dir: /var/php
+    command: sh -c "composer config process-timeout 3600 && composer install && php -S 0.0.0.0:80 -t public"
+    environment:
+      - S3_INTERNAL_ENDPOINT=http://S3:8333
+      - S3_EXTERNAL_ENDPOINT=${S3_EXTERNAL_ENDPOINT}
+      - S3_REGION=seaweedFS
+      - S3_ACCESS_KEY=GHIJKL
+      - S3_SECRET_KEY=789012
+      - S3_BUCKET=photopro-galeries
+    networks:
+      - photopro.net
+    depends_on:
+      - S3
 
   # Service Notif
   app-mail:
@@ -146,12 +135,6 @@ services:
   galerie.db:
     image: 'postgres:latest'
     env_file: ./back/app-galerie/config/.env
-    environment:
-      - POSTGRES_DB=galerie
-      - POSTGRES_USER=galerie_user
-      - POSTGRES_PASSWORD=galerie_password
-    ports:
-      - '5435:5432'
     networks:
       - photopro.net
     volumes:
@@ -161,12 +144,6 @@ services:
   auth.db:
     image: 'postgres:latest'
     env_file: ./back/app-auth/config/.env
-    environment:
-      - POSTGRES_DB=auth
-      - POSTGRES_USER=auth_user
-      - POSTGRES_PASSWORD=auth_password
-    ports:
-      - '5436:5432'
     networks:
       - photopro.net
     volumes:
@@ -175,15 +152,14 @@ services:
 
   adminer:
     image: adminer
-    ports:
-      - '8080:8080'
     networks:
       - photopro.net
 
+  # Frontend Vue.js
   app-vue:
     image: node:22-alpine
     ports:
-      - "5173:5173"
+      - "${PORT_FRONTEND}:5173"
     volumes:
       - ./app-vue:/app
       - /app/node_modules
@@ -193,17 +169,15 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=100
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     command: sh -c "npm install || true && npm run dev -- --host"
 
+  # Stockage SeaweedFS (Compatible S3)
   S3:
     image: chrislusf/seaweedfs:latest
-    ports:
-      - "8333:8333"
-      - "9333:9333"
-      - "23646:23646"
-    command: "server -dir=/data -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json"    
     networks:
       - photopro.net
+    command: "server -dir=/data -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json"
     volumes:
       - ./S3/data:/data
       - ./S3:/etc/seaweedfs

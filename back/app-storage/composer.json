@@ -10,5 +10,8 @@
         "slim/psr7": "^1.6",
         "aws/aws-sdk-php": "^3.0",
         "php-di/php-di": "^7.0"
+    },
+    "config": {
+        "process-timeout": 3600
     }
 }
