@@ -3,6 +3,14 @@ import { RouterView, RouterLink } from 'vue-router'
 import {useAuthStore} from "@/stores/auth.ts";
 
 const authStore = useAuthStore();
+
+const confirmLogout = (event: Event) => {
+  if (!window.confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+    event.preventDefault();
+  } else {
+    authStore.logout();
+  }
+};
 </script>
 
 <template>
@@ -13,7 +21,7 @@ const authStore = useAuthStore();
       <RouterLink v-if="authStore.isAuthenticated" to="/stockage">Mon Stockage</RouterLink>
       <RouterLink v-if="!authStore.isAuthenticated" to="/connexion">Connexion</RouterLink>
       <RouterLink v-if="!authStore.isAuthenticated" to="/register">Inscription</RouterLink>
-      <RouterLink v-if="authStore.isAuthenticated" to="/connexion" @click="authStore.logout">Déconnexion</RouterLink>
+      <RouterLink v-if="authStore.isAuthenticated" to="/connexion" @click="confirmLogout">Déconnexion</RouterLink>
     </nav>
   </header>
 
