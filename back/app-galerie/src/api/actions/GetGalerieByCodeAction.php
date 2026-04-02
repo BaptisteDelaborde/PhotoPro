@@ -6,26 +6,23 @@ use photopro\core\application\ports\api\ServiceGalerieInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class GetGalerieAction
+class GetGalerieByCodeAction
 {
     public function __construct(private ServiceGalerieInterface $serviceGalerie) {}
 
     public function __invoke(Request $rq, Response $rs, array $args): Response
     {
-        $id = $args['id'];
-        $userProfile = $rq->getAttribute('user_profile');
+        $code = $args['code'];
 
         try {
-            $galerieDTO = $this->serviceGalerie->getGalerie($id);
+            $galerieDTO = $this->serviceGalerie->getGalerieByCode($code);
         } catch (\Exception $e) {
-            return $rs->withStatus(404);
-        }
-
-        if ($galerieDTO->photographer_id !== $userProfile->id) {
-            return $rs->withStatus(403);
+            $status = $e->getCode() ?: 404;
+            $rs->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $rs->withHeader('Content-Type', 'application/json')->withStatus($status);
         }
 
         $rs->getBody()->write(json_encode($galerieDTO));
-        return $rs->withHeader('Content-Type', 'application/json');
+        return $rs->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

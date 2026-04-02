@@ -65,6 +65,9 @@ services:
       - ./back/app-galerie:/var/php
     env_file:
       - ./back/app-galerie/config/.env
+    environment:
+      - S3_EXTERNAL_ENDPOINT=${S3_EXTERNAL_ENDPOINT}
+      - S3_BUCKET=photopro-galeries
     working_dir: /var/php
     networks:
       - photopro.net
