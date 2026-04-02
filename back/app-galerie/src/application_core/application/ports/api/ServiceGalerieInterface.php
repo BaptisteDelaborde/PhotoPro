@@ -12,7 +12,7 @@ interface ServiceGalerieInterface
      */
     public function getGalerie(string $id): GalerieDTO;
 
-    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): \photopro\core\domain\entities\Photo;
+    public function ajouterPhoto(string $photographer_id, string $galerie_id, string $file_name, string $mime_type, float $file_size, string $s3_key): \photopro\core\domain\entities\Photo;
 
     /**
      * Crée une nouvelle galerie (publique ou privée)
@@ -42,8 +42,7 @@ interface ServiceGalerieInterface
      * @return GalerieDTO[] Tableau de DTOs de galeries
      */
     public function getGaleriesByPhotographer(string $photographerId): array;
-    public function getPhotos(string $photographer_id): array;
-
+    public function getPhotos(string $galerie_id): array;
     /**
      * Supprime une galerie par son identifiant
      * @param string $id L'UUID de la galerie
