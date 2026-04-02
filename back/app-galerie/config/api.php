@@ -4,6 +4,7 @@ use Psr\Container\ContainerInterface;
 use photopro\api\actions\UploadAction;
 use photopro\api\actions\CreateGalerieAction;
 use photopro\api\actions\GetGalerieByCodeAction;
+use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\middleware\AuthnMiddleware;
 use photopro\core\application\usecases\StorageService;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
@@ -22,6 +23,10 @@ return [
 
     GetGalerieByCodeAction::class => function (ContainerInterface $c) {
         return new GetGalerieByCodeAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    GetPublicGaleriesAction::class => function (ContainerInterface $c) {
+        return new GetPublicGaleriesAction($c->get(ServiceGalerieInterface::class));
     },
 
     GetPhotosAction::class => function (\Psr\Container\ContainerInterface $c) {

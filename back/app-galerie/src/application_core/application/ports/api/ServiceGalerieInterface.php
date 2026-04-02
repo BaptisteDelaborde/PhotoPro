@@ -74,4 +74,5 @@ interface ServiceGalerieInterface
      * @throws \Exception Si la galerie est introuvable ou si elle n'est pas publiée
      */
     public function getGalerieByCode(string $code): GalerieDTO;
+    public function getPublicGaleries(): array;
 }

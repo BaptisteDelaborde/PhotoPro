@@ -38,7 +38,12 @@ return function (App $app) {
     })->add($validateTokenMiddleware::class);
 
     // Routes publiques : navigation galeries, accès galerie privée par code/URL, commentaires
-    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
+    $app->map(['GET', 'POST'], '/{routes:.+}', GenericGatewayAction::class);
+
+    // Routes protégées : modifications nécessitent un token
+    $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->map(['PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
+    })->add($validateTokenMiddleware::class);
 
     return $app;
 };

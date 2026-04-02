@@ -13,6 +13,6 @@ class GetUserGaleriesAction {
         $galeries = $this->serviceGalerie->getGaleriesByPhotographer($userProfile->id);
         
         $rs->getBody()->write(json_encode($galeries));
-        return $rs->withHeader('Content-Type', 'application/json');
+        return $rs->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }
