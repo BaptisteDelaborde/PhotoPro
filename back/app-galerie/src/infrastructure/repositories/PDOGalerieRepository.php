@@ -28,33 +28,23 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
             return null;
         }
 
-        // Instanciation claire grâce aux paramètres nommés (PHP 8)
-        $galerie = new Galerie(
-            id: $row['id'],
-            photographer_id: $row['photographer_id'],
-            title: $row['title'],
-            layout: $row['layout'],
-            is_public: (bool) $row['is_public'],
-            created_at: $row['created_at'],
-            description: $row['description'],
-            access_code: $row['access_code'],
-            access_url: $row['access_url'],
-            client_name: $row['client_name'],
-            client_email: $row['client_email']
-        );
+        return $this->hydrateGalerie($row);
+    }
 
-        // Astuce : si la galerie est publiée en base, on restaure son état
-        if ($row['is_published']) {
-            $reflection = new \ReflectionClass($galerie);
-            $reflection->getProperty('is_published')->setValue($galerie, true);
-            $reflection->getProperty('published_at')->setValue($galerie, $row['published_at']);
+    public function findByAccessCode(string $code): ?Galerie
+    {
+        $sql = "SELECT * FROM galleries WHERE access_code = :code";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':code', $code);
+        $stmt->execute();
+
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
         }
 
-        if ($row['cover_photo_id']) {
-            $galerie->setCoverPhoto($row['cover_photo_id']);
-        }
-
-        return $galerie;
+        return $this->hydrateGalerie($row);
     }
 
     public function savePhoto(Photo $photo): void
@@ -135,7 +125,7 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute();
     }
 
-    public function delete(string $id): void 
+    public function delete(string $id): void
     {
         $sql = "DELETE FROM galleries WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
@@ -143,7 +133,7 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute();
     }
 
-    public function getPhotosByPhotographerId(string $photographerId): array 
+    public function getPhotosByPhotographerId(string $photographerId): array
     {
         $sql = "SELECT * FROM photos WHERE photographer_id = :photographer_id ORDER BY uploaded_at DESC";
         $stmt = $this->pdo->prepare($sql);
@@ -176,33 +166,38 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         $galeries = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $galerie = new Galerie(
-                id: $row['id'],
-                photographer_id: $row['photographer_id'],
-                title: $row['title'],
-                layout: $row['layout'],
-                is_public: (bool) $row['is_public'],
-                created_at: $row['created_at'],
-                description: $row['description'],
-                access_code: $row['access_code'],
-                access_url: $row['access_url'],
-                client_name: $row['client_name'],
-                client_email: $row['client_email']
-            );
-
-            if ($row['is_published']) {
-                $reflection = new \ReflectionClass($galerie);
-                $reflection->getProperty('is_published')->setValue($galerie, true);
-                $reflection->getProperty('published_at')->setValue($galerie, $row['published_at']);
-            }
-
-            if ($row['cover_photo_id']) {
-                $galerie->setCoverPhoto($row['cover_photo_id']);
-            }
-
-            $galeries[] = $galerie;
+            $galeries[] = $this->hydrateGalerie($row);
         }
 
         return $galeries;
+    }
+
+    private function hydrateGalerie(array $row): Galerie
+    {
+        $galerie = new Galerie(
+            id: $row['id'],
+            photographer_id: $row['photographer_id'],
+            title: $row['title'],
+            layout: $row['layout'],
+            is_public: (bool) $row['is_public'],
+            created_at: $row['created_at'],
+            description: $row['description'],
+            access_code: $row['access_code'],
+            access_url: $row['access_url'],
+            client_name: $row['client_name'],
+            client_email: $row['client_email']
+        );
+
+        if ($row['is_published']) {
+            $reflection = new \ReflectionClass($galerie);
+            $reflection->getProperty('is_published')->setValue($galerie, true);
+            $reflection->getProperty('published_at')->setValue($galerie, $row['published_at']);
+        }
+
+        if ($row['cover_photo_id']) {
+            $galerie->setCoverPhoto($row['cover_photo_id']);
+        }
+
+        return $galerie;
     }
 }

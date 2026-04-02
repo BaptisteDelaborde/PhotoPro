@@ -27,10 +27,10 @@ interface ServiceGalerieInterface
      * @throws \InvalidArgumentException
      */
     public function createGalerie(
-        string $photographer_id, 
-        string $title, 
-        string $layout, 
-        bool $is_public, 
+        string $photographer_id,
+        string $title,
+        string $layout,
+        bool $is_public,
         ?string $description = null,
         ?string $client_name = null,
         ?string $client_email = null
@@ -58,5 +58,21 @@ interface ServiceGalerieInterface
      * @return GalerieDTO La galerie mise à jour
      * @throws \Exception Si la galerie n'est pas trouvée
      */
+
+    /**
+     * Met à jour le statut (visibilité/publication) d'une galerie
+     * @param string $id L'UUID de la galerie
+     * @param array $data Les données à mettre à jour (ex: ['is_published' => true])
+     * @return GalerieDTO La galerie mise à jour
+     * @throws \Exception Si la galerie n'est pas trouvée
+     */
     public function updateStatus(string $id, array $data): GalerieDTO;
+
+    /**
+     * Récupère une galerie privée via son code d'accès (front-office)
+     * @param string $code Le code d'accès unique de la galerie
+     * @return GalerieDTO La galerie correspondante
+     * @throws \Exception Si la galerie est introuvable ou si elle n'est pas publiée
+     */
+    public function getGalerieByCode(string $code): GalerieDTO;
 }
