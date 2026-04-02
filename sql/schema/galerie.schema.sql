@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS gallery_photos;
+DROP TABLE IF EXISTS photos;
 DROP TABLE IF EXISTS galleries;
 
 CREATE TABLE galleries (
@@ -24,11 +27,10 @@ CREATE TABLE galleries (
     published_at TIMESTAMP
 );
 
-DROP TABLE IF EXISTS photos;
-
 CREATE TABLE photos (
     id UUID PRIMARY KEY,
     photographer_id UUID NOT NULL,
+    galerie_id UUID,
 
     title VARCHAR(255),
     file_name VARCHAR(255) NOT NULL,
@@ -36,22 +38,10 @@ CREATE TABLE photos (
     file_size FLOAT NOT NULL,
 
     storage_url TEXT NOT NULL,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_galerie FOREIGN KEY (galerie_id) REFERENCES galleries(id) ON DELETE CASCADE
 );
-
-DROP TABLE IF EXISTS gallery_photos;
-
-CREATE TABLE gallery_photos (
-    gallery_id UUID NOT NULL,
-    photo_id UUID NOT NULL,
-    position INT,
-
-    PRIMARY KEY (gallery_id, photo_id),
-    CONSTRAINT fk_gallery FOREIGN KEY (gallery_id) REFERENCES galleries(id) ON DELETE CASCADE,
-    CONSTRAINT fk_photo FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
-);
-
-DROP TABLE IF EXISTS comments;
 
 CREATE TABLE comments (
     id UUID PRIMARY KEY,
@@ -60,5 +50,7 @@ CREATE TABLE comments (
     author_name VARCHAR(255),
     content TEXT NOT NULL,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_photo_comment FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
 );
