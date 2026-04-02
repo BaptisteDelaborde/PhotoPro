@@ -4,7 +4,6 @@ namespace photopro\storage\services;
 
 use Aws\S3\S3Client;
 use Psr\Http\Message\StreamInterface;
-use Ramsey\Uuid\Uuid;
 
 class S3Service
 {
@@ -13,15 +12,16 @@ class S3Service
 
     public function __construct()
     {
-        $this->bucket = $_ENV['S3_BUCKET'];
+        $this->bucket = (string) (getenv('S3_BUCKET') ?: 'photopro-galeries');
+        
         $this->s3Client = new S3Client([
             'version' => 'latest',
-            'region'  => $_ENV['S3_REGION'],
-            'endpoint' => $_ENV['S3_INTERNAL_ENDPOINT'],
+            'region'  => (string) (getenv('S3_REGION') ?: 'seaweedFS'),
+            'endpoint' => (string) (getenv('S3_INTERNAL_ENDPOINT') ?: 'http://S3:8333'),
             'use_path_style_endpoint' => true,
             'credentials' => [
-                'key'    => $_ENV['S3_ACCESS_KEY'],
-                'secret' => $_ENV['S3_SECRET_KEY'],
+                'key'    => (string) (getenv('S3_ACCESS_KEY') ?: 'GHIJKL'),
+                'secret' => (string) (getenv('S3_SECRET_KEY') ?: '789012'),
             ],
         ]);
     }
@@ -38,9 +38,11 @@ class S3Service
             'ContentType' => $mimeType,
         ]);
 
+        $externalEndpoint = (string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333');
+
         return [
             's3_key' => $s3Key,
-            'url'    => $_ENV['S3_EXTERNAL_ENDPOINT'] . '/' . $this->bucket . '/' . $s3Key
+            'url'    => $externalEndpoint . '/' . $this->bucket . '/' . $s3Key
         ];
     }
 }
