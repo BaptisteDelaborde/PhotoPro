@@ -85,8 +85,6 @@ const initials = (titre: string) =>
         </select>
 
         <button v-if="authStore.isAuthenticated" class="btn-primary" @click="goToCreate">+ Nouvelle galerie</button>
-        <button v-if="authStore.isAuthenticated" class="btn-outline" @click="handleLogout">Déconnexion</button>
-        <button v-else class="btn-primary" @click="goToLogin">Se connecter</button>
       </div>
     </header>
 

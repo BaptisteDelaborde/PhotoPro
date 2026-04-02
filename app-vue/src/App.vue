@@ -1,13 +1,27 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
+import {useAuthStore} from "@/stores/auth.ts";
+
+const authStore = useAuthStore();
+
+const confirmLogout = (event: Event) => {
+  if (!window.confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+    event.preventDefault();
+  } else {
+    authStore.logout();
+  }
+};
 </script>
 
 <template>
   <header class="navbar">
     <div class="nav-brand">PhotoPro Admin</div>
     <nav>
-      <RouterLink to="/galeries">Mes Galeries</RouterLink>
-      <RouterLink to="/stockage">Mon Stockage</RouterLink>
+      <RouterLink v-if="authStore.isAuthenticated" to="/galeries">Mes Galeries</RouterLink>
+      <RouterLink v-if="authStore.isAuthenticated" to="/stockage">Mon Stockage</RouterLink>
+      <RouterLink v-if="!authStore.isAuthenticated" to="/connexion">Connexion</RouterLink>
+      <RouterLink v-if="!authStore.isAuthenticated" to="/register">Inscription</RouterLink>
+      <RouterLink v-if="authStore.isAuthenticated" to="/connexion" @click="confirmLogout">Déconnexion</RouterLink>
     </nav>
   </header>
 
