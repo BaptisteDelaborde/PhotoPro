@@ -36,10 +36,7 @@ const handleRegister = async () => {
         console.log('Tentative d\'inscription avec:', email.value)
         await authStore.register(email.value, password.value, 0)
         successMsg.value = 'Inscription réussie! Redirection vers la connexion...'
-
-        setTimeout(() => {
-            router.push('/connexion')
-        }, 1500)
+        router.push('/connexion')
     } catch (e) {
         errorMsg.value = e instanceof Error ? e.message : 'Erreur lors de l\'inscription'
         console.error('Erreur d\'inscription:', e)
