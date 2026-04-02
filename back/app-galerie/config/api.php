@@ -8,13 +8,11 @@ use photopro\core\application\usecases\StorageService;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
 use photopro\api\providers\JWTManager;
 use photopro\api\actions\GetPhotosAction;
+use photopro\api\actions\AddPhotoAction;
 
 return [
-    UploadAction::class => function (ContainerInterface $c) {
-        return new UploadAction(
-            $c->get(StorageService::class),
-            $c->get(ServiceGalerieInterface::class)
-        );
+    AddPhotoAction::class => function (\Psr\Container\ContainerInterface $c) {
+        return new AddPhotoAction($c->get(ServiceGalerieInterface::class));
     },
     
     CreateGalerieAction::class => function (ContainerInterface $c) {
