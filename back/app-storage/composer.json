@@ -1,0 +1,14 @@
+{
+    "name": "photopro/api-storage",
+    "autoload": {
+        "psr-4": {
+            "photopro\\storage\\": "src/"
+        }
+    },
+    "require": {
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.6",
+        "aws/aws-sdk-php": "^3.0",
+        "php-di/php-di": "^7.0"
+    }
+}
