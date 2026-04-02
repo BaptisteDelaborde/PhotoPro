@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null)
   const photographerId = ref(localStorage.getItem('photographer_id') || null)
@@ -10,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(email: string, mdp: string) {
     try {
-      const res = await axios.post('http://localhost:8081/auth/signin', {
+      const res = await axios.post(`${API_BASE_URL}/auth/signin`, {
           email: email,
           password: mdp
       });
@@ -30,7 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(email: string, password: string, role: number = 0) {
     try {
-      const res = await axios.post('http://localhost:8081/auth/signup', {
+      const res = await axios.post(`${API_BASE_URL}/auth/signup`, {
           email: email,
           password: password,
           role: role
