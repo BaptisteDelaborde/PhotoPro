@@ -20,9 +20,9 @@ class GenericGatewayAction {
 
     public function __invoke(Request $request, Response $response, array $args): Response {
         $method = $request->getMethod();
-        $path = '/' . ($args['routes'] ?? '');
+        $originalPath = $request->getUri()->getPath();
 
-        $client = $this->selectClient($path);
+        [$client, $path] = $this->resolveClientAndPath($originalPath);
 
         $headers = $request->getHeaders();
         unset($headers['Host']);
@@ -55,25 +55,37 @@ class GenericGatewayAction {
                 if ($statusCode === 404) {
                     throw new HttpNotFoundException($request, "Ressource introuvable sur le service distant : $path");
                 }
+                $errorBody = $e->getResponse()->getBody()->getContents();
+                $response->getBody()->write($errorBody);
+                return $response
+                    ->withStatus($statusCode)
+                    ->withHeader('Content-Type', 'application/json');
             }
             throw new HttpInternalServerErrorException($request, "Erreur Gateway vers : $path", $e);
         }
+
         $response->getBody()->write($apiResponse->getBody()->getContents());
         return $response->withStatus($apiResponse->getStatusCode())
             ->withHeader('Content-Type', 'application/json');
     }
 
     /**
-     * Sélectionne le bon client par rapport au chemin
+     * Retourne [Client, chemin adapté] selon le path entrant
      */
-    private function selectClient(string $path): Client
+    private function resolveClientAndPath(string $path): array
     {
-        // app-auth
-        if (str_starts_with($path, '/signin') || str_starts_with($path, '/signup') || str_starts_with($path, '/refresh') || str_starts_with($path, '/tokens')) {
-            return $this->authClient;
+        // /auth/signin → /signin sur app-auth
+        // /auth/signup → /signup sur app-auth
+        // /auth/refresh → /refresh sur app-auth
+        // /tokens/... → /tokens/... sur app-auth
+        if (str_starts_with($path, '/auth/')) {
+            return [$this->authClient, substr($path, 5)]; // supprime "/auth"
         }
 
-        //api_galerie
-        return $this->galerieClient;
+        if (str_starts_with($path, '/tokens')) {
+            return [$this->authClient, $path];
+        }
+
+        return [$this->galerieClient, $path];
     }
 }

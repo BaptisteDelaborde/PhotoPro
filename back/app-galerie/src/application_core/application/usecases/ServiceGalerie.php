@@ -21,7 +21,7 @@ class ServiceGalerie implements ServiceGalerieInterface
     public function getGalerie(string $id): GalerieDTO
     {
         $galerie = $this->galerieRepository->findById($id);
-        
+
         if (!$galerie) {
             // Idéalement, tu devrais créer une exception personnalisée comme NotFoundException
             throw new \Exception("La galerie demandée n'existe pas.");
@@ -31,10 +31,10 @@ class ServiceGalerie implements ServiceGalerieInterface
     }
 
     public function createGalerie(
-        string $photographer_id, 
-        string $title, 
-        string $layout, 
-        bool $is_public, 
+        string $photographer_id,
+        string $title,
+        string $layout,
+        bool $is_public,
         ?string $description = null,
         ?string $client_name = null,
         ?string $client_email = null
@@ -87,29 +87,30 @@ class ServiceGalerie implements ServiceGalerieInterface
         );
     }
 
-    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo {
+    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo
+    {
         $photoId = Uuid::uuid4()->toString();
-        $uploadedAt = date('Y-m-d H:i:s'); 
-        
+        $uploadedAt = date('Y-m-d H:i:s');
+
         $photo = new Photo(
             $photoId,
             $photographer_id,
             $file_name,
             $mime_type,
             $file_size,
-            $s3_key, 
+            $s3_key,
             $uploadedAt
         );
-        
+
         $this->galerieRepository->savePhoto($photo);
-        
+
         return $photo;
     }
 
-    public function getPhotos(string $photographer_id): array 
+    public function getPhotos(string $photographer_id): array
     {
         $photos = $this->galerieRepository->getPhotosByPhotographerId($photographer_id);
-        
+
         $result = [];
         foreach ($photos as $photo) {
             $result[] = [
@@ -124,19 +125,19 @@ class ServiceGalerie implements ServiceGalerieInterface
                 'uploaded_at' => $photo->getUploadedAt()
             ];
         }
-        
+
         return $result;
     }
-    
+
     public function getGaleriesByPhotographer(string $photographerId): array
     {
         $galeries = $this->galerieRepository->findByPhotographerId($photographerId);
-        
+
         $dtos = [];
         foreach ($galeries as $galerie) {
             $dtos[] = $this->toDTO($galerie);
         }
-        
+
         return $dtos;
     }
 
@@ -148,18 +149,18 @@ class ServiceGalerie implements ServiceGalerieInterface
     public function updateStatus(string $id, array $data): GalerieDTO
     {
         $galerie = $this->galerieRepository->findById($id);
-        
+
         if (!$galerie) {
             throw new \Exception("La galerie demandée n'existe pas.", 404);
         }
 
         if (isset($data['is_public'])) {
-            $galerie->setIsPublic((bool)$data['is_public']);
+            $galerie->setIsPublic((bool) $data['is_public']);
         }
 
         if (isset($data['is_published'])) {
-            $isPublished = (bool)$data['is_published'];
-            
+            $isPublished = (bool) $data['is_published'];
+
             if ($isPublished && !$galerie->isPublished()) {
                 $galerie->publier();
             } elseif (!$isPublished && $galerie->isPublished()) {
@@ -168,7 +169,22 @@ class ServiceGalerie implements ServiceGalerieInterface
         }
 
         $this->galerieRepository->save($galerie);
-        
+
+        return $this->toDTO($galerie);
+    }
+
+    public function getGalerieByCode(string $code): GalerieDTO
+    {
+        $galerie = $this->galerieRepository->findByAccessCode($code);
+
+        if (!$galerie) {
+            throw new \Exception("Galerie introuvable ou code invalide.", 404);
+        }
+
+        if (!$galerie->isPublished()) {
+            throw new \Exception("Cette galerie n'est pas encore disponible à la consultation.", 403);
+        }
+
         return $this->toDTO($galerie);
     }
 }

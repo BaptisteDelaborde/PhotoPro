@@ -1,0 +1,20 @@
+meta {
+  name: Upload Photo
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8081/photographes/22222222-2222-2222-2222-222222222222/photos
+  body: multipart-form
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  file: @file(/chemin/vers/photo.jpg)
+  title: Ma photo
+}

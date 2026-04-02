@@ -21,7 +21,7 @@ class ValidateTokenMiddleware implements MiddlewareInterface {
         $path = $request->getUri()->getPath();
 
         // Ne pas valider le token sur les routes d'authentification
-        if (str_starts_with($path, '/signin') || str_starts_with($path, '/signup') || str_starts_with($path, '/refresh') || str_starts_with($path, '/tokens')) {
+        if (str_starts_with($path, '/auth/') || str_starts_with($path, '/tokens')) {
             return $handler->handle($request);
         }
 

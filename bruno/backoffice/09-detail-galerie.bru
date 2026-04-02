@@ -1,0 +1,15 @@
+meta {
+  name: Détail galerie
+  type: http
+  seq: 9
+}
+
+get {
+  url: http://localhost:8081/galeries/55555555-5555-5555-5555-555555555555
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

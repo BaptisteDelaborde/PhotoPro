@@ -20,9 +20,9 @@ class GenericGatewayAction {
 
     public function __invoke(Request $request, Response $response, array $args): Response {
         $method = $request->getMethod();
-        $path = '/' . ($args['routes'] ?? '');
+        $originalPath = $request->getUri()->getPath();
 
-        $client = $this->selectClient($path);
+        [$client, $path] = $this->resolveClientAndPath($originalPath);
 
         $headers = $request->getHeaders();
         unset($headers['Host']);
@@ -55,7 +55,6 @@ class GenericGatewayAction {
                 if ($statusCode === 404) {
                     throw new HttpNotFoundException($request, "Ressource introuvable sur le service distant : $path");
                 }
-                // Propager les autres codes d'erreur (401, 403, 422, etc.) tels quels
                 $errorBody = $e->getResponse()->getBody()->getContents();
                 $response->getBody()->write($errorBody);
                 return $response
@@ -71,16 +70,17 @@ class GenericGatewayAction {
     }
 
     /**
-     * Sélectionne le bon client par rapport au chemin
+     * Retourne [Client, chemin adapté] selon le path entrant
      */
-    private function selectClient(string $path): Client
+    private function resolveClientAndPath(string $path): array
     {
-        // app-auth : signin et refresh pour le mode authentifié photographe (mobile)
-        if (str_starts_with($path, '/auth/signin') || str_starts_with($path, '/auth/refresh')) {
-            return $this->authClient;
+        // /auth/signin → /signin sur app-auth (pour le mode photographe mobile)
+        // /auth/refresh → /refresh sur app-auth
+        if (str_starts_with($path, '/auth/')) {
+            return [$this->authClient, substr($path, 5)]; // supprime "/auth"
         }
 
-        // app-galerie : tout le reste (galeries, photographes, photos, commentaires)
-        return $this->galerieClient;
+        // Tout le reste → app-galerie (galeries, photos, commentaires, photographes)
+        return [$this->galerieClient, $path];
     }
 }
