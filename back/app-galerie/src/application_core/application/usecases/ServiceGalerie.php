@@ -23,7 +23,6 @@ class ServiceGalerie implements ServiceGalerieInterface
         $galerie = $this->galerieRepository->findById($id);
 
         if (!$galerie) {
-            // Idéalement, tu devrais créer une exception personnalisée comme NotFoundException
             throw new \Exception("La galerie demandée n'existe pas.");
         }
 
@@ -87,7 +86,7 @@ class ServiceGalerie implements ServiceGalerieInterface
         );
     }
 
-    public function ajouterPhoto(string $photographer_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo
+public function ajouterPhoto(string $photographer_id, string $galerie_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo
     {
         $photoId = Uuid::uuid4()->toString();
         $uploadedAt = date('Y-m-d H:i:s');
@@ -95,6 +94,7 @@ class ServiceGalerie implements ServiceGalerieInterface
         $photo = new Photo(
             $photoId,
             $photographer_id,
+            $galerie_id,
             $file_name,
             $mime_type,
             $file_size,
@@ -107,9 +107,9 @@ class ServiceGalerie implements ServiceGalerieInterface
         return $photo;
     }
 
-    public function getPhotos(string $photographer_id): array
+    public function getPhotos(string $galerie_id): array
     {
-        $photos = $this->galerieRepository->getPhotosByPhotographerId($photographer_id);
+        $photos = $this->galerieRepository->getPhotosByGalerieId($galerie_id);
 
         $result = [];
         foreach ($photos as $photo) {
@@ -120,7 +120,6 @@ class ServiceGalerie implements ServiceGalerieInterface
                 'mime_type' => $photo->getMimeType(),
                 'file_size' => $photo->getFileSize(),
                 's3_key' => $photo->getStorageUrl(),
-                // On pré-mâche le travail pour le frontend en générant l'URL complète
                 'url' => $_ENV['S3_EXTERNAL_ENDPOINT'] . '/' . $_ENV['S3_BUCKET'] . '/' . $photo->getStorageUrl(),
                 'uploaded_at' => $photo->getUploadedAt()
             ];

@@ -13,10 +13,8 @@ use photopro\api\actions\DeleteGalerieAction;
 return function (\Slim\App $app): \Slim\App {
 
     // --- Gestion des Photos ---
-    $app->post('/photographes/{id}/photos', UploadAction::class)
-        ->add(AuthnMiddleware::class);
-    $app->get('/photographes/{id}/photos', GetPhotosAction::class)
-        ->add(AuthnMiddleware::class);
+    $app->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadAction::class);
+    $app->get('/photographes/{id}/galeries/{galerie_id}/photos', GetPhotosAction::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)

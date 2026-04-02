@@ -50,15 +50,16 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
     public function savePhoto(Photo $photo): void
     {
         $sql = "INSERT INTO photos (
-                    id, photographer_id, title, file_name, mime_type, file_size, storage_url, uploaded_at
+                    id, photographer_id, galerie_id, title, file_name, mime_type, file_size, storage_url, uploaded_at
                 ) VALUES (
-                    :id, :photographer_id, :title, :file_name, :mime_type, :file_size, :storage_url, :uploaded_at
+                    :id, :photographer_id, :galerie_id, :title, :file_name, :mime_type, :file_size, :storage_url, :uploaded_at
                 )";
 
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->bindValue(':id', $photo->getId());
         $stmt->bindValue(':photographer_id', $photo->getPhotographerId());
+        $stmt->bindValue(':galerie_id', $photo->getGalerieId());
         $stmt->bindValue(':title', $photo->getTitle());
         $stmt->bindValue(':file_name', $photo->getFileName());
         $stmt->bindValue(':mime_type', $photo->getMimeType());
@@ -133,29 +134,29 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute();
     }
 
-    public function getPhotosByPhotographerId(string $photographerId): array
-    {
-        $sql = "SELECT * FROM photos WHERE photographer_id = :photographer_id ORDER BY uploaded_at DESC";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':photographer_id', $photographerId);
-        $stmt->execute();
+    public function getPhotosByGalerieId(string $galerieId): array 
+        {
+            $sql = "SELECT * FROM photos WHERE galerie_id = :galerie_id ORDER BY uploaded_at DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':galerie_id', $galerieId);
+            $stmt->execute();
 
-        $photos = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $photos[] = new Photo(
-                $row['id'],
-                $row['photographer_id'],
-                $row['file_name'],
-                $row['mime_type'],
-                (float) $row['file_size'],
-                $row['storage_url'],
-                $row['uploaded_at'],
-                $row['title']
-            );
+            $photos = [];
+            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $photos[] = new Photo(
+                    $row['id'],
+                    $row['photographer_id'],
+                    $row['galerie_id'],
+                    $row['file_name'],
+                    $row['mime_type'],
+                    (float) $row['file_size'],
+                    $row['storage_url'],
+                    $row['uploaded_at'],
+                    $row['title']
+                );
+            }
+            return $photos;
         }
-
-        return $photos;
-    }
 
     public function findByPhotographerId(string $photographerId): array
     {

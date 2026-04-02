@@ -32,6 +32,8 @@ class UploadAction
 
     public function __invoke(Request $request, Response $response, array $args): Response {
         $photographer_id = $args['id'] ?? 'anonyme'; 
+        $galerie_id = $args['galerie_id'] ?? null;
+
         
         $files = $request->getUploadedFiles();
 
@@ -55,13 +57,12 @@ class UploadAction
         }
 
         try {
-            // 1. Envoi S3
             $key = $this->storageService->store($photographer_id, $upload->getStream(), $mimeType);
             $url = $this->storageService->getPresignedUrl($key);
             
-            // 2. Sauvegarde en Base de données (NOUVEAU !)
             $photo = $this->serviceGalerie->ajouterPhoto(
                 $photographer_id,
+                $galerie_id, 
                 $upload->getClientFilename(),
                 $mimeType,
                 $upload->getSize(),
@@ -72,7 +73,6 @@ class UploadAction
             throw new HttpInternalServerErrorException($request, 'Erreur technique : ' . $e->getMessage());
         }
 
-        // Nouveau message JSON avec l'ID de la photo
         $response->getBody()->write(json_encode([
             'message' => 'Image uploadée et sauvegardée avec succès !',
             'photo_id' => $photo->getId(),
