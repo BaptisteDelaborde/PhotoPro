@@ -152,6 +152,8 @@ services:
 
   adminer:
     image: adminer
+    ports:
+      - "${PORT_ADMINER}:8080"
     networks:
       - photopro.net
 
