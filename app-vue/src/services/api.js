@@ -49,6 +49,17 @@ export const apiGestion = {
     }
   },
 
+  async getMesGaleries() {
+    console.log("GET /galeries (mes galeries)");
+    try {
+      const res = await axiosInstance.get('/galeries')
+      return res.data
+    } catch (error) {
+      console.error('Erreur récupération des galeries:', error)
+      throw error
+    }
+  },
+
   async post(endpoint, data) {
     try {
       const res = await axiosInstance.post(endpoint, data)
