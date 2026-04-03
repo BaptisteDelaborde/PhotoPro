@@ -152,4 +152,19 @@ class Galerie
     {
         $this->is_public = $is_public;
     }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setLayout(string $layout): void
+    {
+        $this->layout = $layout;
+    }
 }

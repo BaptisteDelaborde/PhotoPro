@@ -81,9 +81,21 @@ $callback = function (AMQPMessage $msg) use ($mailer) {
         $lines[] = "Un événement concernant votre galerie privée vient de se produire : {$event}.";
         $lines[] = "";
         $lines[] = "Détails de la galerie :";
-        $lines[] = "- ID          : " . ($galerie['id'] ?? 'inconnu');
         $lines[] = "- Titre       : " . ($galerie['titre'] ?? $galerie['nom'] ?? 'inconnu');
         $lines[] = "- Description : " . ($galerie['description'] ?? 'aucune');
+
+        if (!empty($galerie['url'])) {
+            $lines[] = "";
+            $lines[] = "Accédez directement à votre galerie :";
+            $lines[] = $galerie['url'];
+        }
+
+        if (!empty($galerie['access_code'])) {
+            $lines[] = "";
+            $lines[] = "Votre code d'accès : " . $galerie['access_code'];
+            $lines[] = "(Utile si vous accédez au site sans le lien ci-dessus)";
+        }
+
         $lines[] = "";
         $lines[] = "L'équipe PhotoPro";
 

@@ -166,6 +166,10 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
             $isPublished = (bool) $data['is_published'];
 
             if ($isPublished && !$galerie->isPublished()) {
+                $photos = $this->galerieRepository->getPhotosByGalerieId($id);
+                if (count($photos) === 0) {
+                    throw new \InvalidArgumentException("La galerie doit contenir au moins une photo pour être publiée.");
+                }
                 $galerie->publier();
             } elseif (!$isPublished && $galerie->isPublished()) {
                 $galerie->depublier();
@@ -178,12 +182,15 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         // Notification uniquement pour les galeries privées avec un client
         if (!$galerie->isPublic() && $galerie->getClientEmail()) {
+            $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'http://localhost:8082';
             $payload = [
                 'galerie' => [
                     'id'          => $dto->id,
                     'titre'       => $dto->title,
                     'description' => $dto->description,
                     'access_url'  => $dto->access_url,
+                    'access_code' => $dto->access_code,
+                    'url'         => $frontendUrl . $dto->access_url,
                 ],
                 'destinataires' => [
                     ['type' => 'client', 'email' => $galerie->getClientEmail()]
@@ -194,6 +201,50 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
                 $event = (bool) $data['is_published'] ? 'PUBLISHED' : 'UNPUBLISHED';
                 $this->publisher->publish($event, $payload);
             }
+        }
+
+        return $dto;
+    }
+
+    public function updateGalerie(string $id, array $data): GalerieDTO
+    {
+        $galerie = $this->galerieRepository->findById($id);
+
+        if (!$galerie) {
+            throw new \Exception("La galerie demandée n'existe pas.", 404);
+        }
+
+        if (isset($data['title'])) {
+            $galerie->setTitle($data['title']);
+        }
+        if (array_key_exists('description', $data)) {
+            $galerie->setDescription($data['description']);
+        }
+        if (isset($data['layout'])) {
+            $galerie->setLayout($data['layout']);
+        }
+
+        $this->galerieRepository->save($galerie);
+
+        $dto = $this->toDTO($galerie);
+
+        // Notification si galerie privée, publiée, avec un client
+        if (!$galerie->isPublic() && $galerie->isPublished() && $galerie->getClientEmail()) {
+            $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'http://localhost:8082';
+            $payload = [
+                'galerie' => [
+                    'id'          => $dto->id,
+                    'titre'       => $dto->title,
+                    'description' => $dto->description,
+                    'access_url'  => $dto->access_url,
+                    'access_code' => $dto->access_code,
+                    'url'         => $frontendUrl . $dto->access_url,
+                ],
+                'destinataires' => [
+                    ['type' => 'client', 'email' => $galerie->getClientEmail()]
+                ]
+            ];
+            $this->publisher->publish('MODIFIED', $payload);
         }
 
         return $dto;

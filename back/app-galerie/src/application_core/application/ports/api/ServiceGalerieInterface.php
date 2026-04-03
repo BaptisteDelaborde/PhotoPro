@@ -75,4 +75,6 @@ interface ServiceGalerieInterface
      */
     public function getGalerieByCode(string $code): GalerieDTO;
     public function getPublicGaleries(): array;
+
+    public function updateGalerie(string $id, array $data): GalerieDTO;
 }

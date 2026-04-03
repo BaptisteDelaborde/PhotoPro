@@ -10,6 +10,7 @@ use photopro\api\actions\CreateGalerieAction;
 use photopro\api\actions\GetUserGaleriesAction;
 use photopro\api\actions\GetGalerieAction;
 use photopro\api\actions\UpdateGalerieStatusAction;
+use photopro\api\actions\UpdateGalerieAction;
 use photopro\api\actions\DeleteGalerieAction;
 
 return function (\Slim\App $app): \Slim\App {
@@ -33,6 +34,8 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/galeries/{id}', GetGalerieAction::class)
         ->add(AuthnMiddleware::class);
     $app->patch('/galeries/{id}/status', UpdateGalerieStatusAction::class)
+        ->add(AuthnMiddleware::class);
+    $app->put('/galeries/{id}', UpdateGalerieAction::class)
         ->add(AuthnMiddleware::class);
     $app->delete('/galeries/{id}', DeleteGalerieAction::class)
         ->add(AuthnMiddleware::class);

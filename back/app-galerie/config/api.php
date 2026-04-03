@@ -10,6 +10,7 @@ use photopro\api\actions\GetPhotosAction;
 use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\actions\GetUserGaleriesAction;
 use photopro\api\actions\UpdateGalerieStatusAction;
+use photopro\api\actions\UpdateGalerieAction;
 use photopro\api\middleware\AuthnMiddleware;
 use photopro\core\application\ports\api\ServiceGalerieInterface;
 
@@ -48,6 +49,10 @@ return [
 
     UpdateGalerieStatusAction::class => function (ContainerInterface $c) {
         return new UpdateGalerieStatusAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    UpdateGalerieAction::class => function (ContainerInterface $c) {
+        return new UpdateGalerieAction($c->get(ServiceGalerieInterface::class));
     },
 
     // Middlewares
