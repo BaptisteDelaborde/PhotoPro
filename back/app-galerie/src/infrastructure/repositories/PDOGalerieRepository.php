@@ -219,4 +219,15 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         return $galerie;
     }
+
+    public function findByStatus(string $status): array {
+        $sql = "SELECT * FROM galeries WHERE status = :status";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute(['status' => $status]);
+
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $rows;
+    }
 }
