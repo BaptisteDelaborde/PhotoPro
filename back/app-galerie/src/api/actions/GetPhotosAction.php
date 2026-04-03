@@ -15,7 +15,7 @@ class GetPhotosAction
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response {
-        $photographer_id = $args['id'];
+        $photographer_id = $args['id'] ?? null;
         $galerie_id = $args['galerie_id'];
         
         $photos = $this->serviceGalerie->getPhotos($galerie_id);
