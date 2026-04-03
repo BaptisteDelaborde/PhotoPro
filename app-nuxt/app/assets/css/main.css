@@ -30,3 +30,34 @@
     border-radius: 4px;
     margin-top: 10px;
 }
+
+.lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}
+.controls-top {
+    position: absolute; top: 20px; right: 20px;
+    display: flex; gap: 15px; z-index: 10;
+}
+.control-btn, .nav-btn {
+    background: none; border: none; color: white;
+    font-size: 2rem; cursor: pointer; opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.control-btn:hover, .nav-btn:hover { opacity: 1; }
+.nav-btn { position: absolute; top: 50%; transform: translateY(-50%); padding: 20px; }
+.prev { left: 20px; }
+.next { right: 20px; }
+.image-wrapper {
+    max-width: 90vw; max-height: 90vh;
+    display: flex; flex-direction: column; align-items: center;
+}
+.lightbox-img {
+    max-width: 100%; max-height: 85vh; object-fit: contain;
+}
+.image-caption {
+    color: white; margin-top: 10px; font-size: 1.1rem;
+}
