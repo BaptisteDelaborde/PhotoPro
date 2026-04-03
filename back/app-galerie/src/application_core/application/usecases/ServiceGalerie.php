@@ -117,6 +117,11 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
         $photos = $this->galerieRepository->getPhotosByGalerieId($galerie_id);
 
         $result = [];
+        
+        // On récupère les variables d'environnement de manière sécurisée
+        $s3Endpoint = (string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333');
+        $s3Bucket   = (string) (getenv('S3_BUCKET') ?: 'photopro-galeries');
+
         foreach ($photos as $photo) {
             $result[] = [
                 'id' => $photo->getId(),
@@ -125,14 +130,13 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
                 'mime_type' => $photo->getMimeType(),
                 'file_size' => $photo->getFileSize(),
                 's3_key' => $photo->getStorageUrl(),
-                'url' => $_ENV['S3_EXTERNAL_ENDPOINT'] . '/' . $_ENV['S3_BUCKET'] . '/' . $photo->getStorageUrl(),
+                'url' => $s3Endpoint . '/' . $s3Bucket . '/' . $photo->getStorageUrl(),
                 'uploaded_at' => $photo->getUploadedAt()
             ];
         }
 
         return $result;
     }
-
     public function getGaleriesByPhotographer(string $photographerId): array
     {
         $galeries = $this->galerieRepository->findByPhotographerId($photographerId);

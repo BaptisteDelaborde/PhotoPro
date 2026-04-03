@@ -3,6 +3,7 @@
 use gateway\api\actions\GenericGatewayAction;
 use Slim\App;
 use gateway\api\middleware\ValidateTokenMiddleware;
+use gateway\api\actions\UploadPhotoGatewayAction;
 
 
 return function (App $app) {
@@ -25,6 +26,7 @@ return function (App $app) {
     $app->post('/auth/signin', GenericGatewayAction::class);
     $app->post('/auth/signup', GenericGatewayAction::class);
     $app->post('/auth/refresh', GenericGatewayAction::class);
+    $app->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
 
     //Autres routes qui passent par le GenericGatewayAction avec le middleware de validation de token
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
