@@ -9,16 +9,19 @@ use GuzzleHttp\Exception\RequestException;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpInternalServerErrorException;
 
-class GenericGatewayAction {
+class GenericGatewayAction
+{
     private Client $galerieClient;
     private Client $authClient;
 
-    public function __construct(Client $galerieClient, Client $authClient) {
+    public function __construct(Client $galerieClient, Client $authClient)
+    {
         $this->galerieClient = $galerieClient;
         $this->authClient = $authClient;
     }
 
-    public function __invoke(Request $request, Response $response, array $args): Response {
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $method = $request->getMethod();
         $originalPath = $request->getUri()->getPath();
 
@@ -35,8 +38,31 @@ class GenericGatewayAction {
         ];
 
         if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
+            $uploadedFiles = $request->getUploadedFiles();
             $parsedBody = $request->getParsedBody();
-            if (!empty($parsedBody)) {
+
+            if (!empty($uploadedFiles)) {
+                $multipart = [];
+
+                if (is_array($parsedBody)) {
+                    foreach ($parsedBody as $name => $contents) {
+                        $multipart[] = ['name' => $name, 'contents' => $contents];
+                    }
+                }
+
+                foreach ($uploadedFiles as $name => $file) {
+                    if ($file->getError() === UPLOAD_ERR_OK) {
+                        $multipart[] = [
+                            'name' => $name,
+                            'contents' => $file->getStream(),
+                            'filename' => $file->getClientFilename(),
+                            'headers' => ['Content-Type' => $file->getClientMediaType()]
+                        ];
+                    }
+                }
+                $options['multipart'] = $multipart;
+
+            } elseif (!empty($parsedBody)) {
                 $options['json'] = $parsedBody;
             } else {
                 $body = $request->getBody();
