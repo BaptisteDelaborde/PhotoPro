@@ -19,4 +19,5 @@ interface GalerieRepositoryInterface
     public function findByAccessCode(string $code): ?Galerie;
     public function findPublicGaleries(): array;
     public function findByStatus(string $status): array;
+    public function findPhotosByGalerieId(string $galerieId): array;
 }

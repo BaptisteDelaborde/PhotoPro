@@ -275,4 +275,10 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         return $this->toDTO($galerie);
     }
+
+    public function getPhotosByGalerie(string $galerieId): array {
+        $photos = $this->galerieRepository->findPhotosByGalerieId($galerieId);
+
+        return $photos;
+    }
 }
