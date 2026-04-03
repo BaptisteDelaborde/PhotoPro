@@ -25,6 +25,7 @@ return function (\Slim\App $app): \Slim\App {
     // --- Routes Publiques ---
     $app->get('/galeries/publiques', GetPublicGaleriesAction::class);
     $app->get('/galeries/code/{code}', GetGalerieByCodeAction::class);
+    $app->get('/galeries/{galerie_id}/photos', GetPhotosAction::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)

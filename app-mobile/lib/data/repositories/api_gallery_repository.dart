@@ -88,8 +88,21 @@ class ApiGalleryRepository implements GalleryRepository {
     });
     
     late PaginatedResponse<PhotoModel> paginatedResponse;
-    if (response.data is List) {
-      final list = (response.data as List)
+    final responseData = response.data;
+    
+    if (responseData is List) {
+      final list = responseData
+          .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+      paginatedResponse = PaginatedResponse<PhotoModel>(
+        items: list,
+        totalCount: list.length,
+        limit: limit,
+        offset: offset,
+        hasNext: false,
+      );
+    } else if (responseData is Map<String, dynamic> && responseData.containsKey('photos')) {
+      final list = (responseData['photos'] as List)
           .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
           .toList();
       paginatedResponse = PaginatedResponse<PhotoModel>(
@@ -101,7 +114,7 @@ class ApiGalleryRepository implements GalleryRepository {
       );
     } else {
       paginatedResponse = PaginatedResponse<PhotoModel>.fromJson(
-        response.data,
+        responseData,
         (json) => PhotoModel.fromJson(json as Map<String, dynamic>),
       );
     }
