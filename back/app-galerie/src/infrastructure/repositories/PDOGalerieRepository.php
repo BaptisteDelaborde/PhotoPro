@@ -47,6 +47,33 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         return $this->hydrateGalerie($row);
     }
 
+    public function getPhotoById(string $photoId): ?Photo 
+    {
+        $sql = "SELECT * FROM photos WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $photoId);
+        $stmt->execute();
+        
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!$row) {
+            return null;
+        }
+
+        return new Photo(
+            $row['id'], $row['photographer_id'], $row['galerie_id'], $row['file_name'],
+            $row['mime_type'], (float) $row['file_size'], $row['storage_url'],
+            $row['uploaded_at'], $row['title']
+        );
+    }
+
+    public function deletePhoto(string $photoId): void 
+    {
+        $sql = "DELETE FROM photos WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $photoId);
+        $stmt->execute();
+    }
+
     public function savePhoto(Photo $photo): void
     {
         $sql = "INSERT INTO photos (

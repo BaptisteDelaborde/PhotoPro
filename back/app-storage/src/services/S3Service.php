@@ -45,4 +45,12 @@ class S3Service
             'url'    => $externalEndpoint . '/' . $this->bucket . '/' . $s3Key
         ];
     }
+    public function deleteFile(string $s3Key): void
+    {
+        $this->s3Client->deleteObject([
+            'Bucket' => $this->bucket,
+            'Key'    => $s3Key,
+        ]);
+    }
+
 }

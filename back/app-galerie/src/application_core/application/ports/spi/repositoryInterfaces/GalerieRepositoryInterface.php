@@ -20,4 +20,7 @@ interface GalerieRepositoryInterface
     public function findPublicGaleries(): array;
     public function findByStatus(string $status): array;
     public function findPhotosByGalerieId(string $galerieId): array;
+
+    public function getPhotoById(string $photoId): ?\photopro\core\domain\entities\Photo;
+    public function deletePhoto(string $photoId): void;
 }

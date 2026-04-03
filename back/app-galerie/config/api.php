@@ -60,6 +60,10 @@ return [
         return new UpdateGalerieAction($c->get(ServiceGalerieInterface::class));
     },
 
+        \photopro\api\actions\DeletePhotoAction::class => function (\Psr\Container\ContainerInterface $c) {
+        return new \photopro\api\actions\DeletePhotoAction($c->get(ServiceGalerieInterface::class));
+    },
+
     // Middlewares
     AuthnMiddleware::class => function (ContainerInterface $c) {
         $secretKey = $_ENV['JWT_SECRET_KEY'] ?? 'cle_secrete';

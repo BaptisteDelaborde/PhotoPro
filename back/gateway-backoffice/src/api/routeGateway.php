@@ -4,7 +4,7 @@ use gateway\api\actions\GenericGatewayAction;
 use Slim\App;
 use gateway\api\middleware\ValidateTokenMiddleware;
 use gateway\api\actions\UploadPhotoGatewayAction;
-
+use gateway\api\actions\DeletePhotoGatewayAction;
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -22,17 +22,17 @@ return function (App $app) {
 
     $validateTokenMiddleware = $container->get(ValidateTokenMiddleware::class);
 
-    //Routes publiques (sans vérif de token)
     $app->post('/auth/signin', GenericGatewayAction::class);
     $app->post('/auth/signup', GenericGatewayAction::class);
     $app->post('/auth/refresh', GenericGatewayAction::class);
 
-    // Route upload photo protégée par JWT
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
+        
+        $group->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', DeletePhotoGatewayAction::class);
+        
     })->add($validateTokenMiddleware::class);
 
-    //Autres routes qui passent par le GenericGatewayAction avec le middleware de validation de token
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
     })->add($validateTokenMiddleware::class);

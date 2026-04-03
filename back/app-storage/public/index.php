@@ -56,4 +56,30 @@ $app->post('/upload', function (Request $request, Response $response) {
     return $response->withStatus(201)->withHeader('Content-Type', 'application/json');
 });
 
+$app->delete('/delete', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $s3Key = $data['s3_key'] ?? null;
+
+    if (empty($s3Key)) {
+        $response->getBody()->write(json_encode(['error' => 'La clé s3_key est manquante']));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    $s3Service = $this->get(S3Service::class);
+    
+    try {
+        $s3Service->deleteFile($s3Key);
+        
+        $response->getBody()->write(json_encode([
+            'message' => 'Fichier physiquement supprimé avec succès',
+            's3_key' => $s3Key
+        ]));
+        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+        
+    } catch (\Exception $e) {
+        $response->getBody()->write(json_encode(['error' => 'Erreur S3 : ' . $e->getMessage()]));
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+    }
+});
+
 $app->run();

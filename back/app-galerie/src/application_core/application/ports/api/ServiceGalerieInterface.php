@@ -95,4 +95,6 @@ interface ServiceGalerieInterface
      * @return array
      */
     public function getPhotosByGalerie(string $galerieId): array;
+
+    public function deletePhoto(string $photoId): string;
 }

@@ -281,4 +281,19 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         return $photos;
     }
+
+    public function deletePhoto(string $photoId): string 
+    {
+        $photo = $this->galerieRepository->getPhotoById($photoId);
+        
+        if (!$photo) {
+            throw new \Exception("La photo demandée n'existe pas.");
+        }
+
+        $s3Key = $photo->getStorageUrl();
+
+        $this->galerieRepository->deletePhoto($photoId);
+
+        return $s3Key;
+    }
 }
