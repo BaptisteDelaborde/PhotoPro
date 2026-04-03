@@ -58,6 +58,8 @@ services:
     working_dir: /var/php
     networks:
       - photopro.net
+    environment:
+      - PHP_CLI_SERVER_WORKERS=8
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
   # Microservices métiers
@@ -73,6 +75,7 @@ services:
     environment:
       - S3_EXTERNAL_ENDPOINT=${S3_EXTERNAL_ENDPOINT}
       - S3_BUCKET=photopro-galeries
+      - PHP_CLI_SERVER_WORKERS=8
     working_dir: /var/php
     networks:
       - photopro.net

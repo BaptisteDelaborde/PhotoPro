@@ -82,48 +82,80 @@ class ApiGalleryRepository implements GalleryRepository {
 
   @override
   Future<PaginatedResponse<PhotoModel>> getGalleryPhotos(String galleryId, {int limit = 50, int offset = 0}) async {
-    final response = await _dio.get('/galeries/$galleryId/photos', queryParameters: {
-      'limit': limit,
-      'offset': offset,
-    });
-    
-    late PaginatedResponse<PhotoModel> paginatedResponse;
-    final responseData = response.data;
-    
-    if (responseData is List) {
-      final list = responseData
-          .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
-          .toList();
-      paginatedResponse = PaginatedResponse<PhotoModel>(
-        items: list,
-        totalCount: list.length,
-        limit: limit,
-        offset: offset,
-        hasNext: false,
-      );
-    } else if (responseData is Map<String, dynamic> && responseData.containsKey('photos')) {
-      final list = (responseData['photos'] as List)
-          .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
-          .toList();
-      paginatedResponse = PaginatedResponse<PhotoModel>(
-        items: list,
-        totalCount: list.length,
-        limit: limit,
-        offset: offset,
-        hasNext: false,
-      );
-    } else {
-      paginatedResponse = PaginatedResponse<PhotoModel>.fromJson(
-        responseData,
-        (json) => PhotoModel.fromJson(json as Map<String, dynamic>),
-      );
+    try {
+      final response = await _dio.get('/galeries/$galleryId/photos', queryParameters: {
+        'limit': limit,
+        'offset': offset,
+      });
+
+      late PaginatedResponse<PhotoModel> paginatedResponse;
+      final responseData = response.data;
+      
+      if (responseData == null || (responseData is String && responseData.isEmpty)) {
+        paginatedResponse = PaginatedResponse<PhotoModel>(
+          items: [],
+          totalCount: 0,
+          limit: limit,
+          offset: offset,
+          hasNext: false,
+        );
+      } else if (responseData is List) {
+        final list = responseData
+            .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
+            .toList();
+        paginatedResponse = PaginatedResponse<PhotoModel>(
+          items: list,
+          totalCount: list.length,
+          limit: limit,
+          offset: offset,
+          hasNext: false,
+        );
+      } else if (responseData is Map<String, dynamic>) {
+        if (responseData.containsKey('photos')) {
+          final list = (responseData['photos'] as List)
+              .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>))
+              .toList();
+          paginatedResponse = PaginatedResponse<PhotoModel>(
+            items: list,
+            totalCount: list.length,
+            limit: limit,
+            offset: offset,
+            hasNext: false,
+          );
+        } else if (responseData.containsKey('items')) {
+          paginatedResponse = PaginatedResponse<PhotoModel>.fromJson(
+            responseData,
+            (json) => PhotoModel.fromJson(json as Map<String, dynamic>),
+          );
+        } else {
+          paginatedResponse = PaginatedResponse<PhotoModel>(
+            items: [],
+            totalCount: 0,
+            limit: limit,
+            offset: offset,
+            hasNext: false,
+          );
+        }
+      } else {
+        paginatedResponse = PaginatedResponse<PhotoModel>(
+          items: [],
+          totalCount: 0,
+          limit: limit,
+          offset: offset,
+          hasNext: false,
+        );
+      }
+
+      await _isar.writeTxn(() async {
+        await _isar.photoModels.putAll(paginatedResponse.items);
+      });
+
+      return paginatedResponse;
+    } catch (e, stacktrace) {
+      print("Error in getGalleryPhotos: $e");
+      print(stacktrace);
+      rethrow;
     }
-
-    await _isar.writeTxn(() async {
-      await _isar.photoModels.putAll(paginatedResponse.items);
-    });
-
-    return paginatedResponse;
   }
 
   @override
