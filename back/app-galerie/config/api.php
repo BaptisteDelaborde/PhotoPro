@@ -1,5 +1,6 @@
 <?php
 
+use photopro\api\actions\GetPublicGaleriePhotosAction;
 use Psr\Container\ContainerInterface;
 use photopro\api\actions\AddPhotoAction;
 use photopro\api\actions\CreateGalerieAction;
@@ -41,6 +42,10 @@ return [
 
     GetPublicGaleriesAction::class => function (ContainerInterface $c) {
         return new GetPublicGaleriesAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    GetPublicGaleriePhotosAction::class => function (ContainerInterface $c) {
+        return new GetPublicGaleriePhotosAction($c->get(ServiceGalerieInterface::class));
     },
 
     GetUserGaleriesAction::class => function (ContainerInterface $c) {

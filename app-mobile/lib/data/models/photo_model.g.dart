@@ -1248,7 +1248,7 @@ PhotoModel _$PhotoModelFromJson(Map<String, dynamic> json) => PhotoModel(
       isarId: (json['isarId'] as num?)?.toInt(),
       remoteId: json['id'] as String,
       title: json['title'] as String?,
-      storageUrl: json['storage_url'] as String,
+      storageUrl: json['url'] as String,
       mimeType: json['mime_type'] as String,
       fileSize: (json['file_size'] as num).toDouble(),
     );
@@ -1258,7 +1258,7 @@ Map<String, dynamic> _$PhotoModelToJson(PhotoModel instance) =>
       'isarId': instance.isarId,
       'id': instance.remoteId,
       'title': instance.title,
-      'storage_url': instance.storageUrl,
+      'url': instance.storageUrl,
       'mime_type': instance.mimeType,
       'file_size': instance.fileSize,
     };

@@ -1,0 +1,46 @@
+<script setup>
+const { data: galeries, pending, error } = await useFetch('http://localhost:8082/galeries/publiques')
+</script>
+
+<template>
+  <div class="container">
+    <h1>Galeries Publiques</h1>
+
+    <div v-if="error" style="color: red;">
+      Erreur : {{ error.message }}
+    </div>
+
+    <div v-else-if="pending">
+      Chargement des galeries...
+    </div>
+
+    <div v-else-if="galeries && galeries.length > 0">
+      <div v-for="galerie in galeries" :key="galerie.id" class="galerie-card">
+
+        <h2>{{ galerie.title }}</h2>
+
+        <p v-if="galerie.description" class="description">
+          {{ galerie.description }}
+        </p>
+
+        <img
+            v-if="galerie.cover_photo_id"
+            :src="`http://localhost:8333/${galerie.cover_photo_id}`"
+            :alt="galerie.title"
+            class="cover-image"
+        />
+        <div v-else class="no-image">
+          Aucune photo de couverture
+        </div>
+
+      </div>
+    </div>
+
+    <div v-else>
+      Aucune galerie publique pour le moment.
+    </div>
+  </div>
+</template>
+
+<style src="../assets/css/main.css" scoped></style>
+

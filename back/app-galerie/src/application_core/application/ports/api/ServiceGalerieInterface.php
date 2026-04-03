@@ -75,6 +75,12 @@ interface ServiceGalerieInterface
      */
     public function getGalerieByCode(string $code): GalerieDTO;
 
+    /**
+     * Met à jour les informations d'une galerie (titre, description, client, etc.)
+     * @param string $id
+     * @param array $data
+     * @return GalerieDTO
+     */
     public function updateGalerie(string $id, array $data): GalerieDTO;
 
     /**
@@ -82,4 +88,11 @@ interface ServiceGalerieInterface
      * @return GalerieDTO[] Tableau de DTOs de galeries publiques
      */
     public function getPublicGaleries(): array;
+
+    /**
+     * Récupère les photos d'une galerie par son identifiant
+     * @param string $galerieId
+     * @return array
+     */
+    public function getPhotosByGalerie(string $galerieId): array;
 }

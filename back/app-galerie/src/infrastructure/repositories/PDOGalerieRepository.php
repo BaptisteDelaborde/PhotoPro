@@ -230,4 +230,13 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         return $rows;
     }
+
+    public function findPhotosByGalerieId(string $galerieId): array {
+        $sql = "SELECT * FROM photos WHERE galerie_id = :galerie_id";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute(['galerie_id' => $galerieId]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
