@@ -21,9 +21,29 @@ class PhotoProInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     dev.log('API ERROR [${err.response?.statusCode}] !! ${err.requestOptions.uri}');
     
+    // Auto-retry on SocketException/Connection Reset (DioExceptionType.unknown)
+    if (err.type == DioExceptionType.unknown || err.type == DioExceptionType.connectionTimeout) {
+      int retryCount = err.requestOptions.extra['retries'] ?? 0;
+      if (retryCount < 3) {
+        err.requestOptions.extra['retries'] = retryCount + 1;
+        dev.log('RETRYING connection (${retryCount + 1}/3)...');
+        try {
+          await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));
+          // fetch again with the exact same request using a temporary vanilla dio to avoid interceptor loop
+          final retryDio = Dio();
+          final response = await retryDio.fetch(
+            err.requestOptions.copyWith(path: err.requestOptions.uri.toString())
+          );
+          return handler.resolve(response);
+        } catch (e) {
+          dev.log('RETRY FAILED: $e');
+        }
+      }
+    }
+
     PhotoProError? mappedError;
     if (err.response?.data != null && err.response?.data is Map<String, dynamic>) {
       try {
@@ -38,14 +58,14 @@ class PhotoProInterceptor extends Interceptor {
       mappedError = PhotoProError(
         code: _mapStatusCodeToErrorCode(statusCode),
         message: _mapStatusCodeToMessage(statusCode),
-        details: {'raw': err.message},
+        details: {'raw': err.message ?? "Erreur réseau ou connexion perdue"},
       );
     }
 
     // Trigger global error UI
     ref.read(errorProvider.notifier).state = ErrorState(mappedError.message);
 
-    super.onError(err.copyWith(error: mappedError), handler);
+    super.onError(err.copyWith(error: mappedError, message: mappedError.message), handler);
   }
 
   String _mapStatusCodeToErrorCode(int? statusCode) {
@@ -64,7 +84,7 @@ class PhotoProInterceptor extends Interceptor {
       case 404: return 'Ressource introuvable.';
       case 429: return 'Trop de requêtes. Réessayez plus tard.';
       case 500: return 'Erreur interne du serveur.';
-      default: return 'Une erreur inattendue est survenue.';
+      default: return 'Une erreur de connexion inattendue est survenue (le serveur a pu rejeter la requête).';
     }
   }
 }

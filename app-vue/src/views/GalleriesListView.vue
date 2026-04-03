@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { apiGestion } from '../services/api'
 
 type Gallery = {
-  id: number
+  id: string | number
   titre: string
   type: string
   est_publiee: boolean
@@ -13,21 +14,34 @@ type Gallery = {
 
 const router = useRouter()
 
-const galleries = ref<Gallery[]>([
-  { id: 1, titre: 'Mariage Dupont', type: 'Privée', est_publiee: false, cover: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80&auto=format&fit=crop' },
-  { id: 2, titre: "Paysages d'Auvergne", type: 'Publique', est_publiee: true, cover: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80&auto=format&fit=crop' }
-])
-
+const galleries = ref<Gallery[]>([])
 const search = ref('')
 const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes')
 
 const authStore = useAuthStore()
 
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    try {
+      const data = await apiGestion.getMesGaleries()
+      galleries.value = (Array.isArray(data) ? data : data.items || []).map((g: any) => ({
+        id: g.id,
+        titre: g.title || g.titre || 'Sans titre',
+        type: g.is_public ? 'Publique' : 'Privée',
+        est_publiee: g.is_public,
+        cover: g.cover_photo_id ? `${import.meta.env.VITE_API_BASE_URL}/photos/${g.cover_photo_id}/storage` : null
+      }))
+    } catch (error) {
+      console.error("Impossible de charger les galeries", error)
+    }
+  }
+});
+
 const filteredGalleries = computed(() => {
   const q = search.value.trim().toLowerCase()
   return galleries.value.filter(g => {
     const matchType = filterType.value === 'Toutes' || g.type === filterType.value
-    const matchQuery = !q || g.titre.toLowerCase().includes(q)
+    const matchQuery = !q || (g.titre && g.titre.toLowerCase().includes(q))
     return matchType && matchQuery
   })
 })
@@ -49,7 +63,7 @@ const handleLogout = () => {
   router.push('/connexion')
 }
 
-const goToGalleryDetails = (id: number) => {
+const goToGalleryDetails = (id: string | number) => {
   router.push(`/galeries/${id}`)
 }
 
@@ -57,12 +71,14 @@ const showPreview = (msg: string) => {
   window.alert(msg)
 }
 
-const initials = (titre: string) =>
-    titre
-        .split(' ')
-        .map(s => s.charAt(0).toUpperCase())
-        .slice(0, 2)
-        .join('')
+const initials = (titre: string | undefined) => {
+  if (!titre) return '?'
+  return titre
+    .split(' ')
+    .map(s => s.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('')
+}
 </script>
 
 <template>
@@ -273,7 +289,6 @@ const initials = (titre: string) =>
 }
 
 .btn-outline {
-  background: transparent;
   border: 1px solid #e6edf3;
   padding: 8px 10px;
   border-radius: 8px;

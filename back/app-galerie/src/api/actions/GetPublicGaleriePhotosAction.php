@@ -18,8 +18,7 @@ class GetPublicGaleriePhotosAction {
 
         $galerieId = $args['id'];
 
-        $photos = $this->serviceGalerie->getPhotosByGalerie($galerieId);
-
+        $photos = $this->serviceGalerie->getPhotos($galerieId);
 
         $rs->getBody()->write(json_encode($photos));
         return $rs

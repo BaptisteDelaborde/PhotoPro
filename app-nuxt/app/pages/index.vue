@@ -15,7 +15,13 @@ const { data: galeries, pending, error } = await useFetch('http://localhost:8082
     </div>
 
     <div v-else-if="galeries && galeries.length > 0">
-      <div v-for="galerie in galeries" :key="galerie.id" class="galerie-card">
+      <NuxtLink
+          v-for="galerie in galeries"
+          :key="galerie.id"
+          :to="`/galerie/${galerie.id}`"
+          class="galerie-card"
+          style="display: block; text-decoration: none; color: inherit;"
+      >
 
         <h2>{{ galerie.title }}</h2>
 
@@ -33,7 +39,7 @@ const { data: galeries, pending, error } = await useFetch('http://localhost:8082
           Aucune photo de couverture
         </div>
 
-      </div>
+      </NuxtLink>
     </div>
 
     <div v-else>

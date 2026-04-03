@@ -11,16 +11,16 @@ return function (App $app) {
         $response->getBody()->write(json_encode([
             'message' => 'API Gateway PhotoPro Frontoffice',
             'endpoints' => [
-                'GET /galeries'                              => 'Liste des galeries publiques (filtres: ?photographe_id=, ?sort=date)',
-                'GET /galeries/{id}'                        => 'Détail d\'une galerie publique',
-                'GET /galeries/{id}/photos'                 => 'Photos d\'une galerie publique',
-                'GET /galeries/code/{code}'                 => 'Accès à une galerie privée par code',
-                'GET /photographes'                         => 'Liste des photographes',
-                'GET /photographes/{pseudo}/galeries'       => 'Galeries publiques d\'un photographe',
+                'GET /galeries' => 'Liste des galeries publiques (filtres: ?photographe_id=, ?sort=date)',
+                'GET /galeries/{id}' => 'Détail d\'une galerie publique',
+                'GET /galeries/{id}/photos' => 'Photos d\'une galerie publique',
+                'GET /galeries/code/{code}' => 'Accès à une galerie privée par code',
+                'GET /photographes' => 'Liste des photographes',
+                'GET /photographes/{pseudo}/galeries' => 'Galeries publiques d\'un photographe',
                 'POST /galeries/{id}/photos/{photoId}/commentaires' => 'Ajouter un commentaire (anonyme)',
-                'POST /auth/signin'                         => 'Connexion photographe (mode mobile)',
-                'POST /auth/refresh'                        => 'Rafraîchissement de token',
-                'POST /photographes/{id}/photos'            => 'Upload photo vers espace personnel (auth requise)',
+                'POST /auth/signin' => 'Connexion photographe (mode mobile)',
+                'POST /auth/refresh' => 'Rafraîchissement de token',
+                'POST /photographes/{id}/photos' => 'Upload photo vers espace personnel (auth requise)',
             ]
         ], JSON_PRETTY_PRINT));
         return $response->withHeader('Content-Type', 'application/json');
@@ -35,15 +35,14 @@ return function (App $app) {
     // Routes protégées (nécessitent un token JWT) : upload photographe depuis mobile
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->post('/photographes/{id}/photos', GenericGatewayAction::class);
-    })->add($validateTokenMiddleware::class);
+    })->add($validateTokenMiddleware);
+    $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->map(['PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
+    })->add($validateTokenMiddleware);
 
     // Routes publiques : navigation galeries, accès galerie privée par code/URL, commentaires
     $app->map(['GET', 'POST'], '/{routes:.+}', GenericGatewayAction::class);
 
-    // Routes protégées : modifications nécessitent un token
-    $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
-        $group->map(['PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
-    })->add($validateTokenMiddleware::class);
 
     return $app;
 };
