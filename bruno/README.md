@@ -11,22 +11,19 @@ docker compose up -d --build
 ---
 
 ## Importer la collection
-
-1. Ouvrir [Bruno](https://www.usebruno.com/)
-2. Cliquer sur **Open Collection**
-3. Sélectionner le dossier `bruno/` à la racine du projet
+Sélectionner le dossier `bruno/` à la racine du projet
 
 ---
 
 ## Sélectionner l'environnement
 
-Dans Bruno, en haut à droite, sélectionner l'environnement **local**.
+Dans Bruno, en haut à droite, sélectionner l'environnement local.
 
 ---
 
 ## Lancer les tests
 
-Les requêtes sont conçues pour être exécutées **dans l'ordre**. Les tokens et identifiants sont extraits automatiquement de chaque réponse et injectés dans les suivantes. **Rien n'est à renseigner manuellement.**
+Les requêtes sont conçues pour être exécutées dans l'ordre. Les tokens et identifiants sont extraits automatiquement de chaque réponse et injectés dans les suivantes. Rien n'est à renseigner manuellement.
 
 ### Backoffice (port 8081)
 
