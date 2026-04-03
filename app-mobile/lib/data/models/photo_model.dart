@@ -14,7 +14,7 @@ class PhotoModel {
 
   final String? title;
 
-  @JsonKey(name: 'storage_url')
+  @JsonKey(name: 'url')
   final String storageUrl;
 
   @JsonKey(name: 'mime_type')
