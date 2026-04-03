@@ -6,6 +6,7 @@ import LoginView from '../views/LoginView.vue'
 import StorageView from '../views/StorageView.vue'
 import GalleriesListView from '../views/GalleriesListView.vue'
 import GalleryCreateView from '../views/GalleryCreateView.vue'
+import GalleryDetailView from '../views/GalleryDetailView.vue'
 import RegisterView from "@/views/RegisterView.vue";
 
 const router = createRouter({
@@ -37,6 +38,12 @@ const router = createRouter({
       path: '/galeries/nouvelle',
       name: 'creer-galerie',
       component: GalleryCreateView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/galeries/:id',
+      name: 'galerie-detail',
+      component: GalleryDetailView,
       meta: { requiresAuth: true }
     },
     {

@@ -63,7 +63,7 @@ const handleLogout = () => {
   router.push('/connexion')
 }
 
-const goToGalleryDetails = (id: number) => {
+const goToGalleryDetails = (id: string | number) => {
   router.push(`/galeries/${id}`)
 }
 
@@ -289,7 +289,6 @@ const initials = (titre: string | undefined) => {
 }
 
 .btn-outline {
-  background: transparent;
   border: 1px solid #e6edf3;
   padding: 8px 10px;
   border-radius: 8px;

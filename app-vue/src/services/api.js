@@ -78,6 +78,17 @@ export const apiGestion = {
       console.error('Erreur GET:', error)
       throw error
     }
+  },
+
+  async getGalleryPhotos(galleryId) {
+    console.log("GET /galeries/" + galleryId + "/photos");
+    try {
+      const res = await axiosInstance.get(`/galeries/${galleryId}/photos`)
+      return res.data
+    } catch (error) {
+      console.error('Erreur récupération photos galerie:', error)
+      throw error
+    }
   }
 };
 
