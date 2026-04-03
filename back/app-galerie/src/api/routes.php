@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use photopro\api\actions\GetPublicGaleriePhotosAction;
 use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\actions\GetGalerieByCodeAction;
 use photopro\api\middleware\AuthnMiddleware;
@@ -26,6 +27,7 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/galeries/publiques', GetPublicGaleriesAction::class);
     $app->get('/galeries/code/{code}', GetGalerieByCodeAction::class);
     $app->get('/galeries/{galerie_id}/photos', GetPhotosAction::class);
+    $app->get('/galeries/{id}/photos', GetPublicGaleriePhotosAction::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)
