@@ -1,17 +1,21 @@
 meta {
   name: Publier galerie
   type: http
-  seq: 13
+  seq: 6
 }
 
 patch {
-  url: http://localhost:8081/galeries/caca74f2-dc5e-4ce4-bb64-64940ccf4e07/status
+  url: http://localhost:8081/galeries/66666666-6666-6666-6666-666666666666/status
   body: json
   auth: bearer
 }
 
 auth:bearer {
   token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
 }
 
 body:json {

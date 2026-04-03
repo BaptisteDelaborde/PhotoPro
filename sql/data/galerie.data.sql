@@ -33,8 +33,7 @@ INSERT INTO galleries (
     access_url,
     client_name,
     client_email,
-    created_at,
-    published_at
+    created_at
 )
 VALUES (
     '66666666-6666-6666-6666-666666666666',
@@ -42,13 +41,12 @@ VALUES (
     'Galerie privée de test',
     'Une galerie privée pour tester la plateforme',
     FALSE,
-    TRUE,
+    FALSE,
     'masonry',
     'ABC123',
     'http://localhost:8082/galeries/code/ABC123',
     'Client Test',
     'client@test.com',
-    NOW(),
     NOW()
 );
 
@@ -82,4 +80,14 @@ VALUES
     'image/jpeg',
     3.1,
     'https://picsum.photos/601'
+),
+(
+    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    '22222222-2222-2222-2222-222222222222',
+    '66666666-6666-6666-6666-666666666666',
+    'Photo mariage',
+    'mariage.jpg',
+    'image/jpeg',
+    1.8,
+    'https://picsum.photos/602'
 );

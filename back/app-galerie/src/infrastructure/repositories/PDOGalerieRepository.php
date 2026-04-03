@@ -164,7 +164,7 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
     public function findPublicGaleries(): array
     {
-        $sql = "SELECT * FROM galleries WHERE is_public = 1 AND is_published = 1 ORDER BY published_at DESC";
+        $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true ORDER BY published_at DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
 

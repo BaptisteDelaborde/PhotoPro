@@ -8,7 +8,7 @@ use gateway\api\actions\UploadPhotoGatewayAction;
 
 return function (App $app) {
     $container = $app->getContainer();
-    
+
     $app->get('/', function ($request, $response) {
         $response->getBody()->write(json_encode([
             'message' => 'API Gateway PhotoPro Backoffice',
@@ -26,7 +26,11 @@ return function (App $app) {
     $app->post('/auth/signin', GenericGatewayAction::class);
     $app->post('/auth/signup', GenericGatewayAction::class);
     $app->post('/auth/refresh', GenericGatewayAction::class);
-    $app->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
+
+    // Route upload photo protégée par JWT
+    $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
+    })->add($validateTokenMiddleware::class);
 
     //Autres routes qui passent par le GenericGatewayAction avec le middleware de validation de token
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {

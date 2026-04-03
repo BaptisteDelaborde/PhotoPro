@@ -20,12 +20,20 @@ return [
         ]);
     },
 
+    'client.storage' => function (Container $c) {
+        $settings = $c->get('settings');
+        return new Client([
+            'base_uri' => $settings['services']['api_storage'],
+        ]);
+    },
+
     GenericGatewayAction::class => function (Container $c) {
         return new GenericGatewayAction(
             $c->get('client.galerie'),
             $c->get('client.auth')
         );
     },
+
 
     ValidateTokenMiddleware::class => function (Container $c) {
         return new ValidateTokenMiddleware(

@@ -1,7 +1,7 @@
 meta {
   name: Créer Galerie Publique
   type: http
-  seq: 6
+  seq: 5
 }
 
 post {
@@ -25,4 +25,9 @@ body:json {
     "is_public": true,
     "layout": "grid"
   }
+}
+
+script:post-response {
+  const data = res.getBody();
+  bru.setVar("galerie_pub_id", data.id);
 }
