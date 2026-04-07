@@ -28,7 +28,7 @@ onMounted(async () => {
         id: g.id,
         titre: g.title || g.titre || 'Sans titre',
         type: g.is_public ? 'Publique' : 'Privée',
-        est_publiee: g.is_public,
+        est_publiee: g.is_published,
         cover: g.cover_photo_id ? `${import.meta.env.VITE_API_BASE_URL}/photos/${g.cover_photo_id}/storage` : null
       }))
     } catch (error) {
@@ -45,6 +45,21 @@ const filteredGalleries = computed(() => {
     return matchType && matchQuery
   })
 })
+
+const togglePublish = async (g: Gallery) => {
+  try {
+    const nouveauStatut = !g.est_publiee;
+
+    // Appel à l'API pour changer le statut
+    await apiGestion.updateGalerieStatus(g.id, { is_published: nouveauStatut });
+
+    // Mise à jour de l'affichage local si succès
+    g.est_publiee = nouveauStatut;
+  } catch (error) {
+    console.error(error);
+    window.alert("Erreur lors de la modification du statut.");
+  }
+}
 
 const goToCreate = () => {
   if (!authStore.isAuthenticated) {
@@ -105,18 +120,9 @@ const initials = (titre: string | undefined) => {
     </header>
 
     <section v-if="filteredGalleries.length" class="cards">
-      <article
-          v-for="g in filteredGalleries"
-          :key="g.id"
-          class="card"
-          @click="goToGalleryDetails(g.id)"
-          role="button"
-          tabindex="0"
-      >
-        <div
-            class="cover"
-            :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}"
-        >
+      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id)" role="button"
+        tabindex="0">
+        <div class="cover" :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}">
           <div v-if="!g.cover" class="placeholder">{{ initials(g.titre) }}</div>
           <div class="overlay">
             <h3>{{ g.titre }}</h3>
@@ -130,6 +136,11 @@ const initials = (titre: string | undefined) => {
         <div class="actions">
           <button class="btn-outline" @click.stop="goToGalleryDetails(g.id)">Voir</button>
           <button class="btn-ghost" @click.stop="showPreview('Prévisualisation : ' + g.titre)">Prévisualiser</button>
+
+          <button class="btn-outline" :class="g.est_publiee ? 'btn-danger' : 'btn-success'"
+            @click.stop="togglePublish(g)">
+            {{ g.est_publiee ? 'Dépublier' : 'Publier' }}
+          </button>
         </div>
       </article>
     </section>
@@ -194,7 +205,7 @@ const initials = (titre: string | undefined) => {
 }
 
 .btn-primary {
-  background: linear-gradient(90deg,#1f2937,#374151);
+  background: linear-gradient(90deg, #1f2937, #374151);
   color: #fff;
   border: none;
   padding: 8px 12px;
@@ -217,13 +228,13 @@ const initials = (titre: string | undefined) => {
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 8px 24px rgba(2,6,23,0.06);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
   transition: transform .15s ease, box-shadow .15s ease;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(2,6,23,0.08);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.08);
 }
 
 .cover {
@@ -238,19 +249,19 @@ const initials = (titre: string | undefined) => {
 .placeholder {
   width: 100%;
   height: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(135deg,#f3f4f6,#e5e7eb);
-  color:#374151;
-  font-weight:700;
-  font-size:28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  color: #374151;
+  font-weight: 700;
+  font-size: 28px;
 }
 
 .overlay {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(2,6,23,0.45) 60%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(2, 6, 23, 0.45) 60%);
   color: #fff;
 }
 
@@ -262,30 +273,30 @@ const initials = (titre: string | undefined) => {
 
 .meta {
   margin-top: 6px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  font-size:12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
   opacity: 0.95;
 }
 
 .type {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   padding: 4px 8px;
   border-radius: 999px;
 }
 
 .status {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   padding: 4px 8px;
   border-radius: 999px;
 }
 
 .actions {
-  display:flex;
-  gap:10px;
+  display: flex;
+  gap: 10px;
   padding: 12px;
-  align-items:center;
+  align-items: center;
 }
 
 .btn-outline {
@@ -307,7 +318,7 @@ const initials = (titre: string | undefined) => {
   text-align: center;
   padding: 40px 20px;
   color: #6b7280;
-  background: linear-gradient(180deg,#fbfdff,#ffffff);
+  background: linear-gradient(180deg, #fbfdff, #ffffff);
   border-radius: 12px;
   border: 1px dashed #e6edf3;
 }

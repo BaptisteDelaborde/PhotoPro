@@ -19,6 +19,16 @@ axiosInstance.interceptors.request.use(config => {
 
 export const apiGestion = {
 
+  async updateGalerieStatus(id, donnees) {
+    try {
+      const res = await axiosInstance.patch(`/galeries/${id}/status`, donnees)
+      return res.data
+    } catch (error) {
+      console.error('Erreur mise à jour statut:', error)
+      throw error
+    }
+  },
+  
   async creerGalerie(donnees) {
     console.log("POST /galeries", donnees);
     try {

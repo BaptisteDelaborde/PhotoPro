@@ -48,11 +48,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(email: string, password: string, role: number = 0) {
+  async function register(email: string, mdp: string, firstName: string, lastName: string, pseudo: string, phone: string, role: number = 0) {
     try {
       const res = await axios.post(`${API_BASE_URL}/auth/signup`, {
           email: email,
-          password: password,
+          password: mdp,
+          first_name: firstName,
+          last_name: lastName,
+          pseudo: pseudo,
+          phone: phone,
           role: role
       });
 
