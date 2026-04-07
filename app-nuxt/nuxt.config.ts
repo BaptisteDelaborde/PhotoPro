@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/main.css',
   ],
+  devServer: {
+    host: '0.0.0.0',
+    allowedHosts: ['docketu.iutnc.univ-lorraine.fr'],
+  },
   runtimeConfig: {
     public: {
       apiFrontofficeUrl: process.env.NUXT_PUBLIC_API_FRONTOFFICE_URL || 'http://localhost:8082',
