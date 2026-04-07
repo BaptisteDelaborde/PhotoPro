@@ -18,31 +18,26 @@ class LinkPhotoToGalerieAction
 
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $photographerId = $args['id'];
         $photoId = $args['photo_id'];
         $data = $request->getParsedBody() ?? [];
         
-        $galerieId = !empty($data['galerie_id']) ? $data['galerie_id'] : null;
+        $galerieId = $data['galerie_id'] ?? null;
+        $action = $data['action'] ?? 'add';
+
+        if (!$galerieId) {
+            $response->getBody()->write(json_encode(['error' => 'galerie_id manquant']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
 
         try {
-            $stmt = $this->pdo->prepare("
-                UPDATE photos 
-                SET galerie_id = :galerie_id 
-                WHERE id = :id AND photographer_id = :photographer_id
-            ");
-            
-            $stmt->execute([
-                'galerie_id' => $galerieId,
-                'id' => $photoId,
-                'photographer_id' => $photographerId
-            ]);
+            if ($action === 'add') {
+                $stmt = $this->pdo->prepare("INSERT INTO gallery_photos (gallery_id, photo_id) VALUES (:g, :p) ON CONFLICT DO NOTHING");
+            } else {
+                $stmt = $this->pdo->prepare("DELETE FROM gallery_photos WHERE gallery_id = :g AND photo_id = :p");
+            }
+            $stmt->execute(['g' => $galerieId, 'p' => $photoId]);
 
-            $response->getBody()->write(json_encode([
-                'message' => 'Statut de la photo mis à jour',
-                'photo_id' => $photoId,
-                'galerie_id' => $galerieId
-            ]));
-
+            $response->getBody()->write(json_encode(['message' => 'Liaison mise à jour']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
 
         } catch (\Exception $e) {

@@ -37,7 +37,7 @@ return [
     },
 
     GetPhotosAction::class => function (ContainerInterface $c) {
-        return new GetPhotosAction($c->get(ServiceGalerieInterface::class));
+        return new GetPhotosAction($c);
     },
 
     GetPublicGaleriesAction::class => function (ContainerInterface $c) {

@@ -70,8 +70,8 @@ const openStorageModal = async () => {
   try {
     const data = await apiGestion.getStoragePhotos(photographeId.value)
     const allPhotos = data.photos || data || []
-    storagePhotos.value = allPhotos.filter((p: Photo) => p.galerie_id !== galleryId)
-  } catch (err) {
+    const currentPhotoIds = new Set(photos.value.map(p => p.id));
+    storagePhotos.value = allPhotos.filter((p: Photo) => !currentPhotoIds.has(p.id));  } catch (err) {
     alert("Impossible de charger votre bibliothèque")
   } finally {
     loadingStorage.value = false
@@ -92,7 +92,7 @@ const confirmSelection = async () => {
 
   try {
     const promises = Array.from(selectedPhotos.value).map(photoId => 
-      apiGestion.linkPhotoToGallery(photographeId.value, photoId, galleryId)
+        apiGestion.linkPhotoToGallery(photographeId.value, photoId, galleryId, 'add')
     )
     await Promise.all(promises)
     
@@ -109,7 +109,8 @@ const handleRemoveFromGallery = async (photoId: string | number) => {
   if (!window.confirm("Voulez-vous retirer cette photo de la galerie ? (Elle restera dans votre stockage global)")) return
 
   try {
-    await apiGestion.linkPhotoToGallery(photographeId.value, photoId, null)
+    await apiGestion.linkPhotoToGallery(photographeId.value, photoId, galleryId, 'remove')
+    
     photos.value = photos.value.filter(p => p.id !== photoId)
   } catch (err) {
     alert('Impossible de retirer la photo.')

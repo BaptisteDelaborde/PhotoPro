@@ -111,7 +111,7 @@ const getPhotoUrl = (photo) => {
                     </div>
                     <div class="photo-info">
                         <p class="photo-url" :title="getPhotoUrl(photo)">Lien S3 actif</p>
-                        <p class="photo-id">Statut: {{ photo.galerie_id ? 'Dans une galerie' : 'Non assignée' }}</p>
+                        <p class="photo-id">Statut: {{ photo.in_galleries_count > 0 ? `Dans ${photo.in_galleries_count} galerie(s)` : 'Non assignée' }}</p>
                     </div>
                 </div>
             </div>

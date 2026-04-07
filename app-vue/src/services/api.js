@@ -121,11 +121,12 @@ export const apiGestion = {
     return res.data
   },
 
-  async linkPhotoToGallery(photographeId, photoId, galerieId) {
-    console.log(`PATCH /photographes/${photographeId}/photos/${photoId}`);
+  async linkPhotoToGallery(photographeId, photoId, galerieId, action = 'add') {
+    console.log(`PATCH /photographes/${photographeId}/photos/${photoId} (Action: ${action})`);
     try {
       const res = await axiosInstance.patch(`/photographes/${photographeId}/photos/${photoId}`, {
-        galerie_id: galerieId
+        galerie_id: galerieId,
+        action: action
       });
       return res.data;
     } catch (error) {
