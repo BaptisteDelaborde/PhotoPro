@@ -5,9 +5,10 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/main.css',
   ],
-  devServer: {
-    host: '0.0.0.0',
-    allowedHosts: ['docketu.iutnc.univ-lorraine.fr'],
+  vite: {
+    server: {
+      allowedHosts: 'all',
+    },
   },
   runtimeConfig: {
     public: {
