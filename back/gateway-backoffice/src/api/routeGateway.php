@@ -5,6 +5,7 @@ use Slim\App;
 use gateway\api\middleware\ValidateTokenMiddleware;
 use gateway\api\actions\UploadPhotoGatewayAction;
 use gateway\api\actions\DeletePhotoGatewayAction;
+use gateway\api\actions\UpdateGalerieGatewayAction; 
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -27,9 +28,14 @@ return function (App $app) {
     $app->post('/auth/refresh', GenericGatewayAction::class);
 
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
-        $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
         
+        $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
         $group->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', DeletePhotoGatewayAction::class);
+        
+        $group->put('/photographes/{id}/galeries/{galerie_id}', UpdateGalerieGatewayAction::class);
+        
+        $group->post('/photographes/{id}/photos', UploadPhotoGatewayAction::class);
+        $group->get('/photographes/{id}/photos', GenericGatewayAction::class);
         
     })->add($validateTokenMiddleware::class);
 

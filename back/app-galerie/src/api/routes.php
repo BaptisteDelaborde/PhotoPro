@@ -15,6 +15,8 @@ use photopro\api\actions\UpdateGalerieAction;
 use photopro\api\actions\DeleteGalerieAction;
 use photopro\api\actions\AddCommentaireAction;
 use photopro\api\actions\GetCommentairesAction;
+use photopro\api\actions\GetPhotographerPhotosAction;
+use photopro\api\actions\AddPhotoToStorageAction;
 
 return function (\Slim\App $app): \Slim\App {
 
@@ -47,6 +49,9 @@ return function (\Slim\App $app): \Slim\App {
         ->add(AuthnMiddleware::class);
     $app->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', \photopro\api\actions\DeletePhotoAction::class)
         ->add(AuthnMiddleware::class);
+
+    $app->post('/photographes/{id}/photos', \photopro\api\actions\AddPhotoToStorageAction::class)->add(AuthnMiddleware::class);
+    $app->get('/photographes/{id}/photos', \photopro\api\actions\GetPhotographerPhotosAction::class)->add(AuthnMiddleware::class);
 
     return $app;
 };

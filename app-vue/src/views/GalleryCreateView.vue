@@ -25,11 +25,14 @@ const submitGallery = async () => {
             is_public: typeGalerie.value === 'publique',
             layout: miseEnPage.value,
             client_name: typeGalerie.value === 'privee' ? nomClient.value : null,
-            client_email: typeGalerie.value === 'privee' ? emailClient.value : null
+            client_email: typeGalerie.value === 'privee' ? emailClient.value : null,
+            photographe_id: authStore.photographerId 
         }
 
         console.log('Données envoyées à l\'API :', payload)
-        await apiGestion.post('/galeries', payload)
+        
+        await apiGestion.creerGalerie(payload) 
+        
         router.push('/galeries')
     } catch (error) {
         errorMsg.value = 'Une erreur est survenue lors de la création de la galerie.'
