@@ -13,6 +13,8 @@ use photopro\api\actions\GetGalerieAction;
 use photopro\api\actions\UpdateGalerieStatusAction;
 use photopro\api\actions\UpdateGalerieAction;
 use photopro\api\actions\DeleteGalerieAction;
+use photopro\api\actions\AddCommentaireAction;
+use photopro\api\actions\GetCommentairesAction;
 
 return function (\Slim\App $app): \Slim\App {
 
@@ -27,6 +29,8 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/galeries/publiques', GetPublicGaleriesAction::class);
     $app->get('/galeries/code/{code}', GetGalerieByCodeAction::class);
     $app->get('/galeries/{id}/photos', GetPublicGaleriePhotosAction::class);
+    $app->post('/galeries/{id}/photos/{photo_id}/commentaires', AddCommentaireAction::class);
+    $app->get('/galeries/{id}/photos/{photo_id}/commentaires', GetCommentairesAction::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)

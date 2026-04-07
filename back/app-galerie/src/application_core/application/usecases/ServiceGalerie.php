@@ -296,4 +296,19 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         return $s3Key;
     }
+
+    public function addCommentaire(string $photoId, string $content, ?string $authorName): array
+    {
+        $photo = $this->galerieRepository->getPhotoById($photoId);
+        if (!$photo) {
+            throw new \Exception("Photo introuvable.", 404);
+        }
+
+        return $this->galerieRepository->saveCommentaire($photoId, $content, $authorName);
+    }
+
+    public function getCommentaires(string $photoId): array
+    {
+        return $this->galerieRepository->getCommentairesByPhotoId($photoId);
+    }
 }

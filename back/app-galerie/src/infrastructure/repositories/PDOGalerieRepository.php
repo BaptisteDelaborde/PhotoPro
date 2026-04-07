@@ -266,4 +266,33 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function saveCommentaire(string $photoId, string $content, ?string $authorName): array
+    {
+        $id = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $sql = "INSERT INTO comments (id, photo_id, author_name, content) VALUES (:id, :photo_id, :author_name, :content)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id'          => $id,
+            'photo_id'    => $photoId,
+            'author_name' => $authorName,
+            'content'     => $content,
+        ]);
+
+        return [
+            'id'          => $id,
+            'photo_id'    => $photoId,
+            'author_name' => $authorName,
+            'content'     => $content,
+            'created_at'  => date('Y-m-d H:i:s'),
+        ];
+    }
+
+    public function getCommentairesByPhotoId(string $photoId): array
+    {
+        $sql = "SELECT * FROM comments WHERE photo_id = :photo_id ORDER BY created_at ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['photo_id' => $photoId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

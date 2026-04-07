@@ -97,4 +97,8 @@ interface ServiceGalerieInterface
     public function getPhotosByGalerie(string $galerieId): array;
 
     public function deletePhoto(string $photoId): string;
+
+    public function addCommentaire(string $photoId, string $content, ?string $authorName): array;
+
+    public function getCommentaires(string $photoId): array;
 }
