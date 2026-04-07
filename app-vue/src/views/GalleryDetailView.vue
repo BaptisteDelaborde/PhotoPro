@@ -39,8 +39,31 @@ const isAddingPhotos = ref(false)
 
 const galleryId = route.params.id as string
 const galleryTitle = (route.query.title as string) || (route.params.title as string) || 'Galerie'
+const routeLayout = (route.query.layout as string) || undefined
 
 const photographeId = computed(() => authStore.photographerId)
+
+const fetchGalleryMeta = async () => {
+  try {
+    const data = await apiGestion.getGalerie(galleryId)
+    const g = data.galerie || data.item || data
+    if (g && typeof g === 'object') {
+      gallery.value = {
+        id: galleryId,
+        title: g.title || g.titre || galleryTitle,
+        description: g.description,
+        is_public: !!g.is_public,
+        is_published: !!g.is_published,
+        layout: g.layout || routeLayout || 'grid'
+      }
+    }
+  } catch {
+    // fallback
+    if (gallery.value) {
+      gallery.value.layout = gallery.value.layout || routeLayout || 'grid'
+    }
+  }
+}
 
 const fetchPhotos = async () => {
   loading.value = true
@@ -60,13 +83,7 @@ onMounted(async () => {
     router.push('/connexion')
     return
   }
-  gallery.value = {
-    id: galleryId,
-    title: galleryTitle,
-    is_public: true,
-    is_published: true
-  }
-
+  await fetchGalleryMeta()
   await fetchPhotos()
 })
 
@@ -139,6 +156,11 @@ const getPhotoUrl = (photo: Photo) => {
 
   return link;
 }
+
+const normalizedLayout = computed<'grid' | 'masonry'>(() => {
+  const l = (gallery.value?.layout || 'grid').toString().toLowerCase()
+  return l === 'masonry' ? 'masonry' : 'grid'
+})
 </script>
 
 <template>
@@ -161,7 +183,7 @@ const getPhotoUrl = (photo: Photo) => {
       <button class="btn-primary" @click="fetchPhotos">Réessayer</button>
     </div>
 
-    <div v-else-if="photos.length" class="photos-grid">
+    <div v-else-if="photos.length" :class="['photos-grid', normalizedLayout === 'masonry' ? 'photos-grid--masonry' : 'photos-grid--grid']">
       <div v-for="photo in photos" :key="photo.id" class="photo-card">
         <img :src="getPhotoUrl(photo)" :alt="photo.title || 'Photo'" class="photo-image"/>
 
@@ -297,6 +319,37 @@ const getPhotoUrl = (photo: Photo) => {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 24px;
+}
+
+.photos-grid--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.photos-grid--masonry {
+  display: block;
+  column-count: 3;
+  column-gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .photos-grid--masonry { column-count: 2; }
+}
+
+@media (max-width: 700px) {
+  .photos-grid--masonry { column-count: 1; }
+}
+
+.photos-grid--masonry .photo-card {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 20px;
+}
+
+.photos-grid--masonry .photo-image {
+  height: auto;
 }
 
 .photo-card {
