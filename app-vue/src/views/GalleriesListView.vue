@@ -45,7 +45,6 @@ onMounted(async () => {
   }
 });
 
-// --- Ta logique (Gestion de la couverture) ---
 const triggerCoverUpload = (id: string | number) => {
   targetGalleryId.value = id
   fileInput.value?.click()
@@ -92,10 +91,10 @@ const togglePublish = async (g: Gallery) => {
   try {
     const nouveauStatut = !g.est_publiee;
 
-    // Appel à l'API pour changer le statut
+    //Appel à l'API pour changer le statut
     await apiGestion.updateGalerieStatus(g.id, {is_published: nouveauStatut});
 
-    // Mise à jour de l'affichage local si succès
+    //Mise à jour de l'affichage local si succès
     g.est_publiee = nouveauStatut;
   } catch (error) {
     console.error(error);
@@ -191,7 +190,6 @@ const initials = (titre: string | undefined) => {
 </template>
 
 <style scoped>
-/* Fusion des styles */
 .gallery-page {
   max-width: 1100px;
   margin: 28px auto;
