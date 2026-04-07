@@ -138,5 +138,15 @@ export const apiGestion = {
   async get(endpoint) {
     const res = await axiosInstance.get(endpoint)
     return res.data
+  },
+
+  async getGalerie(galerieId) {
+    try {
+      const res = await axiosInstance.get(`/galeries/${galerieId}`)
+      return res.data
+    } catch (error) {
+      console.error('Erreur récupération galerie:', error)
+      throw error
+    }
   }
 };
