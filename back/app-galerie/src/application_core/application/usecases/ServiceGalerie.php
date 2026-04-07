@@ -130,7 +130,9 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
                 'mime_type' => $photo->getMimeType(),
                 'file_size' => $photo->getFileSize(),
                 's3_key' => $photo->getStorageUrl(),
-                'url' => $s3Endpoint . '/' . $s3Bucket . '/' . $photo->getStorageUrl(),
+                'url' => str_starts_with($photo->getStorageUrl(), 'http')
+                    ? $photo->getStorageUrl()
+                    : $s3Endpoint . '/' . $s3Bucket . '/' . $photo->getStorageUrl(),
                 'uploaded_at' => $photo->getUploadedAt()
             ];
         }

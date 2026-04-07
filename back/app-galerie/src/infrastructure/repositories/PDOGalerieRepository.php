@@ -165,29 +165,32 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute();
     }
 
-    public function getPhotosByGalerieId(string $galerieId): array 
-        {
-            $sql = "SELECT * FROM photos WHERE galerie_id = :galerie_id ORDER BY uploaded_at DESC";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':galerie_id', $galerieId);
-            $stmt->execute();
+    public function getPhotosByGalerieId(string $galerieId): array
+    {
+        $sql = "SELECT p.* FROM photos p
+                INNER JOIN gallery_photos gp ON p.id = gp.photo_id
+                WHERE gp.gallery_id = :galerie_id
+                ORDER BY gp.added_at DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':galerie_id', $galerieId);
+        $stmt->execute();
 
-            $photos = [];
-            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $photos[] = new Photo(
-                    $row['id'],
-                    $row['photographer_id'],
-                    $row['galerie_id'],
-                    $row['file_name'],
-                    $row['mime_type'],
-                    (float) $row['file_size'],
-                    $row['storage_url'],
-                    $row['uploaded_at'],
-                    $row['title']
-                );
-            }
-            return $photos;
+        $photos = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $photos[] = new Photo(
+                $row['id'],
+                $row['photographer_id'],
+                $galerieId,
+                $row['file_name'],
+                $row['mime_type'],
+                (float) $row['file_size'],
+                $row['storage_url'],
+                $row['uploaded_at'],
+                $row['title']
+            );
         }
+        return $photos;
+    }
 
     public function findPublicGaleries(?string $photographerId = null): array {
         $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true";
@@ -336,32 +339,19 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
     public function getAllPhotographes(): array {
         $sql = "SELECT id, first_name, last_name, pseudo FROM photographes ORDER BY first_name ASC";
 
-        try {
-            $stmt = $this->pdo->query($sql);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            if ($e->getCode() === '42P01') {
-                $host = $_ENV['AUTH_DB_HOST'] ?? 'auth.db';
-                $port = $_ENV['AUTH_DB_PORT'] ?? 5432;
-                $db   = $_ENV['AUTH_POSTGRES_DB'] ?? $_ENV['AUTH_DB_NAME'] ?? 'photopro_auth';
-                $user = $_ENV['AUTH_POSTGRES_USER'] ?? $_ENV['AUTH_DB_USER'] ?? 'photopro';
-                $pass = $_ENV['AUTH_POSTGRES_PASSWORD'] ?? $_ENV['AUTH_DB_PASSWORD'] ?? 'photopro';
+        $host = $_ENV['AUTH_DB_HOST'] ?? 'auth.db';
+        $port = $_ENV['AUTH_DB_PORT'] ?? 5432;
+        $db   = $_ENV['AUTH_POSTGRES_DB'] ?? 'photopro_auth';
+        $user = $_ENV['AUTH_POSTGRES_USER'] ?? 'photopro';
+        $pass = $_ENV['AUTH_POSTGRES_PASSWORD'] ?? 'photopro';
 
-                $dsn = "pgsql:host=$host;port=$port;dbname=$db";
-                try {
-                    $authPdo = new \PDO($dsn, $user, $pass, [
-                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-                    ]);
+        $dsn = "pgsql:host=$host;port=$port;dbname=$db";
+        $authPdo = new \PDO($dsn, $user, $pass, [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+        ]);
 
-                    $stmt = $authPdo->query($sql);
-                    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                } catch (\PDOException $e2) {
-                    throw $e2;
-                }
-            }
-
-            throw $e;
-        }
+        $stmt = $authPdo->query($sql);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

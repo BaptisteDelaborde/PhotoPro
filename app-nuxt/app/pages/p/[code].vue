@@ -31,7 +31,7 @@
             class="photo-item"
             @click="openLightbox(index)"
         >
-          <img :src="`${config.public.s3Url}/${photo.s3_key}`" :alt="photo.title || 'Photo'" loading="lazy" />
+          <img :src="photo.url" :alt="photo.title || 'Photo'" loading="lazy" />
         </div>
       </div>
 
@@ -74,7 +74,7 @@ const selectedIndex = ref(0)
 const formattedPhotosForLightbox = computed(() => {
   if (!photos.value) return []
   return photos.value.map(photo => ({
-    url: `${config.public.s3Url}/${photo.s3_key || photo.file_name}`,
+    url: photo.url,
     title: photo.title || ''
   }))
 })
