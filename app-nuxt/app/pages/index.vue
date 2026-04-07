@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+
 const config = useRuntimeConfig()
 const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 const router = useRouter()
@@ -18,6 +19,8 @@ const goToPrivateGallery = () => {
 }
 
 const selectedPhotographer = ref('')
+
+const { data: photographes } = await useFetch(`${apiBase}/photographes`)
 
 const { data: galeries, pending, error, refresh } = await useFetch(`${apiBase}/galeries/publiques`, {
   query: { photographer_id: selectedPhotographer }
@@ -36,7 +39,7 @@ const { data: galeries, pending, error, refresh } = await useFetch(`${apiBase}/g
           <input
               v-model="inputCode"
               type="text"
-              placeholder="Ex: ABCDEF12"
+              placeholder="Ex: ABCD12"
               required
               class="code-input"
           />
@@ -56,7 +59,15 @@ const { data: galeries, pending, error, refresh } = await useFetch(`${apiBase}/g
         <label for="photographer">Filtrer par :</label>
         <select id="photographer" v-model="selectedPhotographer" @change="refresh" class="filter-select">
           <option value="">Tous les photographes</option>
-          <option value="11111111-1111-1111-1111-111111111111">Alice</option>
+
+          <option
+              v-for="photographe in photographes"
+              :key="photographe.id"
+              :value="photographe.id"
+          >
+            {{ photographe.first_name }} {{ photographe.last_name }}
+          </option>
+
         </select>
       </div>
     </header>
