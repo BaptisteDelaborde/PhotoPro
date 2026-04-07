@@ -23,6 +23,8 @@ const confirmLogout = (event: Event) => {
     <nav>
       <RouterLink v-if="authStore.isAuthenticated" to="/galeries">Mes Galeries</RouterLink>
       <RouterLink v-if="authStore.isAuthenticated" to="/stockage">Mon Stockage</RouterLink>
+      <RouterLink v-if="authStore.isAuthenticated" to="/profil">Mon Profil</RouterLink>
+
       <RouterLink v-if="!authStore.isAuthenticated" to="/connexion">Connexion</RouterLink>
       <RouterLink v-if="!authStore.isAuthenticated" to="/register">Inscription</RouterLink>
       <RouterLink v-if="authStore.isAuthenticated" to="/connexion" @click="confirmLogout">Déconnexion</RouterLink>
