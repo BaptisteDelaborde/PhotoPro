@@ -91,13 +91,27 @@ class GalleryCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: gallery.coverPhotoId != null
-                  ? Image.network(
-                      '${ApiConfig.baseUrl}/photos/${gallery.coverPhotoId}/storage',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: Colors.blueGrey[50],
-                        child: const Icon(Icons.image_outlined, size: 40, color: Colors.blueGrey),
-                      ),
+                  ? Builder(
+                      builder: (context) {
+                        String url = gallery.coverPhotoId!;
+                        if (!url.startsWith('http')) {
+                          url = '${ApiConfig.baseUrl}/photos/$url/storage';
+                        }
+                        final httpIndex = url.indexOf('http', 4);
+                        if (httpIndex != -1) {
+                          url = url.substring(httpIndex);
+                        } else if (Theme.of(context).platform == TargetPlatform.android && url.contains('localhost')) {
+                          url = url.replaceAll('localhost', '10.0.2.2');
+                        }
+                        return Image.network(
+                          url,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: Colors.blueGrey[50],
+                            child: const Icon(Icons.image_outlined, size: 40, color: Colors.blueGrey),
+                          ),
+                        );
+                      }
                     )
                   : Container(
                       decoration: const BoxDecoration(

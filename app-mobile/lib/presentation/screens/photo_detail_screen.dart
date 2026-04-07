@@ -65,6 +65,20 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final photosAsync = ref.watch(galleryPhotosProvider(widget.galleryId));
+    final photo = photosAsync.valueOrNull?.items.firstWhere(
+      (p) => p.remoteId == widget.photoId,
+    );
+
+    String imageUrl = photo?.storageUrl ?? '';
+
+    final httpIndex = imageUrl.indexOf('http', 4);
+    if (httpIndex != -1) {
+      imageUrl = imageUrl.substring(httpIndex);
+    } else if (Theme.of(context).platform == TargetPlatform.android && imageUrl.contains('localhost')) {
+      imageUrl = imageUrl.replaceAll('localhost', '10.0.2.2');
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Photo')),
       body: SingleChildScrollView(
@@ -72,11 +86,22 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
           children: [
             Hero(
               tag: 'photo_${widget.photoId}',
-              child: Image.network(
-                '${ApiConfig.baseUrl}/photos/${widget.photoId}/storage',
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
+              child: imageUrl.isEmpty
+                  ? Container(
+                      height: 200,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image, size: 50),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 200,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 50),
+                      ),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

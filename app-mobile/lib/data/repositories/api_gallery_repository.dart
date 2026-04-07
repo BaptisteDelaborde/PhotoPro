@@ -91,7 +91,7 @@ class ApiGalleryRepository implements GalleryRepository {
       late PaginatedResponse<PhotoModel> paginatedResponse;
       final responseData = response.data;
       
-      if (responseData == null || (responseData is String && responseData.isEmpty)) {
+        if (responseData == null || (responseData is String && responseData.isEmpty)) {
         paginatedResponse = PaginatedResponse<PhotoModel>(
           items: [],
           totalCount: 0,
