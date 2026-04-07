@@ -1,5 +1,7 @@
 <?php
 
+use photopro\api\actions\AddCommentaireAction;
+use photopro\api\actions\GetCommentairesAction;
 use photopro\api\actions\GetPublicGaleriePhotosAction;
 use Psr\Container\ContainerInterface;
 use photopro\api\actions\AddPhotoAction;
@@ -58,6 +60,14 @@ return [
 
     UpdateGalerieAction::class => function (ContainerInterface $c) {
         return new UpdateGalerieAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    AddCommentaireAction::class => function (ContainerInterface $c) {
+        return new AddCommentaireAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    GetCommentairesAction::class => function (ContainerInterface $c) {
+        return new GetCommentairesAction($c->get(ServiceGalerieInterface::class));
     },
 
         \photopro\api\actions\DeletePhotoAction::class => function (\Psr\Container\ContainerInterface $c) {

@@ -27,6 +27,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
   }
 
   Future<void> _submitComment() async {
+    FocusScope.of(context).unfocus();
     final nickname = _nicknameController.text.trim();
     final content = _contentController.text.trim();
 
