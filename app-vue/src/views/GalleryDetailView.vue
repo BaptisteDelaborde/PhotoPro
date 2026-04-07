@@ -31,7 +31,6 @@ const photos = ref<Photo[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-// 🌟 Variables pour la Modale de Stockage
 const showStorageModal = ref(false)
 const storagePhotos = ref<Photo[]>([])
 const loadingStorage = ref(false)
