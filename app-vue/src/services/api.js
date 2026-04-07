@@ -116,10 +116,22 @@ export const apiGestion = {
     }
   },
 
-  // Méthodes génériques
   async post(endpoint, data) {
     const res = await axiosInstance.post(endpoint, data)
     return res.data
+  },
+
+  async linkPhotoToGallery(photographeId, photoId, galerieId) {
+    console.log(`PATCH /photographes/${photographeId}/photos/${photoId}`);
+    try {
+      const res = await axiosInstance.patch(`/photographes/${photographeId}/photos/${photoId}`, {
+        galerie_id: galerieId
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Erreur liaison photo:', error);
+      throw error;
+    }
   },
 
   async get(endpoint) {

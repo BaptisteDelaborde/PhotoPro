@@ -20,7 +20,6 @@ class UploadGlobalPhotoGatewayAction
 
         $uploadedFile = $uploadedFiles['photo'];
 
-        // 🌟 CORRECTION : On récupère le Token envoyé par Vue.js
         $authHeader = $request->getHeaderLine('Authorization');
 
         $client = new Client([
@@ -28,9 +27,7 @@ class UploadGlobalPhotoGatewayAction
         ]);
 
         try {
-            // On transfère le fichier vers l'API Galerie
             $res = $client->post('/photographes/' . $photographeId . '/photos', [
-                // 🌟 CORRECTION : On glisse le Token dans le colis pour passer la douane du microservice !
                 'headers' => [
                     'Authorization' => $authHeader
                 ],

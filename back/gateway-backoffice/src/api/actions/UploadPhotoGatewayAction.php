@@ -27,7 +27,6 @@ class UploadPhotoGatewayAction
             // ========================================================
             // ÉTAPE 1 : ENVOI AU MICROSERVICE STORAGE
             // ========================================================
-            // On convertit le fichier Psr7 UploadedFile en ressource pour Guzzle
             $stream = $photo->getStream()->detach();
 
             $storageResponse = $client->post('http://api_storage:80/upload', [
@@ -50,8 +49,7 @@ class UploadPhotoGatewayAction
             // ========================================================
             // ÉTAPE 2 : ENVOI AU MICROSERVICE GALERIE
             // ========================================================
-            // On prépare le JSON à envoyer à l'API Galerie
-$galeriePayload = [
+            $galeriePayload = [
                 'file_name' => $storageData['file_name'],
                 'mime_type' => $storageData['mime_type'],
                 'file_size' => $storageData['file_size'],
@@ -73,10 +71,9 @@ $galeriePayload = [
             // ========================================================
             // ÉTAPE 3 : RÉPONSE FINALE AU CLIENT FRONT-END
             // ========================================================
-$rawGalerieResponse = $galerieResponse->getBody()->getContents();
+            $rawGalerieResponse = $galerieResponse->getBody()->getContents();
             $finalData = json_decode($rawGalerieResponse, true);
             
-            // Si le JSON est invalide, on renvoie une erreur avec le contenu brut
             if (json_last_error() !== JSON_ERROR_NONE) {
                  throw new \Exception("L'API Galerie a renvoyé une réponse invalide (non-JSON) : " . $rawGalerieResponse);
             }
