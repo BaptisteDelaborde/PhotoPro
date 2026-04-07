@@ -1,7 +1,8 @@
 <script setup>
 const config = useRuntimeConfig()
+const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 
-const { data: galeries, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/publiques`)
+const { data: galeries, pending, error } = await useFetch(`${apiBase}/galeries/publiques`)
 </script>
 
 <template>

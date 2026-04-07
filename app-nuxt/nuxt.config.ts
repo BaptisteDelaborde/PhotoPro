@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    apiInternalUrl: process.env.NUXT_API_INTERNAL_URL || 'http://gateway_frontoffice:80',
     public: {
       apiFrontofficeUrl: process.env.NUXT_PUBLIC_API_FRONTOFFICE_URL || 'http://localhost:8082',
       s3Url: process.env.NUXT_PUBLIC_S3_URL || 'http://localhost:8333',

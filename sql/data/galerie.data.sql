@@ -13,10 +13,10 @@ INSERT INTO galleries (id, photographer_id, title, description, is_public, is_pu
     '11111111-1111-1111-1111-111111111111', -- ID d'Alice
     'Mariage de Claire & Marc',
     'Reportage complet du mariage au domaine des Chênes, une journée inoubliable.',
-    false, false, 'grid',
+    false, true, 'grid',
     'CLMARC26', 'http://localhost:8082/galeries/code/CLMARC26',
     'Claire et Marc', 'claire.marc@example.com',
-    '2026-04-01 09:00:00', NULL
+    '2026-04-01 09:00:00', '2026-04-02 10:00:00'
 );
 
 INSERT INTO photos (id, photographer_id, galerie_id, title, file_name, mime_type, file_size, storage_url) VALUES

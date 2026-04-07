@@ -58,11 +58,12 @@ import { useRoute } from 'vue-router'
 const config = useRuntimeConfig()
 const route = useRoute()
 const codeAcces = route.params.code
+const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 
-const { data: galerie, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/code/${codeAcces}`)
+const { data: galerie, pending, error } = await useFetch(`${apiBase}/galeries/code/${codeAcces}`)
 
 const { data: photos, pending: photosPending, error: photosError } = await useFetch(() => {
-  return galerie.value ? `${config.public.apiFrontofficeUrl}/galeries/${galerie.value.id}/photos` : null
+  return galerie.value ? `${apiBase}/galeries/${galerie.value.id}/photos` : null
 })
 
 const isLightboxOpen = ref(false)

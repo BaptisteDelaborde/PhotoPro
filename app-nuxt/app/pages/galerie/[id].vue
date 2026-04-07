@@ -7,8 +7,9 @@ import ImageLightbox from "~/components/ImageLightbox.vue";
 const config = useRuntimeConfig()
 const route = useRoute()
 const galerieId = route.params.id
+const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 
-const { data: photos, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/${galerieId}/photos`)
+const { data: photos, pending, error } = await useFetch(`${apiBase}/galeries/${galerieId}/photos`)
 
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
