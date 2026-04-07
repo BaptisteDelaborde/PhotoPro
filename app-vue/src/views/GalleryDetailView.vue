@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { apiGestion } from '../services/api'
@@ -9,6 +9,7 @@ type Photo = {
   title?: string
   file_name?: string
   storage_url?: string
+  url?: string
   uploaded_at?: string
 }
 
@@ -29,7 +30,28 @@ const photos = ref<Photo[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+const fileInput = ref<HTMLInputElement | null>(null)
+const isUploading = ref(false)
+
 const galleryId = route.params.id as string
+
+const photographeId = computed(() => {
+  return authStore.photographerId
+})
+
+const fetchPhotos = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const data = await apiGestion.getGalleryPhotos(photographeId.value, galleryId)
+    photos.value = data.photos || []
+  } catch (err) {
+    error.value = 'Impossible de charger les photos'
+    console.error('Erreur chargement photos:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 onMounted(async () => {
   if (!authStore.isAuthenticated) {
@@ -37,29 +59,57 @@ onMounted(async () => {
     return
   }
 
-  try {
-    const data = await apiGestion.getGalleryPhotos(galleryId)
-    photos.value = (Array.isArray(data) ? data : data.items || [])
-
-    gallery.value = {
-      id: galleryId,
-      title: 'Galerie',
-      is_public: true,
-      is_published: true
-    }
-  } catch (err) {
-    error.value = 'Impossible de charger les photos'
-    console.error('Erreur chargement photos:', err)
-  } finally {
-    loading.value = false
+  gallery.value = {
+    id: galleryId,
+    title: 'Ma Super Galerie',
+    is_public: true,
+    is_published: true
   }
+
+  await fetchPhotos()
 })
+
+const handleFileUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (!target.files || target.files.length === 0) return
+
+  const file = target.files[0]
+  isUploading.value = true
+
+  try {
+    await apiGestion.uploadPhoto(file, photographeId.value, galleryId)
+    
+    await fetchPhotos()
+  } catch (err) {
+    console.error('Erreur lors de l\'upload :', err)
+    alert('Une erreur est survenue lors de l\'envoi de la photo.')
+  } finally {
+    isUploading.value = false
+    if (fileInput.value) fileInput.value.value = ''
+  }
+}
+
+const handleDelete = async (photoId: string | number) => {
+  if (!window.confirm("Es-tu sûr de vouloir supprimer définitivement cette photo ?")) return
+
+  try {
+    await apiGestion.deletePhoto(photographeId.value, galleryId, photoId)
+    
+    photos.value = photos.value.filter(p => p.id !== photoId)
+  } catch (err) {
+    console.error('Erreur suppression :', err)
+    alert('Impossible de supprimer la photo.')
+  }
+}
 
 const goBack = () => {
   router.push('/galeries')
 }
 
 const getPhotoUrl = (photo: Photo) => {
+  if (photo.url) {
+    return photo.url
+  }
   if (photo.storage_url) {
     return photo.storage_url
   }
@@ -70,9 +120,28 @@ const getPhotoUrl = (photo: Photo) => {
 <template>
   <div class="gallery-detail">
     <header class="header">
-      <button class="btn-back" @click="goBack">← Retour</button>
-      <h1>{{ gallery?.title || 'Galerie' }}</h1>
-      <div style="width: 40px;"></div>
+      <div class="header-left">
+        <button class="btn-back" @click="goBack">← Retour</button>
+        <h1>{{ gallery?.title || 'Galerie' }}</h1>
+      </div>
+
+      <div class="header-actions">
+        <input 
+          type="file" 
+          accept="image/*" 
+          ref="fileInput" 
+          class="hidden-input" 
+          @change="handleFileUpload" 
+        />
+        <button 
+          class="btn-primary btn-upload" 
+          @click="fileInput?.click()" 
+          :disabled="isUploading"
+        >
+          <span v-if="isUploading" class="spinner"></span>
+          {{ isUploading ? 'Envoi en cours...' : '+ Ajouter une photo' }}
+        </button>
+      </div>
     </header>
 
     <div v-if="loading" class="loading">
@@ -81,21 +150,26 @@ const getPhotoUrl = (photo: Photo) => {
 
     <div v-else-if="error" class="error">
       <p>{{ error }}</p>
-      <button class="btn-primary" @click="goBack">Retour aux galeries</button>
+      <button class="btn-primary" @click="fetchPhotos">Réessayer</button>
     </div>
 
     <div v-else-if="photos.length" class="photos-grid">
       <div v-for="photo in photos" :key="photo.id" class="photo-card">
         <img :src="getPhotoUrl(photo)" :alt="photo.title || 'Photo'" class="photo-image" />
+        
         <div class="photo-info">
-          <p class="photo-title">{{ photo.title || photo.file_name || 'Sans titre' }}</p>
+          <p class="photo-title" :title="photo.file_name">{{ photo.title || photo.file_name || 'Sans titre' }}</p>
+          <button class="btn-delete" @click.stop="handleDelete(photo.id)" title="Supprimer">
+            🗑️
+          </button>
         </div>
+
       </div>
     </div>
 
     <div v-else class="empty">
       <p>Aucune photo dans cette galerie</p>
-      <button class="btn-primary" @click="goBack">Retour aux galeries</button>
+      <button class="btn-primary" @click="fileInput?.click()">Ajouter la première photo</button>
     </div>
   </div>
 </template>
@@ -117,13 +191,19 @@ const getPhotoUrl = (photo: Photo) => {
   margin-bottom: 32px;
   padding-bottom: 16px;
   border-bottom: 1px solid #e6edf3;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .header h1 {
   margin: 0;
   font-size: 24px;
-  flex: 1;
-  text-align: center;
 }
 
 .btn-back {
@@ -141,6 +221,29 @@ const getPhotoUrl = (photo: Photo) => {
   background: #f3f4f6;
 }
 
+.hidden-input {
+  display: none;
+}
+
+.btn-upload {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -154,7 +257,8 @@ const getPhotoUrl = (photo: Photo) => {
   background: #fff;
   box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .photo-card:hover {
@@ -171,6 +275,10 @@ const getPhotoUrl = (photo: Photo) => {
 
 .photo-info {
   padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 
 .photo-title {
@@ -180,6 +288,24 @@ const getPhotoUrl = (photo: Photo) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  border: none;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: #fca5a5;
 }
 
 .loading,
@@ -201,6 +327,10 @@ const getPhotoUrl = (photo: Photo) => {
   background: linear-gradient(180deg, #fbfdff, #ffffff);
   border-radius: 12px;
   border: 1px dashed #e6edf3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .btn-primary {
@@ -214,8 +344,12 @@ const getPhotoUrl = (photo: Photo) => {
   margin-top: 16px;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   opacity: 0.9;
 }
-</style>
 
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+</style>
