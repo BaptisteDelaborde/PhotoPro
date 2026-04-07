@@ -16,6 +16,7 @@ const confirmLogout = (event: Event) => {
 <template>
   <header class="navbar">
     <div class="nav-brand">PhotoPro Admin</div>
+    <div class="nav-brand" v-if="authStore.isAuthenticated">Connecté en tant que: {{ authStore.userEmail }}</div>
     <nav>
       <RouterLink v-if="authStore.isAuthenticated" to="/galeries">Mes Galeries</RouterLink>
       <RouterLink v-if="authStore.isAuthenticated" to="/stockage">Mon Stockage</RouterLink>
