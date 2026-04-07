@@ -6,40 +6,55 @@ use photopro\core\application\ports\api\ProfileDTO;
 use photopro\core\application\ports\api\ServiceUserInterface;
 use photopro\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 
-class ServiceUser implements ServiceUserInterface {
+class ServiceUser implements ServiceUserInterface
+{
 
     private AuthRepositoryInterface $userRepository;
 
-    public function __construct(AuthRepositoryInterface $userRepository) {
+    public function __construct(AuthRepositoryInterface $userRepository)
+    {
         $this->userRepository = $userRepository;
     }
 
-    public function register(CredentialsDTO $credentials, int $role): ProfileDTO {
+    public function register(CredentialsDTO $credentials, int $role, string $firstName, string $lastName, string $pseudo, ?string $phone): ProfileDTO
+    {
+        // On enregistre
+        $this->userRepository->save($credentials, $role, $firstName, $lastName, $pseudo, $phone);
 
-        $this->userRepository->save($credentials, $role);
+        // On récupère l'utilisateur complet pour renvoyer le ProfileDTO peuplé
         $user = $this->userRepository->findByEmail($credentials->email);
 
         return new ProfileDTO(
             $user->getId(),
             $user->getEmail(),
-            $user->getRole()
+            $user->getRole(),
+            $pseudo,
+            $firstName,
+            $lastName,
+            $phone
         );
     }
 
-    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO {
+    public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO
+    {
         $user = $this->userRepository->findByEmail($credentials->email);
-        if($user === null){
-            throw new \Exception("Email éroné");
+        if ($user === null) {
+            throw new \Exception("Email erroné");
         }
 
-        if(!password_verify($credentials->password, $user->getPassword())){
-            throw new \Exception("Mot de passe éroné");
+        if (!password_verify($credentials->password, $user->getPassword())) {
+            throw new \Exception("Mot de passe erroné");
         }
+        $data = $user->getProfileData();
 
         return new ProfileDTO(
             $user->getId(),
             $user->getEmail(),
-            $user->getRole()
+            $user->getRole(),
+            $data['pseudo'] ?? null,
+            $data['first_name'] ?? null,
+            $data['last_name'] ?? null,
+            $data['phone'] ?? null
         );
     }
 }
