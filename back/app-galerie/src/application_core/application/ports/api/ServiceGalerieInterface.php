@@ -87,8 +87,7 @@ interface ServiceGalerieInterface
      * Récupère toutes les galeries publiques
      * @return GalerieDTO[] Tableau de DTOs de galeries publiques
      */
-    public function getPublicGaleries(): array;
-
+    public function getPublicGaleries(?string $photographerId = null): array;
     /**
      * Récupère les photos d'une galerie par son identifiant
      * @param string $galerieId
