@@ -23,4 +23,5 @@ interface GalerieRepositoryInterface
 
     public function getPhotoById(string $photoId): ?\photopro\core\domain\entities\Photo;
     public function deletePhoto(string $photoId): void;
+    public function getAllPhotographes(): array;
 }
