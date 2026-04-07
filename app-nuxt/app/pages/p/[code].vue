@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <NuxtLink to="/" class="back-btn">← Retour à l'accueil</NuxtLink>
+
     <div v-if="error" class="error-msg">
       <h2>Oups !</h2>
       <p>Désolé, ce lien est invalide ou la galerie n'est pas disponible.</p>
@@ -90,6 +92,22 @@ const openLightbox = (index) => {
   padding: 40px 20px;
   font-family: 'Helvetica Neue', Arial, sans-serif;
 }
+
+/* NOUVEAU : Style du lien de retour */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.05rem;
+  transition: color 0.2s ease;
+}
+.back-btn:hover {
+  color: #34495e;
+  text-decoration: underline;
+}
+
 .header-prive {
   display: flex;
   align-items: center;
