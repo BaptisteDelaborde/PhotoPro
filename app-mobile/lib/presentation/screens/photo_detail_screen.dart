@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import '../../core/persistence/persistence_service.dart';
+import '../../data/models/galerie_model.dart';
 import '../providers/gallery_providers.dart';
-import '../../core/api/api_config.dart';
 
 class PhotoDetailScreen extends ConsumerStatefulWidget {
   final String galleryId;
@@ -70,6 +72,12 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       (p) => p.remoteId == widget.photoId,
     );
 
+    final gallery = PersistenceService.isar.galerieModels.filter()
+      .remoteIdEqualTo(widget.galleryId)
+      .findFirstSync();
+
+    final bool isPrivate = !(gallery?.isPublic ?? true);
+
     String imageUrl = photo?.storageUrl ?? '';
 
     final httpIndex = imageUrl.indexOf('http', 4);
@@ -103,40 +111,49 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                       ),
                     ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Ajouter un commentaire', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _nicknameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Pseudo',
-                      border: OutlineInputBorder(),
+            if (isPrivate)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Ajouter un commentaire', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _nicknameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Pseudo',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _contentController,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Votre commentaire',
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _contentController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Votre commentaire',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isSubmitting ? null : _submitComment,
-                      child: _isSubmitting ? const CircularProgressIndicator() : const Text('Envoyer'),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submitComment,
+                        child: _isSubmitting ? const CircularProgressIndicator() : const Text('Envoyer'),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Text('Les commentaires sont désactivés pour les galeries publiques.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
           ],
         ),
       ),

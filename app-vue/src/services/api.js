@@ -18,7 +18,6 @@ axiosInstance.interceptors.request.use(config => {
 })
 
 export const apiGestion = {
-
   async updateGalerieStatus(id, donnees) {
     try {
       const res = await axiosInstance.patch(`/galeries/${id}/status`, donnees)
@@ -28,9 +27,8 @@ export const apiGestion = {
       throw error
     }
   },
-  
+
   async creerGalerie(donnees) {
-    console.log("POST /galeries", donnees);
     try {
       const res = await axiosInstance.post('/galeries', donnees)
       return res.data
@@ -40,38 +38,7 @@ export const apiGestion = {
     }
   },
 
-  async uploadPhoto(fichier, photographeId, galerieId) {
-    console.log(`POST /photographes/${photographeId}/galeries/${galerieId}/photos`, fichier.name);
-    
-    const formData = new FormData();
-    formData.append('photo', fichier);
-
-    try {
-      const res = await axiosInstance.post(`/photographes/${photographeId}/galeries/${galerieId}/photos`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      return res.data
-    } catch (error) {
-      console.error('Erreur upload photo:', error)
-      throw error
-    }
-  },
-
-  async deletePhoto(photographeId, galerieId, photoId) {
-    console.log(`DELETE /photographes/${photographeId}/galeries/${galerieId}/photos/${photoId}`);
-    try {
-      const res = await axiosInstance.delete(`/photographes/${photographeId}/galeries/${galerieId}/photos/${photoId}`);
-      return res.data;
-    } catch (error) {
-      console.error('Erreur suppression photo:', error);
-      throw error;
-    }
-  },
-
   async getMesGaleries() {
-    console.log("GET /galeries (mes galeries)");
     try {
       const res = await axiosInstance.get('/galeries')
       return res.data
@@ -81,34 +48,94 @@ export const apiGestion = {
     }
   },
 
+  async uploadPhoto(fichier, photographeId, galerieId) {
+    const formData = new FormData();
+    formData.append('photo', fichier);
+    try {
+      const res = await axiosInstance.post(`/photographes/${photographeId}/galeries/${galerieId}/photos`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      return res.data
+    } catch (error) {
+      console.error('Erreur upload photo:', error);
+      throw error;
+    }
+  },
+
+  async uploadPhotoToStorage(fichier, photographeId) {
+    const formData = new FormData();
+    formData.append('photo', fichier);
+    try {
+      const res = await axiosInstance.post(`/photographes/${photographeId}/photos`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      return res.data
+    } catch (error) {
+      console.error('Erreur upload stockage global:', error);
+      throw error;
+    }
+  },
+
+  async getStoragePhotos(photographeId) {
+    try {
+      const res = await axiosInstance.get(`/photographes/${photographeId}/photos`)
+      return res.data
+    } catch (error) {
+      console.error('Erreur récupération stockage:', error);
+      throw error;
+    }
+  },
+
+  async deletePhoto(photographeId, galerieId, photoId) {
+    try {
+      const res = await axiosInstance.delete(`/photographes/${photographeId}/galeries/${galerieId}/photos/${photoId}`);
+      return res.data;
+    } catch (error) {
+      console.error('Erreur suppression photo:', error);
+      throw error;
+    }
+  },
+
   async getGalleryPhotos(photographeId, galleryId) {
-    console.log(`GET /photographes/${photographeId}/galeries/${galleryId}/photos`);
     try {
       const res = await axiosInstance.get(`/photographes/${photographeId}/galeries/${galleryId}/photos`)
       return res.data
     } catch (error) {
-      console.error('Erreur récupération photos galerie:', error)
-      throw error
+      console.error('Erreur récupération photos galerie:', error);
+      throw error;
+    }
+  },
+
+  async updateGalerie(photographeId, galerieId, donnees) {
+    try {
+      const res = await axiosInstance.put(`/photographes/${photographeId}/galeries/${galerieId}`, donnees)
+      return res.data
+    } catch (error) {
+      console.error('Erreur mise à jour galerie:', error);
+      throw error;
     }
   },
 
   async post(endpoint, data) {
+    const res = await axiosInstance.post(endpoint, data)
+    return res.data
+  },
+
+  async linkPhotoToGallery(photographeId, photoId, galerieId) {
+    console.log(`PATCH /photographes/${photographeId}/photos/${photoId}`);
     try {
-      const res = await axiosInstance.post(endpoint, data)
-      return res.data
+      const res = await axiosInstance.patch(`/photographes/${photographeId}/photos/${photoId}`, {
+        galerie_id: galerieId
+      });
+      return res.data;
     } catch (error) {
-      console.error('Erreur POST:', error)
-      throw error
+      console.error('Erreur liaison photo:', error);
+      throw error;
     }
   },
 
   async get(endpoint) {
-    try {
-      const res = await axiosInstance.get(endpoint)
-      return res.data
-    } catch (error) {
-      console.error('Erreur GET:', error)
-      throw error
-    }
+    const res = await axiosInstance.get(endpoint)
+    return res.data
   }
 };

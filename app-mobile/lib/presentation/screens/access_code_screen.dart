@@ -23,8 +23,8 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
 
   Future<void> _validateCode() async {
     final code = _codeController.text.trim();
-    if (code.length != 6) {
-      setState(() => _errorMessage = 'Le code doit contenir 6 chiffres.');
+    if (code.isEmpty) {
+      setState(() => _errorMessage = 'Le code ne peut pas être vide.');
       return;
     }
 
@@ -76,8 +76,6 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
                 errorText: _errorMessage,
                 prefixIcon: const Icon(Icons.key),
               ),
-              keyboardType: TextInputType.number,
-              maxLength: 6,
               onSubmitted: (_) => _validateCode(),
             ),
             const SizedBox(height: 24),

@@ -47,6 +47,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/profil',
+      name: 'profil',
+      component: () => import('../views/ProfileView.vue'), // Lazy loading
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/',
       redirect: '/galeries'
     }
