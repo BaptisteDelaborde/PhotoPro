@@ -10,6 +10,7 @@ type Gallery = {
   type: string
   est_publiee: boolean
   cover?: string | null
+  layout?: string
 }
 
 const router = useRouter()
@@ -32,7 +33,8 @@ const fetchGalleries = async () => {
       titre: g.title || g.titre || 'Sans titre',
       type: g.is_public ? 'Publique' : 'Privée',
       est_publiee: g.is_published,
-      cover: g.cover_url || g.cover_photo_url || null
+      cover: g.cover_url || g.cover_photo_url || null,
+      layout: g.layout || 'grid'
     }))
   } catch (error) {
     console.error("Impossible de charger les galeries", error)
@@ -110,17 +112,8 @@ const goToCreate = () => {
   router.push('/galeries/nouvelle')
 }
 
-const goToLogin = () => {
-  router.push('/connexion')
-}
-
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/connexion')
-}
-
-const goToGalleryDetails = (id: string | number, title: string) => {
-  router.push({path: `/galeries/${id}`, query: {title}})
+const goToGalleryDetails = (id: string | number, title: string, layout?: string) => {
+  router.push({path: `/galeries/${id}`, query: {title, layout: layout || 'grid'}})
 }
 
 const showPreview = (msg: string) => {
@@ -154,7 +147,7 @@ const initials = (titre: string | undefined) => {
     <div v-if="isUploadingCover" class="global-loader"><span class="spinner"></span> Mise à jour...</div>
 
     <section v-if="filteredGalleries.length" class="cards">
-      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id, g.titre)"
+      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id, g.titre, g.layout)"
                role="button"
                tabindex="0">
         <div class="cover" :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}">
@@ -171,7 +164,7 @@ const initials = (titre: string | undefined) => {
         </div>
 
         <div class="actions">
-          <button class="btn-outline" @click.stop="goToGalleryDetails(g.id, g.titre)">Voir</button>
+          <button class="btn-outline" @click.stop="goToGalleryDetails(g.id, g.titre, g.layout)">Voir</button>
           <button class="btn-ghost" @click.stop="showPreview('Prévisualisation : ' + g.titre)">Prévisualiser</button>
 
           <button class="btn-outline" :class="g.est_publiee ? 'btn-danger' : 'btn-success'"
