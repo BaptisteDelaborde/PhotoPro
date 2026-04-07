@@ -96,6 +96,16 @@ export const apiGestion = {
     }
   },
 
+  async deleteGalerie(photographeId, galerieId) {
+    try {
+      const res = await axiosInstance.delete(`/photographes/${photographeId}/galeries/${galerieId}`);
+      return res.data;
+    } catch (error) {
+      console.error('Erreur suppression galerie:', error);
+      throw error;
+    }
+  },
+
   async getGalleryPhotos(photographeId, galleryId) {
     try {
       const res = await axiosInstance.get(`/photographes/${photographeId}/galeries/${galleryId}/photos`)
