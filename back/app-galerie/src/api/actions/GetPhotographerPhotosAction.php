@@ -23,10 +23,11 @@ class GetPhotographerPhotosAction
 
         try {
             $stmt = $this->pdo->prepare("
-                SELECT id, galerie_id, title, file_name, mime_type, file_size, storage_url, uploaded_at 
-                FROM photos 
-                WHERE photographer_id = :photographer_id 
-                ORDER BY uploaded_at DESC
+                SELECT p.id, p.title, p.file_name, p.mime_type, p.file_size, p.storage_url, p.uploaded_at,
+                    (SELECT COUNT(*) FROM gallery_photos gp WHERE gp.photo_id = p.id) as in_galleries_count
+                FROM photos p
+                WHERE p.photographer_id = :photographer_id 
+                ORDER BY p.uploaded_at DESC
             ");
             
             $stmt->execute(['photographer_id' => $photographerId]);
