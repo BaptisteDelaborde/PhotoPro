@@ -4,10 +4,11 @@ import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import ImageLightbox from "~/components/ImageLightbox.vue";
 
+const config = useRuntimeConfig()
 const route = useRoute()
 const galerieId = route.params.id
 
-const { data: photos, pending, error } = await useFetch(`http://localhost:8082/galeries/${galerieId}/photos`)
+const { data: photos, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/${galerieId}/photos`)
 
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
@@ -15,7 +16,7 @@ const selectedIndex = ref(0)
 const formattedPhotosForLightbox = computed(() => {
   if (!photos.value) return []
   return photos.value.map(photo => ({
-    url: `http://localhost:8333/${photo.file_name}`,
+    url: `${config.public.s3Url}/${photo.file_name}`,
     title: photo.title || ''
   }))
 })
@@ -49,7 +50,7 @@ const openLightbox = (index) => {
             @click="openLightbox(index)"
         >
           <img
-              :src="`http://localhost:8333/${photo.file_name}`"
+              :src="`${config.public.s3Url}/${photo.file_name}`"
               :alt="'Photo ' + index"
               loading="lazy"
           />
@@ -97,7 +98,7 @@ const openLightbox = (index) => {
   cursor: pointer;
   overflow: hidden;
   border-radius: 8px;
-  aspect-ratio: 1 / 1; /* Images carrées dans la grille */
+  aspect-ratio: 1 / 1;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .photo-item img {
@@ -107,6 +108,6 @@ const openLightbox = (index) => {
   transition: transform 0.3s ease;
 }
 .photo-item:hover img {
-  transform: scale(1.05); /* Petit zoom au survol */
+  transform: scale(1.05);
 }
 </style>

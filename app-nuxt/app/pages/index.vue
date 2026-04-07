@@ -1,5 +1,7 @@
 <script setup>
-const { data: galeries, pending, error } = await useFetch('http://localhost:8082/galeries/publiques')
+const config = useRuntimeConfig()
+
+const { data: galeries, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/publiques`)
 </script>
 
 <template>
@@ -31,7 +33,7 @@ const { data: galeries, pending, error } = await useFetch('http://localhost:8082
 
         <img
             v-if="galerie.cover_photo_id"
-            :src="`http://localhost:8333/${galerie.cover_photo_id}`"
+            :src="`${config.public.s3Url}/${galerie.cover_photo_id}`"
             :alt="galerie.title"
             class="cover-image"
         />
@@ -49,4 +51,3 @@ const { data: galeries, pending, error } = await useFetch('http://localhost:8082
 </template>
 
 <style src="../assets/css/main.css" scoped></style>
-

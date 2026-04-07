@@ -5,4 +5,10 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/main.css',
   ],
+  runtimeConfig: {
+    public: {
+      apiFrontofficeUrl: process.env.NUXT_PUBLIC_API_FRONTOFFICE_URL || 'http://localhost:8082',
+      s3Url: process.env.NUXT_PUBLIC_S3_URL || 'http://localhost:8333',
+    }
+  }
 })

@@ -168,6 +168,22 @@ services:
     networks:
       - photopro.net
 
+  # Frontend Nuxt.js SSR
+  app-nuxt:
+    image: node:22-alpine
+    ports:
+      - "${PORT_NUXT}:3000"
+    volumes:
+      - ./app-nuxt:/app
+      - /app/node_modules
+    working_dir: /app
+    networks:
+      - photopro.net
+    environment:
+      - NUXT_PUBLIC_API_FRONTOFFICE_URL=${NUXT_PUBLIC_API_FRONTOFFICE_URL}
+      - NUXT_PUBLIC_S3_URL=${S3_EXTERNAL_ENDPOINT}
+    command: sh -c "npm install && npm run dev -- --host"
+
   # Frontend Vue.js
   app-vue:
     image: node:22-alpine

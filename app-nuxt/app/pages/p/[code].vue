@@ -29,7 +29,7 @@
             class="photo-item"
             @click="openLightbox(index)"
         >
-          <img :src="`http://localhost:8333/${photo.s3_key}`" :alt="photo.title || 'Photo'" loading="lazy" />
+          <img :src="`${config.public.s3Url}/${photo.s3_key}`" :alt="photo.title || 'Photo'" loading="lazy" />
         </div>
       </div>
 
@@ -55,28 +55,23 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
+const config = useRuntimeConfig()
 const route = useRoute()
-const codeAcces = route.params.code // Récupère le "ABC123" dans /p/ABC123
+const codeAcces = route.params.code
 
-// 1. Appel API pour vérifier le code et récupérer les infos de la galerie
-const { data: galerie, pending, error } = await useFetch(`http://localhost:8082/galeries/code/${codeAcces}`)
+const { data: galerie, pending, error } = await useFetch(`${config.public.apiFrontofficeUrl}/galeries/code/${codeAcces}`)
 
-// 2. Appel API pour récupérer les photos (uniquement si on a trouvé la galerie)
-// Note: Dans votre ServiceGalerie, la méthode pour les photos publiques utilise l'ID de la galerie.
 const { data: photos, pending: photosPending, error: photosError } = await useFetch(() => {
-  return galerie.value ? `http://localhost:8082/galeries/${galerie.value.id}/photos` : null
+  return galerie.value ? `${config.public.apiFrontofficeUrl}/galeries/${galerie.value.id}/photos` : null
 })
 
-// --- Gestion de la Lightbox ---
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
 
 const formattedPhotosForLightbox = computed(() => {
   if (!photos.value) return []
   return photos.value.map(photo => ({
-    // Attention : Dans votre méthode getPhotos(), vous retournez "s3_key".
-    // Adaptez si c'est un autre nom dans votre retour API pour GetPublicGaleriePhotosAction
-    url: `http://localhost:8333/${photo.s3_key || photo.file_name}`,
+    url: `${config.public.s3Url}/${photo.s3_key || photo.file_name}`,
     title: photo.title || ''
   }))
 })
@@ -114,8 +109,6 @@ const openLightbox = (index) => {
 .divider { border: 0; height: 1px; background: #eee; margin: 30px 0; }
 .error-msg { color: #e74c3c; text-align: center; margin-top: 50px; padding: 20px; background: #fdf0ed; border-radius: 8px;}
 .empty-state { text-align: center; color: #7f8c8d; padding: 50px; background: #f9f9f9; border-radius: 8px;}
-
-/* Grille CSS */
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
