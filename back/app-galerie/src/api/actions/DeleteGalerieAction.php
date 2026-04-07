@@ -12,16 +12,18 @@ class DeleteGalerieAction
 
     public function __invoke(Request $rq, Response $rs, array $args): Response
     {
-        $id = $args['id'];
+        $galerieId = $args['galerie_id'] ?? $args['id'];
+        
         $userProfile = $rq->getAttribute('user_profile');
 
-        $galerieDTO = $this->serviceGalerie->getGalerie($id);
+        $galerieDTO = $this->serviceGalerie->getGalerie($galerieId);
 
         if ($galerieDTO->photographer_id !== $userProfile->id) {
             return $rs->withStatus(403);
         }
 
-        $this->serviceGalerie->deleteGalerie($id);
+        $this->serviceGalerie->deleteGalerie($galerieId);
+        
         return $rs->withStatus(204);
     }
 }

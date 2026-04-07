@@ -49,7 +49,7 @@ return function (\Slim\App $app): \Slim\App {
         ->add(AuthnMiddleware::class);
     $app->put('/galeries/{id}', UpdateGalerieAction::class)
         ->add(AuthnMiddleware::class);
-    $app->delete('/galeries/{id}', DeleteGalerieAction::class)
+    $app->delete('/photographes/{id}/galeries/{galerie_id}', DeleteGalerieAction::class)
         ->add(AuthnMiddleware::class);
     $app->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', \photopro\api\actions\DeletePhotoAction::class)
         ->add(AuthnMiddleware::class);
