@@ -11,12 +11,10 @@ const isUploading = ref(false)
 const uploadedPhotos = ref([])
 const loading = ref(true)
 
-// Charger les photos du stockage au démarrage
 const fetchStoragePhotos = async () => {
     loading.value = true
     try {
         const data = await apiGestion.getStoragePhotos(photographeId.value)
-        // On s'assure de récupérer le tableau de photos selon la structure de ton backend
         uploadedPhotos.value = data.photos || data || []
     } catch (error) {
         console.error("Erreur de chargement du stockage", error)
@@ -46,7 +44,6 @@ const uploadPhoto = async () => {
     try {
         await apiGestion.uploadPhotoToStorage(selectedFile.value, photographeId.value)
         
-        // On rafraîchit la liste pour voir la nouvelle image
         await fetchStoragePhotos()
     } catch (error) {
         console.error("Erreur d'upload", error)
@@ -57,16 +54,13 @@ const uploadPhoto = async () => {
     }
 }
 
-// 🌟 NOUVEAU : Fonction pour s'assurer que l'URL S3 est complète
 const getPhotoUrl = (photo) => {
     if (photo.url) return photo.url;
     
     if (photo.storage_url) {
-        // Si l'URL est déjà complète (commence par http), on la garde
         if (photo.storage_url.startsWith('http')) {
             return photo.storage_url;
         }
-        // Sinon, on rajoute l'adresse de notre serveur S3 devant !
         return `http://localhost:8333/photopro-galeries/${photo.storage_url}`;
     }
     return '';
