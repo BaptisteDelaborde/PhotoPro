@@ -11,15 +11,13 @@ class GetPublicGaleriesAction {
 
     public function __construct(private ServiceGalerieInterface $serviceGalerie) {}
 
-    public function __invoke(Request $request, Response $response, array $args): Response {
-        try {
-            $galeries = $this->serviceGalerie->getPublicGaleries();
-        } catch (\Exception $e) {
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
-        }
+    public function __invoke(Request $rq, Response $rs, array $args): Response {
+        $queryParams = $rq->getQueryParams();
+        $photographerId = $queryParams['photographer_id'] ?? null;
 
-        $response->getBody()->write(json_encode($galeries));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        $galeries = $this->serviceGalerie->getPublicGaleries($photographerId);
+
+        $rs->getBody()->write(json_encode($galeries));
+        return $rs->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

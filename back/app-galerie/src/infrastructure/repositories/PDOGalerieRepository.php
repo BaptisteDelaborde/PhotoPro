@@ -295,4 +295,31 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         $stmt->execute(['photo_id' => $photoId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function findPublicGaleriesP(?string $photographerId = null): array
+    {
+        $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true";
+
+        if ($photographerId) {
+            $sql .= " AND photographer_id = :photographer_id";
+        }
+
+        // "Par date de publication" (le plus récent en premier)
+        $sql .= " ORDER BY published_at DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        if ($photographerId) {
+            $stmt->bindParam(':photographer_id', $photographerId);
+        }
+
+        $stmt->execute();
+
+        $galeries = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $galeries[] = $this->hydrateGalerie($row);
+        }
+
+        return $galeries;
+    }
 }
