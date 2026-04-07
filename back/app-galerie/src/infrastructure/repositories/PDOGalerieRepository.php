@@ -332,4 +332,36 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
 
         return $galeries;
     }
+
+    public function getAllPhotographes(): array {
+        $sql = "SELECT id, first_name, last_name, pseudo FROM photographes ORDER BY first_name ASC";
+
+        try {
+            $stmt = $this->pdo->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            if ($e->getCode() === '42P01') {
+                $host = $_ENV['AUTH_DB_HOST'] ?? 'auth.db';
+                $port = $_ENV['AUTH_DB_PORT'] ?? 5432;
+                $db   = $_ENV['AUTH_POSTGRES_DB'] ?? $_ENV['AUTH_DB_NAME'] ?? 'photopro_auth';
+                $user = $_ENV['AUTH_POSTGRES_USER'] ?? $_ENV['AUTH_DB_USER'] ?? 'photopro';
+                $pass = $_ENV['AUTH_POSTGRES_PASSWORD'] ?? $_ENV['AUTH_DB_PASSWORD'] ?? 'photopro';
+
+                $dsn = "pgsql:host=$host;port=$port;dbname=$db";
+                try {
+                    $authPdo = new \PDO($dsn, $user, $pass, [
+                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+                    ]);
+
+                    $stmt = $authPdo->query($sql);
+                    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                } catch (\PDOException $e2) {
+                    throw $e2;
+                }
+            }
+
+            throw $e;
+        }
+    }
 }
