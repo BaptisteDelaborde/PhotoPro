@@ -17,6 +17,35 @@ INSERT INTO galleries (id, photographer_id, title, description, is_public, is_pu
     'CLMARC26', 'http://localhost:8082/galeries/code/CLMARC26',
     'Claire et Marc', 'claire.marc@example.com',
     '2026-04-01 09:00:00', '2026-04-02 10:00:00'
+)
+,
+(
+    '11111111-aaaa-bbbb-cccc-111111111111',
+    '99999999-9999-9999-9999-999999999999',
+    'Voyage en Islande',
+    'Des paysages à couper le souffle, entre glace et feu.',
+    true, true, 'masonry',
+    NULL, NULL, NULL, NULL,
+    '2026-01-10 08:00:00', '2026-01-15 10:00:00'
+),
+(
+    '22222222-aaaa-bbbb-cccc-222222222222',
+    '99999999-9999-9999-9999-999999999999',
+    'Séance Naissance - Petit Léo',
+    'Les premiers jours de Léo en famille.',
+    false, true, 'grid',
+    'LEO2026', '/p/LEO2026',
+    'Famille Martin', 'famille.martin@example.com',
+    '2026-02-01 14:00:00', '2026-02-05 09:30:00'
+),
+(
+    '33333333-aaaa-bbbb-cccc-333333333333',
+    '88888888-8888-8888-8888-888888888888',
+    'Architecture de Paris',
+    'Exploration des façades haussmanniennes.',
+    true, true, 'masonry',
+    NULL, NULL, NULL, NULL,
+    '2026-03-10 11:00:00', '2026-03-12 16:45:00'
 );
 
 INSERT INTO photos (id, photographer_id, galerie_id, title, file_name, mime_type, file_size, storage_url) VALUES
@@ -27,4 +56,12 @@ INSERT INTO photos (id, photographer_id, galerie_id, title, file_name, mime_type
 ('dddd4444-dddd-4444-dddd-444444444441', '11111111-1111-1111-1111-111111111111', 'bbbb2222-bbbb-2222-bbbb-222222222222', 'Préparatifs de la mariée', 'preparatifs.jpg', 'image/jpeg', 3.5, 'https://picsum.photos/id/1062/800/600'),
 ('dddd4444-dddd-4444-dddd-444444444442', '11111111-1111-1111-1111-111111111111', 'bbbb2222-bbbb-2222-bbbb-222222222222', 'Échange des vœux', 'voeux.jpg', 'image/jpeg', 4.1, 'https://picsum.photos/id/1060/800/600'),
 ('dddd4444-dddd-4444-dddd-444444444443', '11111111-1111-1111-1111-111111111111', 'bbbb2222-bbbb-2222-bbbb-222222222222', 'Sortie d''église', 'sortie.jpg', 'image/jpeg', 3.9, 'https://picsum.photos/id/1063/800/600'),
-('dddd4444-dddd-4444-dddd-444444444444', '11111111-1111-1111-1111-111111111111', 'bbbb2222-bbbb-2222-bbbb-222222222222', 'Première danse', 'danse.jpg', 'image/jpeg', 4.5, 'https://picsum.photos/id/1069/800/600');
+
+('dddd4444-dddd-4444-dddd-444444444444', '11111111-1111-1111-1111-111111111111', 'bbbb2222-bbbb-2222-bbbb-222222222222', 'Première danse', 'danse.jpg', 'image/jpeg', 4.5, 'https://picsum.photos/id/1069/800/600'),
+('a1a1a1a1-1111-1111-1111-a1a1a1a1a1a1', '99999999-9999-9999-9999-999999999999', '11111111-aaaa-bbbb-cccc-111111111111', 'Glacier', 'glacier.jpg', 'image/jpeg', 5.2, 'https://picsum.photos/id/1018/800/600'),
+('a2a2a2a2-1111-1111-1111-a2a2a2a2a2a2', '99999999-9999-9999-9999-999999999999', '11111111-aaaa-bbbb-cccc-111111111111', 'Cascade', 'cascade.jpg', 'image/jpeg', 4.8, 'https://picsum.photos/id/1015/800/600'),
+
+('b1b1b1b1-2222-2222-2222-b1b1b1b1b1b1', '99999999-9999-9999-9999-999999999999', '22222222-aaaa-bbbb-cccc-222222222222', 'Léo dort', 'leo1.jpg', 'image/jpeg', 3.1, 'https://picsum.photos/id/1062/800/600'),
+('b2b2b2b2-2222-2222-2222-b2b2b2b2b2b2', '99999999-9999-9999-9999-999999999999', '22222222-aaaa-bbbb-cccc-222222222222', 'Petits pieds', 'leo2.jpg', 'image/jpeg', 2.9, 'https://picsum.photos/id/1060/800/600'),
+
+('c1c1c1c1-3333-3333-3333-c1c1c1c1c1c1', '88888888-8888-8888-8888-888888888888', '33333333-aaaa-bbbb-cccc-333333333333', 'Façade 1', 'facade1.jpg', 'image/jpeg', 6.0, 'https://picsum.photos/id/1031/800/600');
