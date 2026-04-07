@@ -78,8 +78,8 @@ const handleLogout = () => {
   router.push('/connexion')
 }
 
-const goToGalleryDetails = (id: string | number) => {
-  router.push(`/galeries/${id}`)
+const goToGalleryDetails = (id: string | number, title: string) => {
+  router.push({ path: `/galeries/${id}`, query: { title } })
 }
 
 const showPreview = (msg: string) => {
@@ -120,7 +120,7 @@ const initials = (titre: string | undefined) => {
     </header>
 
     <section v-if="filteredGalleries.length" class="cards">
-      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id)" role="button"
+      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id, g.titre)" role="button"
         tabindex="0">
         <div class="cover" :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}">
           <div v-if="!g.cover" class="placeholder">{{ initials(g.titre) }}</div>
@@ -134,7 +134,7 @@ const initials = (titre: string | undefined) => {
         </div>
 
         <div class="actions">
-          <button class="btn-outline" @click.stop="goToGalleryDetails(g.id)">Voir</button>
+          <button class="btn-outline" @click.stop="goToGalleryDetails(g.id, g.titre)">Voir</button>
           <button class="btn-ghost" @click.stop="showPreview('Prévisualisation : ' + g.titre)">Prévisualiser</button>
 
           <button class="btn-outline" :class="g.est_publiee ? 'btn-danger' : 'btn-success'"

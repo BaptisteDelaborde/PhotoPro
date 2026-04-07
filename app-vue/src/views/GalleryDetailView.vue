@@ -34,6 +34,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const isUploading = ref(false)
 
 const galleryId = route.params.id as string
+const galleryTitle = (route.query.title as string) || (route.params.title as string) || 'Galerie'
 
 const photographeId = computed(() => {
   return authStore.photographerId
@@ -61,7 +62,7 @@ onMounted(async () => {
 
   gallery.value = {
     id: galleryId,
-    title: 'Ma Super Galerie',
+    title: galleryTitle,
     is_public: true,
     is_published: true
   }
