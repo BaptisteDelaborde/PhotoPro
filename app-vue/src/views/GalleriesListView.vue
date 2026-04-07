@@ -123,6 +123,19 @@ const initials = (titre: string | undefined) => {
   if (!titre) return '?'
   return titre.split(' ').map(s => s.charAt(0).toUpperCase()).slice(0, 2).join('')
 }
+
+const deleteGallery = async (id: string | number, titre: string) => {
+  if (!window.confirm(`Êtes-vous sûr de vouloir supprimer la galerie "${titre}" ?\n\nVos photos resteront dans votre stockage global.`)) return
+
+  try {
+    await apiGestion.deleteGalerie(photographeId.value, id)
+    // On met à jour l'affichage en retirant la galerie supprimée
+    galleries.value = galleries.value.filter(g => g.id !== id)
+  } catch (err) {
+    console.error(err)
+    alert("Impossible de supprimer la galerie.")
+  }
+}
 </script>
 
 <template>
@@ -171,6 +184,8 @@ const initials = (titre: string | undefined) => {
                   @click.stop="togglePublish(g)">
             {{ g.est_publiee ? 'Dépublier' : 'Publier' }}
           </button>
+          <button class="btn-ghost" @click.stop="deleteGallery(g.id, g.titre)">Supprimer</button>
+          <button class="btn-delete" @click.stop="deleteGallery(g.id, g.titre)" title="Supprimer la galerie">🗑️</button>
         </div>
       </article>
     </section>
@@ -204,6 +219,9 @@ const initials = (titre: string | undefined) => {
   margin: 0;
   font-size: 22px;
 }
+
+.btn-delete { background: #fee2e2; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; transition: background 0.2s; font-size: 14px; margin-left: auto; }
+.btn-delete:hover { background: #fca5a5; }
 
 .lead {
   margin: 4px 0 0;

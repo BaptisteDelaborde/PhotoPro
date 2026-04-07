@@ -12,23 +12,10 @@ const galerieId = route.params.id
 // 2. Appel API pour récupérer les photos
 const { data: photos, pending, error } = await useFetch(`${apiBase}/galeries/${galerieId}/photos`)
 
-// 3. Gestion des Données Photos (Correction Picsum / S3)
+// 3. Gestion des Données Photos
 const photosWithUrls = computed(() => {
   if (!photos.value) return []
-  return photos.value.map(photo => {
-    // On utilise storage_url s'il existe, sinon file_name
-    const path = photo.storage_url || photo.file_name || ''
-
-    // Si c'est un lien externe (Picsum), on le garde. Sinon, on ajoute l'URL du S3.
-    const fullUrl = path.startsWith('http')
-        ? path
-        : `${config.public.s3Url}/${path}`
-
-    return {
-      ...photo,
-      url: fullUrl
-    }
-  })
+  return photos.value
 })
 
 // 4. Gestion de la Lightbox
