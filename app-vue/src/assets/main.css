@@ -164,6 +164,27 @@ hr {
     font-size: 1.25rem;
 }
 
+.user-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.status-label {
+    color: #bdc3c7;
+    font-weight: 500;
+}
+
+.user-email {
+    color: #ffffff;
+    font-weight: 600;
+    word-break: break-all;
+}
+
 .navbar nav {
     display: flex;
     gap: 1rem;
