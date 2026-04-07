@@ -13,7 +13,8 @@ class GetPublicGaleriesAction {
 
     public function __invoke(Request $rq, Response $rs, array $args): Response {
         $queryParams = $rq->getQueryParams();
-        $photographerId = $queryParams['photographer_id'] ?? null;
+
+        $photographerId = !empty($queryParams['photographer_id']) ? $queryParams['photographer_id'] : null;
 
         $galeries = $this->serviceGalerie->getPublicGaleries($photographerId);
 

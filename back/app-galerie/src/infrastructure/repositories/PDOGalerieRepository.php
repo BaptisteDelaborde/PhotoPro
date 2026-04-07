@@ -189,10 +189,21 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
             return $photos;
         }
 
-    public function findPublicGaleries(): array
-    {
-        $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true ORDER BY published_at DESC";
+    public function findPublicGaleries(?string $photographerId = null): array {
+        $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true";
+
+        if ($photographerId) {
+            $sql .= " AND photographer_id = :photographer_id";
+        }
+
+        $sql .= " ORDER BY published_at DESC";
+
         $stmt = $this->pdo->prepare($sql);
+
+        if ($photographerId) {
+            $stmt->bindParam(':photographer_id', $photographerId);
+        }
+
         $stmt->execute();
 
         $galeries = [];
@@ -296,8 +307,7 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function findPublicGaleriesP(?string $photographerId = null): array
-    {
+    public function findPublicGaleriesP(?string $photographerId = null): array {
         $sql = "SELECT * FROM galleries WHERE is_public = true AND is_published = true";
 
         if ($photographerId) {

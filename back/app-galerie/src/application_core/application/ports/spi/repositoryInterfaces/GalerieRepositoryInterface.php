@@ -17,7 +17,7 @@ interface GalerieRepositoryInterface
     public function delete(string $id): void;
     public function getPhotosByGalerieId(string $galerieId): array;
     public function findByAccessCode(string $code): ?Galerie;
-    public function findPublicGaleries(): array;
+    public function findPublicGaleries(?string $photographerId = null): array;
     public function findByStatus(string $status): array;
     public function findPhotosByGalerieId(string $galerieId): array;
 
