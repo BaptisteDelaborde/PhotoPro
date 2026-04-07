@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use photopro\api\actions\GetPhotographesAction;
 use photopro\api\actions\GetPublicGaleriePhotosAction;
 use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\actions\GetGalerieByCodeAction;
+use photopro\api\actions\LinkPhotoToGalerieAction;
 use photopro\api\middleware\AuthnMiddleware;
 use photopro\api\actions\AddPhotoAction;
 use photopro\api\actions\GetPhotosAction;
@@ -33,7 +35,8 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/galeries/{id}/photos', GetPublicGaleriePhotosAction::class);
     $app->post('/galeries/{id}/photos/{photo_id}/commentaires', AddCommentaireAction::class);
     $app->get('/galeries/{id}/photos/{photo_id}/commentaires', GetCommentairesAction::class);
-    $app->patch('/photographes/{id}/photos/{photo_id}', \photopro\api\actions\LinkPhotoToGalerieAction::class)->add(AuthnMiddleware::class);
+    $app->patch('/photographes/{id}/photos/{photo_id}', LinkPhotoToGalerieAction::class)->add(AuthnMiddleware::class);
+    $app->get('/photographes', GetPhotographesAction::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)
