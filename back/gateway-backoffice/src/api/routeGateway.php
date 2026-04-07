@@ -5,7 +5,8 @@ use Slim\App;
 use gateway\api\middleware\ValidateTokenMiddleware;
 use gateway\api\actions\UploadPhotoGatewayAction;
 use gateway\api\actions\DeletePhotoGatewayAction;
-use gateway\api\actions\UpdateGalerieGatewayAction; 
+use gateway\api\actions\UpdateGalerieGatewayAction;
+use gateway\api\actions\UploadGlobalPhotoGatewayAction;
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -34,7 +35,7 @@ return function (App $app) {
         
         $group->put('/photographes/{id}/galeries/{galerie_id}', UpdateGalerieGatewayAction::class);
         
-        $group->post('/photographes/{id}/photos', UploadPhotoGatewayAction::class);
+        $group->post('/photographes/{id}/photos', UploadGlobalPhotoGatewayAction::class);
         $group->get('/photographes/{id}/photos', GenericGatewayAction::class);
         
     })->add($validateTokenMiddleware::class);

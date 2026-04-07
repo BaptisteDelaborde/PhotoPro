@@ -33,6 +33,7 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/galeries/{id}/photos', GetPublicGaleriePhotosAction::class);
     $app->post('/galeries/{id}/photos/{photo_id}/commentaires', AddCommentaireAction::class);
     $app->get('/galeries/{id}/photos/{photo_id}/commentaires', GetCommentairesAction::class);
+    $app->patch('/photographes/{id}/photos/{photo_id}', \photopro\api\actions\LinkPhotoToGalerieAction::class)->add(AuthnMiddleware::class);
 
     // --- Gestion des Galeries ---
     $app->post('/galeries', CreateGalerieAction::class)
