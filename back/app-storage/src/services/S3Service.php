@@ -10,17 +10,17 @@ class S3Service
     private S3Client $s3Client;
     private string $bucket;
 
-public function __construct()
+    public function __construct()
     {
         $this->bucket = (string) (getenv('S3_BUCKET') ?: 'photopro-galeries');
-        
+
         $this->s3Client = new S3Client([
             'version' => 'latest',
-            'region'  => (string) (getenv('S3_REGION') ?: 'seaweedFS'),
+            'region' => (string) (getenv('S3_REGION') ?: 'seaweedFS'),
             'endpoint' => (string) (getenv('S3_INTERNAL_ENDPOINT') ?: 'http://S3:8333'),
             'use_path_style_endpoint' => true,
             'credentials' => [
-                'key'    => (string) (getenv('S3_ACCESS_KEY') ?: 'GHIJKL'),
+                'key' => (string) (getenv('S3_ACCESS_KEY') ?: 'GHIJKL'),
                 'secret' => (string) (getenv('S3_SECRET_KEY') ?: '789012'),
             ],
         ]);
@@ -53,20 +53,20 @@ public function __construct()
         $fileName = uniqid('photo_') . '.' . $extension;
         $s3Key = 'uploads/' . date('Y/m/d') . '/' . $fileName;
 
-        // 🌟 L'ASTUCE EST ICI : On force l'ACL en "Lecture Publique" pour CHAQUE image
         $this->s3Client->putObject([
-            'Bucket'      => $this->bucket,
-            'Key'         => $s3Key,
-            'Body'        => $stream->detach(),
+            'Bucket' => $this->bucket,
+            'Key' => $s3Key,
+            'Body' => $stream->detach(),
             'ContentType' => $mimeType,
-            'ACL'         => 'public-read', // Le sésame pour SeaweedFS !
+            'ACL' => 'public-read',
         ]);
+        $externalEndpoint = rtrim((string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333'), '/');
 
-        $externalEndpoint = (string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333');
+        $bucketName = trim($this->bucket, '/');
 
         return [
             's3_key' => $s3Key,
-            'url'    => $externalEndpoint . '/' . $this->bucket . '/' . $s3Key
+            'url' => $externalEndpoint . '/' . $bucketName . '/' . $s3Key
         ];
     }
 
@@ -74,7 +74,7 @@ public function __construct()
     {
         $this->s3Client->deleteObject([
             'Bucket' => $this->bucket,
-            'Key'    => $s3Key,
+            'Key' => $s3Key,
         ]);
     }
 }
