@@ -95,9 +95,33 @@ interface ServiceGalerieInterface
      */
     public function getPhotosByGalerie(string $galerieId): array;
 
+    /**
+     * Supprime une photo d'une galerie
+     * @param string $photoId
+     * @return string
+     */
     public function deletePhoto(string $photoId): string;
+
+    /**
+     * Ajoute un commentaire à une photo
+     * @param string $photoId
+     * @param string $content
+     * @param string|null $authorName
+     * @return array
+     */
 
     public function addCommentaire(string $photoId, string $content, ?string $authorName): array;
 
+    /**
+     * Récupère les commentaires d'une photo
+     * @param string $photoId
+     * @return array
+     */
     public function getCommentaires(string $photoId): array;
+
+    /**
+     * Récupère la liste des photographes pour le filtre
+     * @return array
+     */
+    public function getPhotographes(): array;
 }

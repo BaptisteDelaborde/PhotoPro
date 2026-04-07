@@ -310,4 +310,9 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
     {
         return $this->galerieRepository->getCommentairesByPhotoId($photoId);
     }
+
+    public function getPhotographes(): array
+    {
+        return $this->galerieRepository->getAllPhotographes();
+    }
 }
