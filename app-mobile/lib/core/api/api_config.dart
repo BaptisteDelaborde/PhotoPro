@@ -7,13 +7,7 @@ class ApiConfig {
     if (envUrl.isNotEmpty) {
       return envUrl;
     }
-    if (kIsWeb) {
-      return 'http://localhost:8082';
-    } else if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8082';
-    } else {
-      return 'http://localhost:8082';
-    }
+    return 'http://docketu.iutnc.univ-lorraine.fr:21856';
   }
 
   static const Duration timeout = Duration(seconds: 10);
