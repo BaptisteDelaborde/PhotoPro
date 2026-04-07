@@ -1,26 +1,39 @@
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import ImageLightbox from "~/components/ImageLightbox.vue";
 
+// 1. Configuration des variables d'environnement (comme sur index.vue)
 const config = useRuntimeConfig()
-const route = useRoute()
-const galerieId = route.params.id
 const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 
+const route = useRoute()
+const galerieId = route.params.id
+
+// 2. Appel API pour récupérer les photos
 const { data: photos, pending, error } = await useFetch(`${apiBase}/galeries/${galerieId}/photos`)
 
+// 3. Gestion des Données Photos (Correction Picsum / S3)
+const photosWithUrls = computed(() => {
+  if (!photos.value) return []
+  return photos.value.map(photo => {
+    // On utilise storage_url s'il existe, sinon file_name
+    const path = photo.storage_url || photo.file_name || ''
+
+    // Si c'est un lien externe (Picsum), on le garde. Sinon, on ajoute l'URL du S3.
+    const fullUrl = path.startsWith('http')
+        ? path
+        : `${config.public.s3Url}/${path}`
+
+    return {
+      ...photo,
+      url: fullUrl
+    }
+  })
+})
+
+// 4. Gestion de la Lightbox
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
-
-const formattedPhotosForLightbox = computed(() => {
-  if (!photos.value) return []
-  return photos.value.map(photo => ({
-    url: `${config.public.s3Url}/${photo.file_name}`,
-    title: photo.title || ''
-  }))
-})
 
 const openLightbox = (index) => {
   selectedIndex.value = index
@@ -32,6 +45,8 @@ const openLightbox = (index) => {
   <div class="container">
     <NuxtLink to="/" class="back-btn">← Retour aux galeries</NuxtLink>
 
+    <h1>Photos de la galerie</h1>
+
     <div v-if="error" style="color: red;">
       Erreur lors du chargement des photos : {{ error.message }}
     </div>
@@ -40,21 +55,15 @@ const openLightbox = (index) => {
       Chargement des photos...
     </div>
 
-    <div v-else-if="photos && photos.length > 0">
-      <h1>Photos de la galerie</h1>
-
+    <div v-else-if="photosWithUrls && photosWithUrls.length > 0">
       <div class="photo-grid">
         <div
-            v-for="(photo, index) in photos"
+            v-for="(photo, index) in photosWithUrls"
             :key="photo.id"
             class="photo-item"
             @click="openLightbox(index)"
         >
-          <img
-              :src="`${config.public.s3Url}/${photo.file_name}`"
-              :alt="'Photo ' + index"
-              loading="lazy"
-          />
+          <img :src="photo.url" :alt="photo.title || 'Photo'" loading="lazy" />
         </div>
       </div>
     </div>
@@ -67,7 +76,7 @@ const openLightbox = (index) => {
       <Teleport to="body">
         <ImageLightbox
             v-if="isLightboxOpen"
-            :images="formattedPhotosForLightbox"
+            :images="photosWithUrls"
             :initial-index="selectedIndex"
             @close="isLightboxOpen = false"
         />
@@ -75,7 +84,6 @@ const openLightbox = (index) => {
     </ClientOnly>
   </div>
 </template>
-
 
 <style scoped>
 .container {
@@ -87,13 +95,16 @@ const openLightbox = (index) => {
 .back-btn {
   display: inline-block;
   margin-bottom: 20px;
-  color: #007bff;
+  color: #2c3e50;
   text-decoration: none;
+  font-weight: bold;
 }
+.back-btn:hover { text-decoration: underline; }
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
+  margin-top: 20px;
 }
 .photo-item {
   cursor: pointer;

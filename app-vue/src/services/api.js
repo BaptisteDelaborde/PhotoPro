@@ -30,14 +30,14 @@ export const apiGestion = {
     }
   },
 
-  async uploadPhoto(fichier, galerieId) {
-    console.log("POST /photos", fichier.name);
+  async uploadPhoto(fichier, photographeId, galerieId) {
+    console.log(`POST /photographes/${photographeId}/galeries/${galerieId}/photos`, fichier.name);
+    
     const formData = new FormData();
-    formData.append('file', fichier);
-    formData.append('gallery_id', galerieId);
+    formData.append('photo', fichier);
 
     try {
-      const res = await axiosInstance.post('/photos', formData, {
+      const res = await axiosInstance.post(`/photographes/${photographeId}/galeries/${galerieId}/photos`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -49,6 +49,17 @@ export const apiGestion = {
     }
   },
 
+  async deletePhoto(photographeId, galerieId, photoId) {
+    console.log(`DELETE /photographes/${photographeId}/galeries/${galerieId}/photos/${photoId}`);
+    try {
+      const res = await axiosInstance.delete(`/photographes/${photographeId}/galeries/${galerieId}/photos/${photoId}`);
+      return res.data;
+    } catch (error) {
+      console.error('Erreur suppression photo:', error);
+      throw error;
+    }
+  },
+
   async getMesGaleries() {
     console.log("GET /galeries (mes galeries)");
     try {
@@ -56,6 +67,17 @@ export const apiGestion = {
       return res.data
     } catch (error) {
       console.error('Erreur récupération des galeries:', error)
+      throw error
+    }
+  },
+
+  async getGalleryPhotos(photographeId, galleryId) {
+    console.log(`GET /photographes/${photographeId}/galeries/${galleryId}/photos`);
+    try {
+      const res = await axiosInstance.get(`/photographes/${photographeId}/galeries/${galleryId}/photos`)
+      return res.data
+    } catch (error) {
+      console.error('Erreur récupération photos galerie:', error)
       throw error
     }
   },
@@ -78,17 +100,5 @@ export const apiGestion = {
       console.error('Erreur GET:', error)
       throw error
     }
-  },
-
-  async getGalleryPhotos(galleryId) {
-    console.log("GET /galeries/" + galleryId + "/photos");
-    try {
-      const res = await axiosInstance.get(`/galeries/${galleryId}/photos`)
-      return res.data
-    } catch (error) {
-      console.error('Erreur récupération photos galerie:', error)
-      throw error
-    }
   }
 };
-

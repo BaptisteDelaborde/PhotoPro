@@ -10,7 +10,7 @@ class S3Service
     private S3Client $s3Client;
     private string $bucket;
 
-    public function __construct()
+public function __construct()
     {
         $this->bucket = (string) (getenv('S3_BUCKET') ?: 'photopro-galeries');
         
@@ -24,46 +24,52 @@ class S3Service
                 'secret' => (string) (getenv('S3_SECRET_KEY') ?: '789012'),
             ],
         ]);
+
+        try {
+            $policy = json_encode([
+                "Version" => "2012-10-17",
+                "Statement" => [
+                    [
+                        "Sid" => "PublicRead",
+                        "Effect" => "Allow",
+                        "Principal" => "*",
+                        "Action" => ["s3:GetObject"],
+                        "Resource" => ["arn:aws:s3:::" . $this->bucket . "/*"]
+                    ]
+                ]
+            ]);
+
+            $this->s3Client->putBucketPolicy([
+                'Bucket' => $this->bucket,
+                'Policy' => $policy
+            ]);
+        } catch (\Exception $e) {
+            error_log("ERREUR FATALE BUCKET POLICY : " . $e->getMessage());
+        }
     }
 
-public function uploadFile(StreamInterface $stream, string $mimeType, string $extension): array
+    public function uploadFile(StreamInterface $stream, string $mimeType, string $extension): array
     {
         $fileName = uniqid('photo_') . '.' . $extension;
         $s3Key = 'uploads/' . date('Y/m/d') . '/' . $fileName;
 
+        // 🌟 L'ASTUCE EST ICI : On force l'ACL en "Lecture Publique" pour CHAQUE image
         $this->s3Client->putObject([
             'Bucket'      => $this->bucket,
             'Key'         => $s3Key,
             'Body'        => $stream->detach(),
             'ContentType' => $mimeType,
+            'ACL'         => 'public-read', // Le sésame pour SeaweedFS !
         ]);
 
         $externalEndpoint = (string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333');
-        
-        $s3ExternalClient = new S3Client([
-            'version' => 'latest',
-            'region'  => (string) (getenv('S3_REGION') ?: 'seaweedFS'),
-            'endpoint' => $externalEndpoint,
-            'use_path_style_endpoint' => true,
-            'credentials' => [
-                'key'    => (string) (getenv('S3_ACCESS_KEY') ?: 'GHIJKL'),
-                'secret' => (string) (getenv('S3_SECRET_KEY') ?: '789012'),
-            ],
-        ]);
-
-        $cmd = $s3ExternalClient->getCommand('GetObject', [
-            'Bucket' => $this->bucket,
-            'Key'    => $s3Key
-        ]);
-
-        $request = $s3ExternalClient->createPresignedRequest($cmd, '+60 minutes');
-        $publicUrl = (string) $request->getUri();
 
         return [
             's3_key' => $s3Key,
-            'url'    => $publicUrl
+            'url'    => $externalEndpoint . '/' . $this->bucket . '/' . $s3Key
         ];
     }
+
     public function deleteFile(string $s3Key): void
     {
         $this->s3Client->deleteObject([
@@ -71,5 +77,4 @@ public function uploadFile(StreamInterface $stream, string $mimeType, string $ex
             'Key'    => $s3Key,
         ]);
     }
-
 }
