@@ -120,12 +120,17 @@ const handleRemoveFromGallery = async (photoId: string | number) => {
 const goBack = () => router.push('/galeries')
 
 const getPhotoUrl = (photo: Photo) => {
-  if (photo.url) return photo.url
-  if (photo.storage_url) {
-    if (photo.storage_url.startsWith('http')) return photo.storage_url
-    return `http://localhost:8333/photopro-galeries/${photo.storage_url}`
+  let link = photo.url || photo.storage_url || photo.s3_key || '';
+
+  if (link.includes('http://localhost:8333/photopro-galeries/http')) {
+    link = link.replace('http://localhost:8333/photopro-galeries/', '');
   }
-  return ''
+
+  if (link && !link.startsWith('http')) {
+    return `http://localhost:8333/photopro-galeries/${link}`;
+  }
+
+  return link;
 }
 </script>
 
