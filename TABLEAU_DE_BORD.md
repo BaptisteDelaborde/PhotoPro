@@ -9,8 +9,8 @@
 | Ryad     | Service de stockage S3 (app-storage), gateway backoffice upload, intégration S3 dans app-galerie                                                   |
 | Quentin  | Frontend Vue.js (backoffice photographe) : login, inscription, axios intercepteur JWT, galeries, visualisation photos                               |
 | Dio      | Frontend Nuxt SSR (espace client) : visualisation galeries publiques, lightbox, galerie par code privé, CSS                                        |
-| Mattéo  | Application mobile, gateway backoffice                                                                                                              |
-| Léo     | Backend app-galerie : actions CRUD galeries, routes, accès galerie par code, configuration JWT/docker-compose                                      |
+| Mattéo  | Application mobile, gateway backoffice, microservice d'authentification                                                                             |
+| Léo     | Backend app-galerie : actions CRUD galeries, routes, accès galerie par code, configuration JWT/docker-compose, microservice d'authentification      |
 
 ---
 
