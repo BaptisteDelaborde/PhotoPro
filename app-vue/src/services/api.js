@@ -106,6 +106,16 @@ export const apiGestion = {
     }
   },
 
+    async updateGalerie(photographeId, galerieId, donnees) {
+    try {
+      const res = await axiosInstance.put(`/photographes/${photographeId}/galeries/${galerieId}`, donnees)
+      return res.data
+    } catch (error) {
+      console.error('Erreur mise à jour galerie:', error);
+      throw error;
+    }
+  },
+
   async getGalleryPhotos(photographeId, galleryId) {
     try {
       const res = await axiosInstance.get(`/photographes/${photographeId}/galeries/${galleryId}/photos`)
