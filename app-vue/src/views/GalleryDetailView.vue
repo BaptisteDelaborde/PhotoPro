@@ -3,7 +3,7 @@ import {ref, onMounted, computed} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import {useAuthStore} from '../stores/auth'
 import {apiGestion} from '../services/api'
-
+// Définitions TypeScript
 type Photo = {
   id: string | number
   title?: string
@@ -31,18 +31,22 @@ const photos = ref<Photo[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+// Variables pour la Modale de Sélection S3
 const showStorageModal = ref(false)
 const storagePhotos = ref<Photo[]>([])
 const loadingStorage = ref(false)
+// Utilisation de Set pour stocker des ID uniques (les photos sélectionnées en cochant)
 const selectedPhotos = ref<Set<string | number>>(new Set())
 const isAddingPhotos = ref(false)
 
+// Extraction des données depuis l'URL
 const galleryId = route.params.id as string
 const galleryTitle = (route.query.title as string) || (route.params.title as string) || 'Galerie'
 const routeLayout = (route.query.layout as string) || undefined
 
 const photographeId = computed(() => authStore.photographerId)
 
+// Récupère les infos texte de la galerie
 const fetchGalleryMeta = async () => {
   try {
     const data = await apiGestion.getGalerie(galleryId)
@@ -65,6 +69,7 @@ const fetchGalleryMeta = async () => {
   }
 }
 
+// Récupère les photos liées à cette galerie
 const fetchPhotos = async () => {
   loading.value = true
   error.value = null
@@ -87,6 +92,7 @@ onMounted(async () => {
   await fetchPhotos()
 })
 
+// Ouvre la fenêtre S3 et filtre les images pour ne pas afficher celles déjà présentes
 const openStorageModal = async () => {
   showStorageModal.value = true
   loadingStorage.value = true
@@ -94,7 +100,9 @@ const openStorageModal = async () => {
   try {
     const data = await apiGestion.getStoragePhotos(photographeId.value)
     const allPhotos = data.photos || data || []
+    // On crée un Set des IDs des photos déjà dans la galerie
     const currentPhotoIds = new Set(photos.value.map(p => p.id));
+    // On ne garde que les photos S3 qui NE SONT PAS dans currentPhotoIds
     storagePhotos.value = allPhotos.filter((p: Photo) => !currentPhotoIds.has(p.id));  } catch (err) {
     alert("Impossible de charger votre bibliothèque")
   } finally {
@@ -102,6 +110,7 @@ const openStorageModal = async () => {
   }
 }
 
+// Fonction appelée quand on clique sur une photo
 const togglePhotoSelection = (id: string | number) => {
   if (selectedPhotos.value.has(id)) {
     selectedPhotos.value.delete(id)
@@ -110,11 +119,14 @@ const togglePhotoSelection = (id: string | number) => {
   }
 }
 
+// Valide la sélection et envoie au backend
 const confirmSelection = async () => {
   if (selectedPhotos.value.size === 0) return
   isAddingPhotos.value = true
 
   try {
+    // Array.from(set) convertit le Set en tableau classique.
+    // On crée un tableau de "Promesses" API (une requête PATCH par photo)
     const promises = Array.from(selectedPhotos.value).map(photoId =>
         apiGestion.linkPhotoToGallery(photographeId.value, photoId, galleryId)
     )
@@ -154,13 +166,16 @@ const handleRemoveFromGallery = async (photoId: string | number) => {
 
 const goBack = () => router.push('/galeries')
 
+// Nettoie et formate l'URL de l'image si elle vient du serveur local ou S3
 const getPhotoUrl = (photo: Photo) => {
   let link = photo.url || photo.storage_url || photo.s3_key || '';
 
+  // Supprime la duplication localhost si elle existe
   if (link.includes('http://localhost:8333/photopro-galeries/http')) {
     link = link.replace('http://localhost:8333/photopro-galeries/', '');
   }
 
+  // Si c'est un chemin relatif (ex: /photos/123), on ajoute l'hôte
   if (link && !link.startsWith('http')) {
     return `http://localhost:8333/photopro-galeries/${link}`;
   }
@@ -168,6 +183,7 @@ const getPhotoUrl = (photo: Photo) => {
   return link;
 }
 
+// Définit la disposition d'affichage (grille classique ou maçonnerie/Pinterest)
 const normalizedLayout = computed<'grid' | 'masonry'>(() => {
   const l = (gallery.value?.layout || 'grid').toString().toLowerCase()
   return l === 'masonry' ? 'masonry' : 'grid'

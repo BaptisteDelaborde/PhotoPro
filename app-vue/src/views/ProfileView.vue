@@ -11,6 +11,7 @@ type Photo = {
 }
 
 const authStore = useAuthStore()
+// Variables qui stockent les champs textuels du profil
 const isEditing = ref(false)
 const description = ref("Photographe passionné...")
 const profileImageUrl = ref("")
@@ -22,7 +23,7 @@ const showStorageModal = ref(false)
 const storagePhotos = ref<Photo[]>([])
 const loadingStorage = ref(false)
 
-// --- Chargement initial ---
+// Chargement initial (GET) : On vient piocher dans le microservice app-auth
 onMounted(async () => {
     try {
         const data = await apiGestion.get(`/auth/photographes/${photographeId.value}`)
@@ -35,7 +36,7 @@ onMounted(async () => {
     }
 })
 
-// --- Logique inspirée de GalleryDetailView ---
+// Ouvre la modale et récupère les images de S3
 const openStorageModal = async () => {
     showStorageModal.value = true
     loadingStorage.value = true
@@ -49,6 +50,7 @@ const openStorageModal = async () => {
     }
 }
 
+// Se déclenche quand on CLIQUE sur une image de la modale
 const selectPhoto = async (photo: Photo) => {
     const nouvelleUrl = photo.url || photo.storage_url
     try {
@@ -62,6 +64,7 @@ const selectPhoto = async (photo: Photo) => {
     }
 }
 
+// Se déclenche quand on clique sur le bouton "Enregistrer" de la description
 const saveProfile = async () => {
     try {
         await apiGestion.updateProfile(photographeId.value, { description: description.value })

@@ -11,6 +11,7 @@ const isUploading = ref(false)
 const uploadedPhotos = ref([])
 const loading = ref(true)
 
+// Charge toutes les photos globales
 const fetchStoragePhotos = async () => {
     loading.value = true
     try {
@@ -29,6 +30,7 @@ onMounted(async () => {
     }
 })
 
+// Se déclenche quand on glisse un fichier ou qu'on le sélectionne
 const handleFileChange = (event) => {
     const target = event.target
     if (target.files && target.files.length > 0) {
@@ -36,6 +38,7 @@ const handleFileChange = (event) => {
     }
 }
 
+// Se déclenche au clic du bouton "Envoyer"
 const uploadPhoto = async () => {
     if (!selectedFile.value || !photographeId.value) return
 

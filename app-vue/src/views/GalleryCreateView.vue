@@ -7,11 +7,13 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
+// On relie chaque input du HTML à une variable ref() via v-model
 const titre = ref('')
 const description = ref('')
 const typeGalerie = ref('publique')
 const miseEnPage = ref('grille')
 
+// Les champs clients
 const nomClient = ref('')
 const emailClient = ref('')
 
@@ -19,11 +21,13 @@ const errorMsg = ref('')
 
 const submitGallery = async () => {
     try {
+      // On construit l'objet de données (Payload) à envoyer à l'API
         const payload = {
             title: titre.value,
             description: description.value,
             is_public: typeGalerie.value === 'publique',
             layout: miseEnPage.value,
+            // Si c'est privé, on envoie le nom, sinon on envoie 'null'
             client_name: typeGalerie.value === 'privee' ? nomClient.value : null,
             client_email: typeGalerie.value === 'privee' ? emailClient.value : null,
             photographe_id: authStore.photographerId 
@@ -33,6 +37,7 @@ const submitGallery = async () => {
         
         await apiGestion.creerGalerie(payload) 
         
+        // Redirection vers le dashboard après succès
         router.push('/galeries')
     } catch (error) {
         errorMsg.value = 'Une erreur est survenue lors de la création de la galerie.'

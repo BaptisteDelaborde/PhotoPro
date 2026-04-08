@@ -20,10 +20,12 @@ const confirmPassword = ref('')
 const errorMsg = ref('')
 const successMsg = ref('')
 
+// Fonction déclenchée à la soumission du formulaire d'inscription
 const handleRegister = async () => {
     errorMsg.value = ''
     successMsg.value = ''
 
+    // Vérification de sécurité basique
     if (!email.value || !password.value || !confirmPassword.value || !firstName.value || !lastName.value || !pseudo.value) {
         errorMsg.value = 'Veuillez remplir tous les champs obligatoires (*)'
         return
@@ -41,9 +43,12 @@ const handleRegister = async () => {
 
     try {
         console.log("Tentative d'inscription pour le photographe:", firstName.value, lastName.value)
+        // On passe toutes les valeurs au store.
         await authStore.register(email.value, password.value, firstName.value, lastName.value, pseudo.value, phone.value, 0)
 
         successMsg.value = 'Inscription réussie ! Redirection vers la connexion...'
+        // setTimeout permet d'attendre 1.5 seconde pour laisser le temps 
+        // à l'utilisateur de lire le message vert de succès avant de changer de page.
         setTimeout(() => {
             router.push('/connexion')
         }, 1500)

@@ -1,9 +1,13 @@
 <script setup lang="ts">
+// Importation des outils réactifs de Vue.js
 import {ref, computed, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
+// Importation du store Pinia (qui garde en mémoire l'utilisateur connecté)
 import {useAuthStore} from '../stores/auth'
+// Importation des appels API (axios)
 import {apiGestion} from '../services/api'
 
+// Définition de la structure d'une galerie pour Typescript
 type Gallery = {
   id: string | number
   titre: string
@@ -16,15 +20,23 @@ type Gallery = {
 const router = useRouter()
 const authStore = useAuthStore()
 
-const galleries = ref<Gallery[]>([])
-const search = ref('')
-const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes')
+// Variables réactives (si elles changent, l'interface se met à jour automatiquement)
+const galleries = ref<Gallery[]>([]) // Liste de toutes les galeries
+const search = ref('') // Texte de la barre de recherche
+const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes') // Filtre du menu déroulant
 
+// On récupère l'ID du photographe depuis le store (en temps réel grâce à computed)
 const photographeId = computed(() => authStore.photographerId)
 const fileInput = ref<HTMLInputElement | null>(null)
 const targetGalleryId = ref<string | number | null>(null)
 const isUploadingCover = ref(false)
 
+// Références pour gérer l'upload de la photo de couverture
+const fileInput = ref<HTMLInputElement | null>(null) // Fait le lien avec le <input type="file"> caché
+const targetGalleryId = ref<string | number | null>(null) // Mémorise la galerie qu'on est en train de modifier
+const isUploadingCover = ref(false) // Permet d'afficher un loader pendant l'envoi
+
+// Fonction principale : Récupère les galeries depuis le backend PHP
 const fetchGalleries = async () => {
   try {
     const res = await apiGestion.getMesGaleries()
@@ -32,6 +44,8 @@ const fetchGalleries = async () => {
     
     let items = []
     
+    // Ce bloc if/else gère les différentes façons dont le backend pourrait renvoyer le JSON
+    // (parfois double-encodé, parfois dans un objet 'data', parfois un tableau direct)
     if (Array.isArray(res)) {
       items = res
     } 
@@ -43,6 +57,7 @@ const fetchGalleries = async () => {
       
       if (stringData) {
         try {
+          // On nettoie la chaîne pour forcer l'extraction d'un tableau JSON valide
           const startIndex = stringData.indexOf('[')
           const endIndex = stringData.lastIndexOf(']')
           
@@ -58,6 +73,7 @@ const fetchGalleries = async () => {
       }
     }
 
+    // On transforme les données brutes du backend en format propre pour notre composant
     galleries.value = items.map((g: any) => ({
       id: g.id,
       titre: g.title || g.titre || 'Sans titre',
@@ -72,60 +88,72 @@ const fetchGalleries = async () => {
   }
 }
 
+// Se déclenche automatiquement quand la page s'affiche pour la première fois
 onMounted(async () => {
   if (authStore.isAuthenticated) {
     await fetchGalleries()
   }
 });
 
+// -- GESTION DE LA COUVERTURE DE LA GALERIE --
+// Quand on clique sur le bouton, on simule un clic sur l'input type="file" caché
 const triggerCoverUpload = (id: string | number) => {
   targetGalleryId.value = id
   fileInput.value?.click()
 }
 
+// Quand l'utilisateur a choisi un fichier sur son ordinateur
 const onCoverFileSelected = async (event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target.files || target.files.length === 0 || !targetGalleryId.value || !photographeId.value) return
 
-  const file = target.files[0]
-  isUploadingCover.value = true
+  const file = target.files[0] // On récupère le fichier physique
+  isUploadingCover.value = true // On active le loader
 
   try {
+    //On envoie la photo sur le stockage (S3)
     const uploadRes = await apiGestion.uploadPhoto(file, photographeId.value, targetGalleryId.value)
     const newPhotoId = uploadRes.photo_id || (uploadRes.photos ? uploadRes.photos[0].id : null)
 
     if (!newPhotoId) throw new Error("ID de la photo introuvable")
 
+    //On met à jour la galerie pour lui assigner cette nouvelle photo en couverture
     await apiGestion.updateGalerie(photographeId.value, targetGalleryId.value, {
       cover_photo_id: newPhotoId
     })
 
+    //On recharge la liste pour afficher la nouvelle image
     await fetchGalleries()
   } catch (error) {
     console.error("Erreur couverture:", error)
     alert("Impossible de modifier la couverture.")
   } finally {
-    isUploadingCover.value = false
+    isUploadingCover.value = false // On retire le loader
     targetGalleryId.value = null
-    if (fileInput.value) fileInput.value.value = ''
+    if (fileInput.value) fileInput.value.value = '' // On vide l'input pour pouvoir re-sélectionner le même fichier si besoin
   }
 }
 
+// computed permet de créer une variable qui se recalcule toute seule
+// à chaque fois que "search" ou "filterType" changent.
 const filteredGalleries = computed(() => {
   const q = search.value.trim().toLowerCase()
   return galleries.value.filter(g => {
+    // Vérifie si le type correspond (Publique/Privée)
     const matchType = filterType.value === 'Toutes' || g.type === filterType.value
+    // Vérifie si le titre contient le texte recherché
     const matchQuery = !q || (g.titre && g.titre.toLowerCase().includes(q))
     return matchType && matchQuery
   })
 })
 
+// Inverse le statut publié/brouillon
 const togglePublish = async (g: Gallery) => {
   try {
     const nouveauStatut = !g.est_publiee;
-
+    // Appel API pour mettre à jour la BDD
     await apiGestion.updateGalerieStatus(g.id, {is_published: nouveauStatut});
-
+    // Si l'API répond OK, on met à jour l'affichage en local
     g.est_publiee = nouveauStatut;
   } catch (error) {
     console.error(error);
@@ -133,6 +161,7 @@ const togglePublish = async (g: Gallery) => {
   }
 }
 
+// Redirections via vue-router
 const goToCreate = () => {
   if (!authStore.isAuthenticated) {
     router.push('/connexion')
@@ -142,19 +171,23 @@ const goToCreate = () => {
 }
 
 const goToGalleryDetails = (id: string | number, title: string, layout?: string) => {
+  // On passe des infos dans l'URL (query params) pour éviter un chargement blanc sur la page suivante
   router.push({path: `/galeries/${id}`, query: {title, layout: layout || 'grid'}})
 }
 
+// Génère les initiales (ex: "Mariage Sophie" -> "MS") pour la miniature si pas de couverture
 const initials = (titre: string | undefined) => {
   if (!titre) return '?'
   return titre.split(' ').map(s => s.charAt(0).toUpperCase()).slice(0, 2).join('')
 }
 
+// Suppression avec alerte de confirmation native
 const deleteGallery = async (id: string | number, titre: string) => {
   if (!window.confirm(`Êtes-vous sûr de vouloir supprimer la galerie "${titre}" ?\n\nVos photos resteront dans votre stockage global.`)) return
 
   try {
     await apiGestion.deleteGalerie(photographeId.value, id)
+    // On retire la galerie de la liste locale sans avoir à recharger toute la page
     galleries.value = galleries.value.filter(g => g.id !== id)
   } catch (err) {
     console.error(err)
@@ -182,12 +215,12 @@ const deleteGallery = async (id: string | number, titre: string) => {
     </header>
 
     <input type="file" ref="fileInput" class="hidden-input" @change="onCoverFileSelected" accept="image/*"/>
+    
     <div v-if="isUploadingCover" class="global-loader"><span class="spinner"></span> Mise à jour...</div>
 
     <section v-if="filteredGalleries.length" class="cards">
-      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id, g.titre, g.layout)"
-               role="button"
-               tabindex="0">
+      <article v-for="g in filteredGalleries" :key="g.id" class="card" @click="goToGalleryDetails(g.id, g.titre, g.layout)" role="button" tabindex="0">
+        
         <div class="cover" :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}">
           <div v-if="!g.cover" class="placeholder">{{ initials(g.titre) }}</div>
           <div class="overlay">

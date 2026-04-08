@@ -6,14 +6,21 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
+// Variables réactives reliées directement aux champs de saisie du HTML
 const email = ref('')
 const password = ref('')
+
 const errorMsg = ref('')
 
+// Fonction déclenchée quand l'utilisateur clique sur "Se connecter" ou appuie sur Entrée
 const handleLogin = async () => {
     try {
         console.log('Tentative de connexion avec:', email.value)
+        //Appel à la méthode "login" de auth.ts
+        // C'est cette méthode qui envoie la requête POST à la Gateway Back
         await authStore.login(email.value, password.value)
+
+        //Si le backend renvoie 200 OK avec le JWT, on redirige vers le tableau de bord
         router.push('/galeries')
     } catch (e) {
         errorMsg.value = 'Échec de la connexion. Veuillez vérifier vos identifiants.'
@@ -21,6 +28,7 @@ const handleLogin = async () => {
     }
 }
 
+// Fonction utilitaire pour le bouton en bas de page
 const goToRegister = () => {
     router.push('/register')
 }
