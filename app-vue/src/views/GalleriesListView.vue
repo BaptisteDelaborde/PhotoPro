@@ -27,9 +27,6 @@ const filterType = ref<'Toutes' | 'Publique' | 'Privée'>('Toutes') // Filtre du
 
 // On récupère l'ID du photographe depuis le store (en temps réel grâce à computed)
 const photographeId = computed(() => authStore.photographerId)
-const fileInput = ref<HTMLInputElement | null>(null)
-const targetGalleryId = ref<string | number | null>(null)
-const isUploadingCover = ref(false)
 
 // Références pour gérer l'upload de la photo de couverture
 const fileInput = ref<HTMLInputElement | null>(null) // Fait le lien avec le <input type="file"> caché
