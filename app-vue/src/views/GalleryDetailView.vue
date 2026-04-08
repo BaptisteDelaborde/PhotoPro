@@ -398,6 +398,26 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
   display: block;
 }
 
+.photos-grid--masonry .photo-info {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.photos-grid--masonry .photo-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.photos-grid--masonry .photo-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
 .photo-info {
   padding: 12px;
   display: flex;
