@@ -10,6 +10,7 @@ use photopro\api\actions\DeleteGalerieAction;
 use photopro\api\actions\GetGalerieAction;
 use photopro\api\actions\GetGalerieByCodeAction;
 use photopro\api\actions\GetPhotosAction;
+use photopro\api\actions\GetPhotographesAction;
 use photopro\api\actions\GetPublicGaleriesAction;
 use photopro\api\actions\GetUserGaleriesAction;
 use photopro\api\actions\UpdateGalerieStatusAction;
@@ -68,6 +69,10 @@ return [
 
     GetCommentairesAction::class => function (ContainerInterface $c) {
         return new GetCommentairesAction($c->get(ServiceGalerieInterface::class));
+    },
+
+    GetPhotographesAction::class => function (ContainerInterface $c) {
+        return new GetPhotographesAction($c->get(ServiceGalerieInterface::class));
     },
 
         \photopro\api\actions\DeletePhotoAction::class => function (\Psr\Container\ContainerInterface $c) {

@@ -339,19 +339,24 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
     public function getAllPhotographes(): array {
         $sql = "SELECT id, first_name, last_name, pseudo FROM photographes ORDER BY first_name ASC";
 
-        $host = $_ENV['AUTH_DB_HOST'] ?? 'auth.db';
-        $port = $_ENV['AUTH_DB_PORT'] ?? 5432;
-        $db   = $_ENV['AUTH_POSTGRES_DB'] ?? 'photopro_auth';
-        $user = $_ENV['AUTH_POSTGRES_USER'] ?? 'photopro';
-        $pass = $_ENV['AUTH_POSTGRES_PASSWORD'] ?? 'photopro';
+        $host = getenv('AUTH_DB_HOST') ?: 'auth.db';
+        $port = getenv('AUTH_DB_PORT') ?: 5432;
+        $db   = getenv('AUTH_POSTGRES_DB') ?: 'photopro_auth';
+        $user = getenv('AUTH_POSTGRES_USER') ?: 'photopro';
+        $pass = getenv('AUTH_POSTGRES_PASSWORD') ?: 'photopro';
 
         $dsn = "pgsql:host=$host;port=$port;dbname=$db";
-        $authPdo = new \PDO($dsn, $user, $pass, [
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-        ]);
 
-        $stmt = $authPdo->query($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $authPdo = new \PDO($dsn, $user, $pass, [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+            ]);
+            $stmt = $authPdo->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log('[getAllPhotographes] Connexion auth.db échouée : ' . $e->getMessage());
+            return [];
+        }
     }
 }

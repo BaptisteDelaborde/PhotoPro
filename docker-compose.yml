@@ -82,6 +82,8 @@ services:
     depends_on:
       galerie.db:
         condition: service_started
+      auth.db:
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     command: sh -c "composer install --ignore-platform-reqs || composer update --no-interaction --ignore-platform-reqs && php -S 0.0.0.0:80 -t /var/php/public"

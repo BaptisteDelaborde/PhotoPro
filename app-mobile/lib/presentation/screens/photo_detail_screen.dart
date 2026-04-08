@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import '../../core/persistence/persistence_service.dart';
 import '../../data/models/galerie_model.dart';
 import '../providers/gallery_providers.dart';
+import '../../core/api/api_config.dart';
 
 class PhotoDetailScreen extends ConsumerStatefulWidget {
   final String galleryId;
@@ -80,6 +81,9 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     final bool isPrivate = !(gallery?.isPublic ?? true);
 
     String imageUrl = photo?.storageUrl ?? '';
+    if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      imageUrl = '${ApiConfig.baseUrl}/photos/${photo!.remoteId}/storage';
+    }
 
     final httpIndex = imageUrl.indexOf('http', 4);
     if (httpIndex != -1) {
