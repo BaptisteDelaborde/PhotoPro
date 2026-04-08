@@ -32,7 +32,6 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
         );
     }
 
-    // AJOUT DES NOUVEAUX PARAMÈTRES ICI POUR NE PLUS FAIRE DE "MERDE"
     public function save(CredentialsDTO $dto, int $role, string $firstName, string $lastName, string $pseudo, ?string $phone): void
     {
         $id = Uuid::uuid4()->toString();
@@ -40,7 +39,6 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
 
         $this->pdo->beginTransaction();
         try {
-            // 1. Insertion dans la table users
             $sql = "INSERT INTO users (id, email, password, role) VALUES (:id, :email, :password, :role)";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
@@ -50,7 +48,6 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
                 ':role' => $role
             ]);
 
-            // 2. Insertion dans la table photographes avec les VRAIES données
             $photoId = Uuid::uuid4()->toString();
 
             $sqlPhoto = "INSERT INTO photographes (id, auth_user_id, pseudo, first_name, last_name, email, phone) 
@@ -59,11 +56,11 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
             $stmtPhoto->execute([
                 ':id' => $photoId,
                 ':auth_user_id' => $id,
-                ':pseudo' => $pseudo,       // Utilise le pseudo du front
-                ':first_name' => $firstName, // Utilise le prénom du front
-                ':last_name' => $lastName,   // Utilise le nom du front
+                ':pseudo' => $pseudo,       
+                ':first_name' => $firstName, 
+                ':last_name' => $lastName,   
                 ':email' => $dto->email,
-                ':phone' => $phone           // Utilise le téléphone du front (ou null)
+                ':phone' => $phone           
             ]);
 
             $this->pdo->commit();

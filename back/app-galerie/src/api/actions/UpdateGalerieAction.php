@@ -23,7 +23,6 @@ class UpdateGalerieAction
         $body = $request->getParsedBody() ?? [];
 
         try {
-            // 2. 🌟 CORRECTION : On passe bien $galerieId au lieu de $id
             $dto = $this->serviceGalerie->updateGalerie($galerieId, $body);
         } catch (\InvalidArgumentException $e) {
             throw new HttpBadRequestException($request, $e->getMessage());

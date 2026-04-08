@@ -11,7 +11,6 @@ class GetPhotographerPhotosAction
 {
     private PDO $pdo;
 
-    // 🌟 CORRECTION : On accepte le Container, et on va chercher PDO dedans
     public function __construct(ContainerInterface $container)
     {
         $this->pdo = $container->get(PDO::class);
