@@ -2,23 +2,19 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-// 1. Configuration des variables d'environnement (comme sur index.vue)
 const config = useRuntimeConfig()
 const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 
 const route = useRoute()
 const galerieId = route.params.id
 
-// 2. Appel API pour récupérer les photos
 const { data: photos, pending, error } = await useFetch(`${apiBase}/galeries/${galerieId}/photos`)
 
-// 3. Gestion des Données Photos
 const photosWithUrls = computed(() => {
   if (!photos.value) return []
   return photos.value
 })
 
-// 4. Gestion de la Lightbox
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
 
