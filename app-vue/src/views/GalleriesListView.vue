@@ -32,21 +32,17 @@ const fetchGalleries = async () => {
     
     let items = []
     
-    // 1. Si c'est un tableau propre (comportement idéal)
     if (Array.isArray(res)) {
       items = res
     } 
-    // 2. Si c'est emballé dans res.data
     else if (res && Array.isArray(res.data)) {
       items = res.data
     } 
-    // 3. Si PHP a pollué le JSON et l'a transformé en texte brut
     else {
       let stringData = typeof res === 'string' ? res : (res && typeof res.data === 'string' ? res.data : null)
       
       if (stringData) {
         try {
-          // On cherche le début '[' et la fin ']' du vrai JSON pour ignorer la pollution
           const startIndex = stringData.indexOf('[')
           const endIndex = stringData.lastIndexOf(']')
           
@@ -62,13 +58,11 @@ const fetchGalleries = async () => {
       }
     }
 
-    // 4. On affecte nos galeries à l'affichage
     galleries.value = items.map((g: any) => ({
       id: g.id,
       titre: g.title || g.titre || 'Sans titre',
       type: g.is_public ? 'Publique' : 'Privée',
       est_publiee: g.is_published,
-      // Ta fameuse couverture !
       cover: g.cover_url || g.cover_photo_url || null,
       layout: g.layout || 'grid'
     }))
@@ -130,10 +124,8 @@ const togglePublish = async (g: Gallery) => {
   try {
     const nouveauStatut = !g.est_publiee;
 
-    //Appel à l'API pour changer le statut
     await apiGestion.updateGalerieStatus(g.id, {is_published: nouveauStatut});
 
-    //Mise à jour de l'affichage local si succès
     g.est_publiee = nouveauStatut;
   } catch (error) {
     console.error(error);
@@ -163,7 +155,6 @@ const deleteGallery = async (id: string | number, titre: string) => {
 
   try {
     await apiGestion.deleteGalerie(photographeId.value, id)
-    // On met à jour l'affichage en retirant la galerie supprimée
     galleries.value = galleries.value.filter(g => g.id !== id)
   } catch (err) {
     console.error(err)

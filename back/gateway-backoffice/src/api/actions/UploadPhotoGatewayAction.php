@@ -56,7 +56,6 @@ class UploadPhotoGatewayAction
                 's3_key'    => $storageData['s3_key']
             ];
 
-            // 🌟 NOUVEAU : On récupère le token d'authentification de l'utilisateur
             $authHeader = $request->getHeaderLine('Authorization');
 
             // On ajoute l'en-tête (headers) dans l'appel Guzzle

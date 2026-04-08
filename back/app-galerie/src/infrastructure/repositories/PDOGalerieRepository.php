@@ -323,7 +323,7 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
             $sql .= " AND photographer_id = :photographer_id";
         }
 
-        // "Par date de publication" (le plus récent en premier)
+        // le plus récent en premier
         $sql .= " ORDER BY published_at DESC";
 
         $stmt = $this->pdo->prepare($sql);
