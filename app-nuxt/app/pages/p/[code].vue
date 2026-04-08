@@ -26,7 +26,7 @@
 
       <div v-else-if="photos && photos.length > 0" class="photo-grid">
         <div
-            v-for="(photo, index) in photos"
+            v-for="(photo, index) in photosWithUrls"
             :key="photo.id"
             class="photo-item"
             @click="openLightbox(index)"
@@ -68,12 +68,38 @@ const { data: photos, pending: photosPending, error: photosError } = await useFe
   return galerie.value ? `${apiBase}/galeries/${galerie.value.id}/photos` : null
 })
 
+const getPhotoUrl = (photo) => {
+  let link = photo.url || photo.storage_url || photo.s3_key || '';
+  if (!link) return '';
+
+  if (link.includes('http://localhost:8333/photopro-galeries/http')) {
+    link = link.replace('http://localhost:8333/photopro-galeries/', '');
+  }
+
+  if (!link.startsWith('http')) {
+    if (link.includes('/')) {
+      return `${config.public.s3Url}/${link}`;
+    } else {
+      return `${config.public.s3Url}/photopro-galeries/${link}`;
+    }
+  }
+  return link;
+}
+
+const photosWithUrls = computed(() => {
+  if (!photos.value) return []
+  return photos.value.map(p => ({
+    ...p,
+    url: getPhotoUrl(p)
+  }))
+})
+
 const isLightboxOpen = ref(false)
 const selectedIndex = ref(0)
 
 const formattedPhotosForLightbox = computed(() => {
-  if (!photos.value) return []
-  return photos.value.map(photo => ({
+  if (!photosWithUrls.value) return []
+  return photosWithUrls.value.map(photo => ({
     url: photo.url,
     title: photo.title || ''
   }))

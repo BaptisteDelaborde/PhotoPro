@@ -7,6 +7,24 @@ const config = useRuntimeConfig()
 const apiBase = import.meta.server ? config.apiInternalUrl : config.public.apiFrontofficeUrl
 const router = useRouter()
 
+const getPhotoUrl = (galerie) => {
+  let link = galerie.cover_url || galerie.cover_photo_url || galerie.cover_photo || galerie.cover_photo_id || '';
+  if (!link) return '';
+
+  if (link.includes('http://localhost:8333/photopro-galeries/http')) {
+    link = link.replace('http://localhost:8333/photopro-galeries/', '');
+  }
+
+  if (!link.startsWith('http')) {
+    if (link.includes('/')) {
+      return `${config.public.s3Url}/${link}`;
+    } else {
+      return `${config.public.s3Url}/photopro-galeries/${link}`;
+    }
+  }
+  return link;
+}
+
 const inputCode = ref('')
 const errorMsg = ref('')
 
@@ -95,8 +113,8 @@ const { data: galeries, pending, error, refresh } = await useFetch(`${apiBase}/g
         </p>
 
         <img
-            v-if="galerie.cover_photo_id"
-            :src="`${config.public.s3Url}/${galerie.cover_photo_id}`"
+            v-if="getPhotoUrl(galerie)"
+            :src="getPhotoUrl(galerie)"
             :alt="galerie.title"
             class="cover-image"
         />

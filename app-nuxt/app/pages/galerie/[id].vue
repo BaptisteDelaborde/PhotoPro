@@ -10,9 +10,30 @@ const galerieId = route.params.id
 
 const { data: photos, pending, error } = await useFetch(`${apiBase}/galeries/${galerieId}/photos`)
 
+const getPhotoUrl = (photo) => {
+  let link = photo.url || photo.storage_url || photo.s3_key || '';
+  if (!link) return '';
+
+  if (link.includes('http://localhost:8333/photopro-galeries/http')) {
+    link = link.replace('http://localhost:8333/photopro-galeries/', '');
+  }
+
+  if (!link.startsWith('http')) {
+    if (link.includes('/')) {
+      return `${config.public.s3Url}/${link}`;
+    } else {
+      return `${config.public.s3Url}/photopro-galeries/${link}`;
+    }
+  }
+  return link;
+}
+
 const photosWithUrls = computed(() => {
   if (!photos.value) return []
-  return photos.value
+  return photos.value.map(p => ({
+    ...p,
+    url: getPhotoUrl(p)
+  }))
 })
 
 const isLightboxOpen = ref(false)
