@@ -21,7 +21,7 @@ class ServiceUser implements ServiceUserInterface
         // On enregistre
         $this->userRepository->save($credentials, $role, $firstName, $lastName, $pseudo, $phone);
 
-        // On récupère l'utilisateur complet pour renvoyer le ProfileDTO peuplé
+        // On récupère l'utilisateur complet pour renvoyer le ProfileDTO
         $user = $this->userRepository->findByEmail($credentials->email);
 
         return new ProfileDTO(
@@ -56,5 +56,9 @@ class ServiceUser implements ServiceUserInterface
             $data['last_name'] ?? null,
             $data['phone'] ?? null
         );
+    }
+    public function updateProfile(string $id, array $data): void
+    {
+        $this->userRepository->updatePhotographe($id, $data);
     }
 }

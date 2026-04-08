@@ -104,4 +104,27 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
 
         return $user;
     }
+
+    public function updatePhotographe(string $id, array $data): void
+    {
+        $fields = [];
+        $params = [':id' => $id];
+        if (isset($data['description'])) {
+            $fields[] = 'description = :description';
+            $params[':description'] = $data['description'];
+        }
+        if (isset($data['profile_image_url'])) {
+            $fields[] = 'profile_image_url = :profile_image_url';
+            $params[':profile_image_url'] = $data['profile_image_url'];
+        }
+
+        if (empty($fields)) {
+            return;
+        }
+
+        $sql = "UPDATE photographes SET " . implode(', ', $fields) . " WHERE auth_user_id = :id OR id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+    }
 }

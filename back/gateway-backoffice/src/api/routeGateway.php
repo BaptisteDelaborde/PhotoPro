@@ -29,16 +29,16 @@ return function (App $app) {
     $app->post('/auth/refresh', GenericGatewayAction::class);
 
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
-        
+
         $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
         $group->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', DeletePhotoGatewayAction::class);
 
         $group->put('/photographes/{id}/galeries/{galerie_id}', GenericGatewayAction::class);
-        $group->delete('/photographes/{id}/galeries/{galerie_id}', GenericGatewayAction::class);        
-        
+        $group->delete('/photographes/{id}/galeries/{galerie_id}', GenericGatewayAction::class);
+
         $group->post('/photographes/{id}/photos', UploadGlobalPhotoGatewayAction::class);
         $group->get('/photographes/{id}/photos', GenericGatewayAction::class);
-        
+        $group->patch('/auth/photographes/{id}', GenericGatewayAction::class);
     })->add($validateTokenMiddleware::class);
 
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {
