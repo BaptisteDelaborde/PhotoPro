@@ -168,7 +168,7 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
     <header class="header">
       <div class="header-left">
         <button class="btn-back" @click="goBack">← Retour</button>
-        <h1>{{ gallery?.title || 'Galerie' }}</h1>
+        <h1 class="titregalerie">{{ gallery?.title || 'Galerie' }}</h1>
       </div>
 
       <div class="header-actions">
@@ -265,13 +265,18 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
+  min-width: 0;
+}
+
+.titregalerie{
+  padding-left:50px;
 }
 
 .header h1 {
   margin: 0;
   font-size: 24px;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .btn-back {
