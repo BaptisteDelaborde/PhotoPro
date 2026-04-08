@@ -9,4 +9,5 @@ interface AuthRepositoryInterface
     public function save(CredentialsDTO $dto, int $role, string $firstName, string $lastName, string $pseudo, ?string $phone): void;
     public function findByEmail(string $email): ?User;
     public function updatePhotographe(string $id, array $data): void;
+    public function getPhotographeProfile(string $id): array;
 }

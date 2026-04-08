@@ -59,4 +59,9 @@ class ServiceUser implements ServiceUserInterface
     {
         $this->userRepository->updatePhotographe($id, $data);
     }
+
+    public function getProfileData(string $id): array
+    {
+        return $this->userRepository->getPhotographeProfile($id);
+    }
 }

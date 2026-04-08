@@ -6,4 +6,5 @@ interface ServiceUserInterface
     public function register(CredentialsDTO $credentials, int $role, string $firstName, string $lastName, string $pseudo, ?string $phone): ProfileDTO;
     public function byCredentials(CredentialsDTO $credentials): ?ProfileDTO;
     public function updateProfile(string $id, array $data): void;
+    public function getProfileData(string $id): array;
 }

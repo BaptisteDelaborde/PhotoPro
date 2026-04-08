@@ -7,6 +7,7 @@ use photopro\api\actions\ValidateTokenAction;
 use photopro\api\actions\RefreshAction;
 use photopro\api\actions\UpdatePhotographeAction;
 use photopro\api\middlewares\AuthnMiddleware;
+use photopro\api\actions\GetPhotographeProfileAction;
 
 return function (\Slim\App $app): \Slim\App {
 
@@ -15,7 +16,8 @@ return function (\Slim\App $app): \Slim\App {
     $app->post('/refresh', RefreshAction::class)->setName('refresh');
     $app->post('/tokens/validate', ValidateTokenAction::class)->setName('tokens.validate');
     $app->patch('/photographes/{id}', UpdatePhotographeAction::class)
-        ->setName('update_profile')
+        ->add(AuthnMiddleware::class);
+    $app->get('/photographes/{id}', GetPhotographeProfileAction::class)
         ->add(AuthnMiddleware::class);
     return $app;
 };

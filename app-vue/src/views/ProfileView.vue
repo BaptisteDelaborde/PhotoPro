@@ -25,7 +25,7 @@ const loadingStorage = ref(false)
 // --- Chargement initial ---
 onMounted(async () => {
     try {
-        const data = await apiGestion.get(`/photographes/${photographeId.value}`)
+        const data = await apiGestion.get(`/auth/photographes/${photographeId.value}`)
         description.value = data.description || ''
         if (data.profile_image_url) {
             profileImageUrl.value = getPhotoUrl({ url: data.profile_image_url } as Photo)

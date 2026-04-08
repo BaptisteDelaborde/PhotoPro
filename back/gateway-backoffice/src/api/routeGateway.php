@@ -39,6 +39,7 @@ return function (App $app) {
         $group->post('/photographes/{id}/photos', UploadGlobalPhotoGatewayAction::class);
         $group->get('/photographes/{id}/photos', GenericGatewayAction::class);
         $group->patch('/auth/photographes/{id}', GenericGatewayAction::class);
+        $group->get('/auth/photographes/{id}', GenericGatewayAction::class);
     })->add($validateTokenMiddleware::class);
 
     $app->group('', function (\Slim\Routing\RouteCollectorProxy $group) {

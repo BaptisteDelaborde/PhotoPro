@@ -56,11 +56,11 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
             $stmtPhoto->execute([
                 ':id' => $photoId,
                 ':auth_user_id' => $id,
-                ':pseudo' => $pseudo,       
-                ':first_name' => $firstName, 
-                ':last_name' => $lastName,   
+                ':pseudo' => $pseudo,
+                ':first_name' => $firstName,
+                ':last_name' => $lastName,
                 ':email' => $dto->email,
-                ':phone' => $phone           
+                ':phone' => $phone
             ]);
 
             $this->pdo->commit();
@@ -123,5 +123,15 @@ class PDOAuthReposiroty implements AuthRepositoryInterface
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
+    }
+
+    public function getPhotographeProfile(string $id): array
+    {
+        $sql = "SELECT description, profile_image_url FROM photographes WHERE id = :id OR auth_user_id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $row ?: [];
     }
 }

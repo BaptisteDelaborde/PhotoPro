@@ -8,6 +8,7 @@ use photopro\api\middlewares\AuthnMiddleware;
 use photopro\api\providers\AuthnProviderInterface;
 use photopro\api\providers\JWTManager;
 use photopro\api\actions\UpdatePhotographeAction;
+use photopro\api\actions\GetPhotographeProfileAction;
 
 return [
     SigninAction::class => function ($c) {
@@ -39,6 +40,12 @@ return [
 
     UpdatePhotographeAction::class => function ($c) {
         return new UpdatePhotographeAction(
+            $c->get(\photopro\core\application\ports\api\ServiceUserInterface::class)
+        );
+    },
+
+    GetPhotographeProfileAction::class => function ($c) {
+        return new GetPhotographeProfileAction(
             $c->get(\photopro\core\application\ports\api\ServiceUserInterface::class)
         );
     },
