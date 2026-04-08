@@ -38,18 +38,20 @@ NUXT_FRONTEND_URL=http://localhost:3001
 ```bash
 docker compose up -d --build
 ```
+
 ---
 
 ## Équipe
 
-| Prénom   | Rôle principal                                                                                                                                                                                         |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Baptiste | Gateway frontoffice (CORS, error middleware, proxy), notifications RabbitMQ/mail (URL `/p/{code}`, env local/docketu), API commentaires, filtre galeries par photographe (Nuxt + DI), docker-compose, tests Bruno |
-| Ryad     | Service de stockage S3 (app-storage), gateway backoffice upload, intégration S3 dans app-galerie                                                                                                       |
-| Quentin  | Frontend Vue.js (backoffice photographe) : login, inscription, axios intercepteur JWT, galeries, visualisation photos                                                                                  |
-| Burak      | Frontend Nuxt SSR (espace client) : visualisation galeries publiques, lightbox, galerie par code privé, CSS                                                                                            |
-| Mattéo   | Application mobile, gateway backoffice, microservice d'authentification                                                                                                                                |
-| Léo      | Backend app-galerie : actions CRUD galeries, routes, accès galerie par code, configuration JWT/docker-compose, microservice d'authentification, développement des vues                                      |
+
+| Prénom  | Rôle principal                                                                                                                                                                                                  |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Baptiste | Gateway frontoffice (CORS, error middleware, proxy), notifications RabbitMQ/mail (URL`/p/{code}`, env local/docketu), API commentaires, filtre galeries par photographe (Nuxt + DI), docker-compose, tests Bruno |
+| Ryad     | Service de stockage S3 (app-storage), gateway backoffice upload, intégration S3 dans app-galerie                                                                                                                |
+| Quentin  | Frontend Vue.js (backoffice photographe) : login, inscription, axios intercepteur JWT, galeries, visualisation photos                                                                                            |
+| Burak    | Frontend Nuxt SSR (espace client) : visualisation galeries publiques, lightbox, galerie par code privé, CSS                                                                                                     |
+| Mattéo  | Application mobile, gateway backoffice, microservice d'authentification, docker                                                                                                                                  |
+| Léo     | Backend app-galerie : actions CRUD galeries, routes, accès galerie par code, configuration JWT/docker-compose, microservice d'authentification, développement des vues                                         |
 
 ---
 
@@ -57,32 +59,35 @@ docker compose up -d --build
 
 ### En local
 
-| Service              | URL                                  |
-| -------------------- | ------------------------------------ |
-| Espace client Nuxt   | http://localhost:3001                |
-| Backoffice Vue.js    | http://localhost:5173                |
-| Gateway frontoffice  | http://localhost:8082                |
-| Gateway backoffice   | http://localhost:8081                |
-| Stockage S3          | http://localhost:8333                |
-| MailCatcher          | http://localhost:1081                |
-| Adminer              | http://localhost:8080                |
-| RabbitMQ UI          | http://localhost:15672               |
+
+| Service             | URL                    |
+| ------------------- | ---------------------- |
+| Espace client Nuxt  | http://localhost:3001  |
+| Backoffice Vue.js   | http://localhost:5173  |
+| Gateway frontoffice | http://localhost:8082  |
+| Gateway backoffice  | http://localhost:8081  |
+| Stockage S3         | http://localhost:8333  |
+| MailCatcher         | http://localhost:1081  |
+| Adminer             | http://localhost:8080  |
+| RabbitMQ UI         | http://localhost:15672 |
 
 ### Sur Docketu
 
-| Service              | URL                                               |
-| -------------------- | ------------------------------------------------- |
-| Espace client Nuxt   | http://docketu.iutnc.univ-lorraine.fr:21859       |
-| Backoffice Vue.js    | http://docketu.iutnc.univ-lorraine.fr:21858       |
-| Gateway frontoffice  | http://docketu.iutnc.univ-lorraine.fr:21856       |
-| Gateway backoffice   | http://docketu.iutnc.univ-lorraine.fr:21857       |
-| MailCatcher          | http://docketu.iutnc.univ-lorraine.fr:21863       |
+
+| Service             | URL                                         |
+| ------------------- | ------------------------------------------- |
+| Espace client Nuxt  | http://docketu.iutnc.univ-lorraine.fr:21859 |
+| Backoffice Vue.js   | http://docketu.iutnc.univ-lorraine.fr:21858 |
+| Gateway frontoffice | http://docketu.iutnc.univ-lorraine.fr:21856 |
+| Gateway backoffice  | http://docketu.iutnc.univ-lorraine.fr:21857 |
+| MailCatcher         | http://docketu.iutnc.univ-lorraine.fr:21863 |
 
 ---
 
 ## Identifiants de test
 
-| Rôle        | Email                   | Mot de passe |
+
+| Rôle       | Email                   | Mot de passe |
 | ----------- | ----------------------- | ------------ |
 | Photographe | alice.dubois@mail.com   | password     |
 | Photographe | thomas.moreau@mail.com  | password     |
@@ -149,14 +154,13 @@ docker compose up -d --build
 
 ### Application Mobile (Flutter)
 
-- Liste des galeries publiques avec pull-to-refresh
+- Liste des galeries publiques
 - Saisie d'un code pour accéder à une galerie privée
 - Détail d'une galerie (photos en grille 3 colonnes)
-- Visualisation d'une photo en grand avec navigation (avant / après) et Hero animation
+- Visualisation d'une photo en grand
 - Ajout de commentaires sur les photos d'une galerie privée (anonyme)
-- Cache local hors-ligne via Isar DB
 - Architecture Clean (Domain / Data / Presentation)
-- State management Riverpod, navigation GoRouter
+- Gestion d'état Riverpod
 - Client HTTP Dio avec interceptors
 
 ### Espace client (Nuxt SSR)
@@ -166,4 +170,3 @@ docker compose up -d --build
 - Détail d'une galerie publique avec lightbox photos (navigation, plein écran)
 - Accès galerie privée via URL directe `/p/[code]` (fetch côté client)
 - Accès galerie privée via lien reçu par mail
-
