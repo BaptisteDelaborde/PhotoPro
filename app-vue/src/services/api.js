@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+// L'adresse de la Gateway
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+//instance d'Axios préconfigurée
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -9,6 +11,9 @@ const axiosInstance = axios.create({
   }
 })
 
+// Avant CHAQUE requête qui part de l'application, Axios passe par ici.
+// S'il trouve un token dans le localStorage, il l'attache automatiquement dans l'en-tête "Authorization".
+// C'est ce qui permet à AuthnMiddleware(PHP) de reconnaître !
 axiosInstance.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   if (token) {
@@ -17,7 +22,9 @@ axiosInstance.interceptors.request.use(config => {
   return config
 })
 
+// On exporte un  objet apiGestion qui contient toutes les actions possibles.
 export const apiGestion = {
+  // Met à jour si la galerie est publique/brouillon
   async updateGalerieStatus(id, donnees) {
     try {
       const res = await axiosInstance.patch(`/galeries/${id}/status`, donnees)
@@ -48,7 +55,9 @@ export const apiGestion = {
     }
   },
 
+  // Upload une photo directement DEPUIS l'intérieur d'une galerie
   async uploadPhoto(fichier, photographeId, galerieId) {
+    // Utilisation de FormData car on envoie un fichier binaire (multipart/form-data), pas du JSON !
     const formData = new FormData();
     formData.append('photo', fichier);
     try {
@@ -62,6 +71,7 @@ export const apiGestion = {
     }
   },
 
+  // Upload une photo dans le stockage S3 du photographe
   async uploadPhotoToStorage(fichier, photographeId) {
     const formData = new FormData();
     formData.append('photo', fichier);
@@ -106,7 +116,7 @@ export const apiGestion = {
     }
   },
 
-    async updateGalerie(photographeId, galerieId, donnees) {
+  async updateGalerie(photographeId, galerieId, donnees) {
     try {
       const res = await axiosInstance.put(`/photographes/${photographeId}/galeries/${galerieId}`, donnees)
       return res.data
@@ -116,6 +126,7 @@ export const apiGestion = {
     }
   },
 
+  // Récupère les photos d'une galerie spécifique
   async getGalleryPhotos(photographeId, galleryId) {
     try {
       const res = await axiosInstance.get(`/photographes/${photographeId}/galeries/${galleryId}/photos`)
@@ -126,6 +137,7 @@ export const apiGestion = {
     }
   },
 
+  // Quand l'utilisateur modifie son profil (email, nom, prénom, etc), on appelle cette fonction pour envoyer les nouvelles données au backend 
   async updateProfile(photographeId, donnees) {
     try {
       const res = await axiosInstance.patch(`/auth/photographes/${photographeId}`, donnees)
@@ -136,11 +148,13 @@ export const apiGestion = {
     }
   },
 
+  // Fonction générique pour faire un POST basique si besoin
   async post(endpoint, data) {
     const res = await axiosInstance.post(endpoint, data)
     return res.data
   },
 
+  // Lie ou délie une photo du stockage global avec une galerie spécifique
   async linkPhotoToGallery(photographeId, photoId, galerieId, action = 'add') {
     console.log(`PATCH /photographes/${photographeId}/photos/${photoId} (Action: ${action})`);
     try {
@@ -155,6 +169,7 @@ export const apiGestion = {
     }
   },
 
+  // Fonction générique pour faire un GET basique
   async get(endpoint) {
     const res = await axiosInstance.get(endpoint)
     return res.data
