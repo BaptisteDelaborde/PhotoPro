@@ -134,7 +134,7 @@ const setAsCover = async (photoId: string | number) => {
     await apiGestion.updateGalerie(photographeId.value, galleryId, {
       cover_photo_id: photoId
     })
-    alert('✅ Image définie comme couverture avec succès !')
+    alert('Image définie comme couverture avec succès!')
   } catch (err) {
     alert('Erreur lors de la modification de la couverture.')
   }

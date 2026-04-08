@@ -18,10 +18,8 @@ class ServiceUser implements ServiceUserInterface
 
     public function register(CredentialsDTO $credentials, int $role, string $firstName, string $lastName, string $pseudo, ?string $phone): ProfileDTO
     {
-        // On enregistre
         $this->userRepository->save($credentials, $role, $firstName, $lastName, $pseudo, $phone);
 
-        // On récupère l'utilisateur complet pour renvoyer le ProfileDTO
         $user = $this->userRepository->findByEmail($credentials->email);
 
         return new ProfileDTO(
