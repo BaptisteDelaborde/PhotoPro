@@ -93,7 +93,6 @@ const openLightbox = (index) => {
   font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* NOUVEAU : Style du lien de retour */
 .back-btn {
   display: inline-block;
   margin-bottom: 25px;
