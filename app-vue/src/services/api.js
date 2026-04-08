@@ -116,13 +116,13 @@ export const apiGestion = {
     }
   },
 
-  async updateGalerie(photographeId, galerieId, donnees) {
+  async updateProfile(photographeId, donnees) {
     try {
-      const res = await axiosInstance.put(`/photographes/${photographeId}/galeries/${galerieId}`, donnees)
+      const res = await axiosInstance.patch(`/auth/photographes/${photographeId}`, donnees)
       return res.data
     } catch (error) {
-      console.error('Erreur mise à jour galerie:', error);
-      throw error;
+      console.error('Erreur mise à jour profil:', error)
+      throw error
     }
   },
 

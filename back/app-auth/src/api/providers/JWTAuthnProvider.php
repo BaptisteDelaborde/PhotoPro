@@ -18,9 +18,6 @@ class JWTAuthnProvider implements AuthnProviderInterface
         $this->serviceUser = $serviceUser;
     }
 
-    /**
-     * CORRECTION : La signature doit correspondre à AuthnProviderInterface
-     */
     public function register(
         CredentialsDTO $credentials,
         int $role,
