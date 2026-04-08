@@ -116,9 +116,6 @@ const goToGalleryDetails = (id: string | number, title: string, layout?: string)
   router.push({path: `/galeries/${id}`, query: {title, layout: layout || 'grid'}})
 }
 
-const showPreview = (msg: string) => {
-  window.alert(msg)
-}
 const initials = (titre: string | undefined) => {
   if (!titre) return '?'
   return titre.split(' ').map(s => s.charAt(0).toUpperCase()).slice(0, 2).join('')
@@ -178,7 +175,6 @@ const deleteGallery = async (id: string | number, titre: string) => {
 
         <div class="actions">
           <button class="btn-outline" @click.stop="goToGalleryDetails(g.id, g.titre, g.layout)">Voir</button>
-          <button class="btn-ghost" @click.stop="showPreview('Prévisualisation : ' + g.titre)">Prévisualiser</button>
 
           <button class="btn-outline" :class="g.est_publiee ? 'btn-danger' : 'btn-success'"
                   @click.stop="togglePublish(g)">
