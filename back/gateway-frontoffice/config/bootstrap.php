@@ -20,6 +20,7 @@ $app->add(new CorsMiddleware());
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
+$app->addErrorMiddleware(false, true, true);
 
 $app = (require __DIR__ . '/../src/api/routeGateway.php')($app);
 
