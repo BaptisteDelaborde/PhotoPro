@@ -181,7 +181,6 @@ const deleteGallery = async (id: string | number, titre: string) => {
             {{ g.est_publiee ? 'Dépublier' : 'Publier' }}
           </button>
           <button class="btn-ghost" @click.stop="deleteGallery(g.id, g.titre)">Supprimer</button>
-          <button class="btn-delete" @click.stop="deleteGallery(g.id, g.titre)" title="Supprimer la galerie">🗑️</button>
         </div>
       </article>
     </section>
