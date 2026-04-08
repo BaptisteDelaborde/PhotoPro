@@ -53,7 +53,7 @@ class ServiceGalerie implements ServiceGalerieInterface
                 throw new \InvalidArgumentException("Une galerie privée doit avoir un email client.");
             }
             $accessCode = substr(bin2hex(random_bytes(4)), 0, 8);
-            $accessUrl = "/galeries/privee/" . $id;
+            $accessUrl = "/p/" . $accessCode;
         }
         $galerie = new Galerie(
             id: $id,
@@ -188,7 +188,7 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         // Notification uniquement pour les galeries privées avec un client
         if (!$galerie->isPublic() && $galerie->getClientEmail()) {
-            $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'http://localhost:8082';
+            $frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:3001';
             $payload = [
                 'galerie' => [
                     'id'          => $dto->id,
@@ -236,7 +236,7 @@ public function ajouterPhoto(string $photographer_id, string $galerie_id, string
 
         // Notification si galerie privée, publiée, avec un client
         if (!$galerie->isPublic() && $galerie->isPublished() && $galerie->getClientEmail()) {
-            $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'http://localhost:8082';
+            $frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:3001';
             $payload = [
                 'galerie' => [
                     'id'          => $dto->id,

@@ -76,6 +76,7 @@ services:
       - S3_EXTERNAL_ENDPOINT=${S3_EXTERNAL_ENDPOINT}
       - S3_BUCKET=photopro-galeries
       - PHP_CLI_SERVER_WORKERS=8
+      - FRONTEND_URL=${NUXT_FRONTEND_URL:-http://localhost:3001}
     working_dir: /var/php
     networks:
       - photopro.net
