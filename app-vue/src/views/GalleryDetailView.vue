@@ -264,12 +264,14 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex: 1;
 }
 
 .header h1 {
   margin: 0;
   font-size: 24px;
+  white-space: nowrap;
 }
 
 .btn-back {
@@ -278,7 +280,7 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
   color: #374151;
   font-size: 16px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px 8px 8px 0;
   border-radius: 8px;
   transition: background 0.2s;
 }
