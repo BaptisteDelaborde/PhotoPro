@@ -236,7 +236,7 @@ class ServiceGalerie implements ServiceGalerieInterface
         return $dto;
     }
 
-    public function updateGalerie(string $id, array $data): GalerieDTO
+public function updateGalerie(string $id, array $data): GalerieDTO
     {
         $galerie = $this->galerieRepository->findById($id);
 
@@ -252,6 +252,10 @@ class ServiceGalerie implements ServiceGalerieInterface
         }
         if (isset($data['layout'])) {
             $galerie->setLayout($data['layout']);
+        }
+
+        if (array_key_exists('cover_photo_id', $data)) {
+            $galerie->setCoverPhoto($data['cover_photo_id']);
         }
 
         $this->galerieRepository->save($galerie);

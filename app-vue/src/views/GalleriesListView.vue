@@ -198,8 +198,6 @@ const deleteGallery = async (id: string | number, titre: string) => {
                role="button"
                tabindex="0">
         <div class="cover" :style="g.cover ? { backgroundImage: 'url(' + g.cover + ')' } : {}">
-          <button class="btn-edit-cover" @click.stop="triggerCoverUpload(g.id)" title="Modifier la couverture">✏️
-          </button>
           <div v-if="!g.cover" class="placeholder">{{ initials(g.titre) }}</div>
           <div class="overlay">
             <h3>{{ g.titre }}</h3>
