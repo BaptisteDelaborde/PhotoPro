@@ -73,7 +73,7 @@ class ServiceGalerie implements ServiceGalerieInterface
     }
     private function toDTO(Galerie $galerie): GalerieDTO
     {
-        return new GalerieDTO(
+        $dto = new GalerieDTO(
             id: $galerie->getId(),
             photographer_id: $galerie->getPhotographerId(),
             title: $galerie->getTitle(),
@@ -89,9 +89,33 @@ class ServiceGalerie implements ServiceGalerieInterface
             client_email: $galerie->getClientEmail(),
             published_at: $galerie->getPublishedAt()
         );
+
+        if ($galerie->getCoverPhotoId()) {
+            try {
+                $photo = $this->galerieRepository->getPhotoById($galerie->getCoverPhotoId());
+                if ($photo) {
+                    $link = $photo->getStorageUrl();
+                    
+                    if (str_contains($link, 'http://localhost:8333/photopro-galeries/http')) {
+                        $link = str_replace('http://localhost:8333/photopro-galeries/', '', $link);
+                    }
+                    
+                    $s3Endpoint = (string) (getenv('S3_EXTERNAL_ENDPOINT') ?: 'http://localhost:8333');
+                    $s3Bucket   = (string) (getenv('S3_BUCKET') ?: 'photopro-galeries');
+                    
+                    $dto->cover_url = str_starts_with($link, 'http')
+                        ? $link
+                        : $s3Endpoint . '/' . $s3Bucket . '/' . $link;
+                }
+            } catch (\Exception $e) {
+                $dto->cover_url = null;
+            }
+        }
+
+        return $dto;
     }
 
-public function ajouterPhoto(string $photographer_id, string $galerie_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo
+    public function ajouterPhoto(string $photographer_id, string $galerie_id, string $file_name, string $mime_type, float $file_size, string $s3_key): Photo
     {
         $photoId = Uuid::uuid4()->toString();
         $uploadedAt = date('Y-m-d H:i:s');

@@ -13,6 +13,7 @@ class GalerieDTO
     public string $created_at;
     public ?string $description;
     public ?string $cover_photo_id;
+    public ?string $cover_url = null;
     public ?string $access_code;
     public ?string $access_url;
     public ?string $client_name;

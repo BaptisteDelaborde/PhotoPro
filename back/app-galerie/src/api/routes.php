@@ -47,7 +47,7 @@ return function (\Slim\App $app): \Slim\App {
         ->add(AuthnMiddleware::class);
     $app->patch('/galeries/{id}/status', UpdateGalerieStatusAction::class)
         ->add(AuthnMiddleware::class);
-    $app->put('/galeries/{id}', UpdateGalerieAction::class)
+    $app->put('/photographes/{id}/galeries/{galerie_id}', UpdateGalerieAction::class)        
         ->add(AuthnMiddleware::class);
     $app->delete('/photographes/{id}/galeries/{galerie_id}', DeleteGalerieAction::class)
         ->add(AuthnMiddleware::class);

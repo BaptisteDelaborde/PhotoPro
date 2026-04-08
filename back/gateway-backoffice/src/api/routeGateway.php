@@ -33,8 +33,7 @@ return function (App $app) {
         $group->post('/photographes/{id}/galeries/{galerie_id}/photos', UploadPhotoGatewayAction::class);
         $group->delete('/photographes/{id}/galeries/{galerie_id}/photos/{photo_id}', DeletePhotoGatewayAction::class);
 
-        $group->put('/photographes/{id}/galeries/{galerie_id}', UpdateGalerieGatewayAction::class);
-        // ✅ C'est ici la vraie ligne pour la Gateway !
+        $group->put('/photographes/{id}/galeries/{galerie_id}', GenericGatewayAction::class);
         $group->delete('/photographes/{id}/galeries/{galerie_id}', GenericGatewayAction::class);        
         
         $group->post('/photographes/{id}/photos', UploadGlobalPhotoGatewayAction::class);

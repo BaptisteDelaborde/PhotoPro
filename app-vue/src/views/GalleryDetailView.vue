@@ -129,6 +129,17 @@ const confirmSelection = async () => {
   }
 }
 
+const setAsCover = async (photoId: string | number) => {
+  try {
+    await apiGestion.updateGalerie(photographeId.value, galleryId, {
+      cover_photo_id: photoId
+    })
+    alert('✅ Image définie comme couverture avec succès !')
+  } catch (err) {
+    alert('Erreur lors de la modification de la couverture.')
+  }
+}
+
 const handleRemoveFromGallery = async (photoId: string | number) => {
   if (!window.confirm("Voulez-vous retirer cette photo de la galerie ? (Elle restera dans votre stockage global)")) return
 
@@ -189,9 +200,15 @@ const normalizedLayout = computed<'grid' | 'masonry'>(() => {
 
         <div class="photo-info">
           <p class="photo-title" :title="photo.file_name">{{ photo.title || photo.file_name || 'Sans titre' }}</p>
-          <button class="btn-delete" @click.stop="handleRemoveFromGallery(photo.id)" title="Retirer de la galerie">
-            🗑️
-          </button>
+          
+          <div class="photo-actions">
+            <button class="btn-cover" @click.stop="setAsCover(photo.id)" title="Définir comme couverture">
+              Définir comme couverture
+            </button>
+            <button class="btn-delete" @click.stop="handleRemoveFromGallery(photo.id)" title="Retirer de la galerie">
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -60,9 +60,15 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
         }
 
         return new Photo(
-            $row['id'], $row['photographer_id'], $row['galerie_id'], $row['file_name'],
-            $row['mime_type'], (float) $row['file_size'], $row['storage_url'],
-            $row['uploaded_at'], $row['title']
+            $row['id'], 
+            $row['photographer_id'], 
+            $row['galerie_id'] ?? null,
+            $row['file_name'],
+            $row['mime_type'], 
+            (float) $row['file_size'], 
+            $row['storage_url'] ?? $row['s3_key'] ?? '',
+            $row['uploaded_at'], 
+            $row['title'] ?? null
         );
     }
 
@@ -184,9 +190,9 @@ class PDOGalerieRepository implements GalerieRepositoryInterface
                 $row['file_name'],
                 $row['mime_type'],
                 (float) $row['file_size'],
-                $row['storage_url'],
+                $row['storage_url'] ?? $row['s3_key'] ?? '',
                 $row['uploaded_at'],
-                $row['title']
+                $row['title'] ?? null
             );
         }
         return $photos;

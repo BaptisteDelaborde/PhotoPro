@@ -19,11 +19,12 @@ class UpdateGalerieAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $id = $args['id'];
+        $galerieId = $args['galerie_id'] ?? $args['id'];
         $body = $request->getParsedBody() ?? [];
 
         try {
-            $dto = $this->serviceGalerie->updateGalerie($id, $body);
+            // 2. 🌟 CORRECTION : On passe bien $galerieId au lieu de $id
+            $dto = $this->serviceGalerie->updateGalerie($galerieId, $body);
         } catch (\InvalidArgumentException $e) {
             throw new HttpBadRequestException($request, $e->getMessage());
         } catch (\Exception $e) {

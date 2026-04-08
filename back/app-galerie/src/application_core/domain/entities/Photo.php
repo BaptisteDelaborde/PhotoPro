@@ -12,12 +12,12 @@ class Photo
     private float $file_size;
     private string $storage_url;
     private string $uploaded_at;
-    private string $galerie_id;
+    private ?string $galerie_id;
 
     public function __construct(
         string $id,
         string $photographer_id,
-        string $galerie_id,
+        ?string $galerie_id,
         string $file_name,
         string $mime_type,
         float $file_size,

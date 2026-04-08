@@ -27,15 +27,52 @@ const isUploadingCover = ref(false)
 
 const fetchGalleries = async () => {
   try {
-    const data = await apiGestion.getMesGaleries()
-    galleries.value = (Array.isArray(data) ? data : data.items || []).map((g: any) => ({
+    const res = await apiGestion.getMesGaleries()
+    console.log("🔍 Données brutes reçues :", res)
+    
+    let items = []
+    
+    // 1. Si c'est un tableau propre (comportement idéal)
+    if (Array.isArray(res)) {
+      items = res
+    } 
+    // 2. Si c'est emballé dans res.data
+    else if (res && Array.isArray(res.data)) {
+      items = res.data
+    } 
+    // 3. Si PHP a pollué le JSON et l'a transformé en texte brut
+    else {
+      let stringData = typeof res === 'string' ? res : (res && typeof res.data === 'string' ? res.data : null)
+      
+      if (stringData) {
+        try {
+          // On cherche le début '[' et la fin ']' du vrai JSON pour ignorer la pollution
+          const startIndex = stringData.indexOf('[')
+          const endIndex = stringData.lastIndexOf(']')
+          
+          if (startIndex !== -1 && endIndex !== -1) {
+            const cleanJson = stringData.substring(startIndex, endIndex + 1)
+            items = JSON.parse(cleanJson)
+          } else {
+            items = JSON.parse(stringData)
+          }
+        } catch (e) {
+          console.error("Échec de l'extraction JSON :", stringData)
+        }
+      }
+    }
+
+    // 4. On affecte nos galeries à l'affichage
+    galleries.value = items.map((g: any) => ({
       id: g.id,
       titre: g.title || g.titre || 'Sans titre',
       type: g.is_public ? 'Publique' : 'Privée',
       est_publiee: g.is_published,
+      // Ta fameuse couverture !
       cover: g.cover_url || g.cover_photo_url || null,
       layout: g.layout || 'grid'
     }))
+    
   } catch (error) {
     console.error("Impossible de charger les galeries", error)
   }
