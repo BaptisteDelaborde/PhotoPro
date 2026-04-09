@@ -1,0 +1,21 @@
+/speckit.constitution Je souhaite développer une version mobile en Flutter compatible iOS et Android du projet PhotoPro. Pour ce faire tu dois te baser sur le répertoire back qui contient tout ce qui concerne le backend du projet avec ses microservices. L'application mobile sera dans son propre répertoire app-mobile à la racine du projet, et structurer de manière à bien séparer le domaine métier, interface etc. L'application est exclusivement pour les visiteurs donc pas besoin d'authentification, et les galeries privées sont accèssibles via un code comme c'est le cas pour l'application nuxt (dossier app-nuxt). Ce qu'apportera en plus cette application sera un système de commentaire des photos des galeries. Rédige la constituion pour réaliser ce projet mobile en définissant les principes importants de l'application.
+
+/speckit.specify Rédige les spécifications techniques pour le socle de l'application mobile. Définis l'arborescence complète du dossier app-mobile/lib en respectant la Clean Architecture (couches UI, Domain, Data). Spécifie la configuration initiale du main.dart, le système de routing (ex: avec GoRouter), l'injection de dépendances/gestion d'état (ex: avec Riverpod) et la configuration du client HTTP (ex: avec Dio) pour communiquer avec notre API Gateway.
+
+/speckit.specify Rédige également les spécifications pour la couche "Data" de l'application mobile. En te basant sur le dossier back du projet, définis les modèles de données Flutter (Galerie, Photo, Commentaire) avec leur sérialisation JSON (ex: via Freezed ou json_serializable). Spécifie également les interfaces des services API qui appelleront la Gateway pour récupérer les galeries publiques, valider un code d'accès privé, et envoyer un commentaire.
+
+/speckit.clarify
+
+/speckit.plan L'application est en Flutter et se base que le backend dans le dossier back du projet. Tout les fichiers de l'application mobile seront dans le dossier app-mobile prévu pour ça. N'oublie pas de bien isoler les différentes couches. Je te laisse la liberté d'ajouter des packages qui te semblent pertinent pour ce projet.
+
+/speckit.task
+
+/speckit.implement
+
+Je n'ai malheureusement pas conservé les prompts liés au débboggage de l'application. En voici quelques uns que j'ai toujours dans mon historique :
+
+Notre dossier app-mobile contient tout l'application mobile. L'application se lance mais ne marche pas, j'ai une erreur impossible de se connecter : DioException etc, avec connection refused, PhotoProErreor, tu peux m'aider stp. Je me demande si ce n'est pas juste avant de faire les requêtes vers la BD que ça plante.
+
+J'ai une DioException [unknown]: null Error : PhotoProError (code: ERR_UNKNOWN, message : Une erreur inattendue est survenue, détails: {raw: null}). Je ne sais pas trop à quoi elle correspond puisqu'il n'y a aucun détail, tu pourrais faire en sorte qu'on ait une erreur plus précise pour que ce soit plus simple à comprendre et corriger ?
+
+Pour docketu, ce n'est pas mieux ce lien plutôt ? http://docketu.iutnc.univ-lorraine.fr:21856/
